@@ -20,13 +20,10 @@ jobs:
         id: fetch-news
         run: |
           echo "🕐 Starting news fetch at $(date)"
-
           # Make the API call with detailed error handling
           response=$(curl -f -s -w "%{http_code}" -X GET \
             "http://localhost:3000/api/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
-
           http_code=${response: -3}
-
           if [ "$http_code" -eq 200 ]; then
             echo "✅ News fetch completed successfully"
             echo "success=true" >> $GITHUB_OUTPUT
@@ -36,7 +33,12 @@ jobs:
             exit 1
           fi
 
-      # Step 3: Send Notification Email (handles both success and failure)
+      # Step 3: Get current timestamp
+      - name: Get current time
+        id: time
+        run: echo "timestamp=$(date -Iseconds)" >> $GITHUB_OUTPUT
+
+      # Step 4: Send Notification Email (handles both success and failure)
       - name: Send Notification Email
         if: always()
         uses: dawidd6/action-send-mail@v3
@@ -71,7 +73,7 @@ jobs:
             <p>${{ steps.fetch-news.outputs.success == 'true' && 'Your automated news collection completed successfully' || 'Immediate attention required for your automated news collection' }}</p>
             </div>
             <div class="content">
-             <p>Hello,</p>
+            <p>Hello,</p>
             <p>${{ steps.fetch-news.outputs.success == 'true' && 'The automated tech news fetch from sources like AWS, TechCrunch, etc. has completed successfully.' || 'The automated tech news fetch has encountered an error and requires investigation.' }}</p>
             <div class="info-box">
             <h3>🔍 Details</h3>
@@ -79,7 +81,7 @@ jobs:
             <p><strong>Workflow:</strong> ${{ github.workflow }}</p>
             <p><strong>Run ID:</strong> ${{ github.run_id }}</p>
             <p><strong>Triggered by:</strong> ${{ github.event_name }}</p>
-            <p><strong>Time:</strong> ${{ fromJSON('{"timestamp": "'$(date -Iseconds)'"}').timestamp }}</p>
+            <p><strong>Time:</strong> ${{ steps.time.outputs.timestamp }}</p>
             </div>
             <a href="${{ github.serverUrl }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="button">
             ${{ steps.fetch-news.outputs.success == 'true' && 'View Run Details' || 'Investigate Failure' }}
@@ -93,7 +95,7 @@ jobs:
             </body>
             </html>
 
-      # Step 4: Always run cleanup/status
+      # Step 5: Always run cleanup/status
       - name: Workflow Status
         if: always()
         run: |
