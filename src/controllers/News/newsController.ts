@@ -1,12 +1,11 @@
 import { sources } from "@/constant/sources";
 import { Prisma } from "@/generated/prisma";
-import { fetchRSSFeed, sleep } from "@/services/Rss/rss.service";
+import { sleep } from "@/services/rss.service";
 import { AppError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
-import { summarizeText } from "@/services/huggingface.service";
-
 import { NextFunction, Response, Request } from "express";
+import { fetchFromSource } from "@/services/newsFetcher.service";
 
 export const getNews = async (
   req: Request,
@@ -41,72 +40,12 @@ export const getNews = async (
 export const fetchAndStoreNews = async () => {
   let totalProcessed = 0;
   let totalFailed = 0;
-  let aiSummary: string | null = null;
 
   for (const source of sources) {
-    logger.info(`🔎 Fetching ${source.name} — ${source.url}`);
     try {
-      const articles = await fetchRSSFeed(source.url, source.name);
+      const fetched = await fetchFromSource(source);
+      totalProcessed += fetched.length;
       await sleep(1200);
-
-      if (!articles || articles.length === 0) {
-        logger.warn(`No articles returned for ${source.name}`);
-      }
-
-      let savedCount = 0;
-      for (const article of articles) {
-        try {
-          if (!article.link || article.link.trim().length === 0) {
-            logger.warn(
-              `Skipping article with empty link from ${source.name}: ${article.title}`
-            );
-            continue;
-          }
-
-          if (article.content && article.content.length > 100) {
-            aiSummary = await summarizeText(article.content);
-            await sleep(1500);
-          }
-
-          await prisma.news.upsert({
-            where: { link: article.link },
-            update: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              author: article.author,
-              category: article.category,
-              summary: (aiSummary as string) ?? undefined,
-              publishedAt: article.publishedAt,
-              updatedAt: new Date(),
-            },
-            create: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              link: article.link,
-              source: article.source,
-              author: article.author,
-              category: article.category,
-              summary: (aiSummary as string) ?? undefined,
-              publishedAt: article.publishedAt,
-            },
-          });
-
-          savedCount++;
-        } catch (articleError: any) {
-          logger.error(
-            `Failed to save article from ${source.name}: ${
-              articleError?.message || articleError
-            }`
-          );
-        }
-      }
-
-      totalProcessed += savedCount;
-      logger.info(
-        `✅ ${source.name}: Saved ${savedCount}/${articles.length} articles`
-      );
     } catch (err: any) {
       totalFailed++;
       logger.error(`❌ ${source.name} failed: ${err?.message || err}`);
@@ -114,8 +53,9 @@ export const fetchAndStoreNews = async () => {
   }
 
   logger.info(
-    `📊 News fetch completed: ${totalProcessed} articles processed, ${totalFailed} sources failed`
+    `📊 News fetch completed: ${totalProcessed} new articles processed, ${totalFailed} sources failed`
   );
+
   return { processed: totalProcessed, failed: totalFailed };
 };
 

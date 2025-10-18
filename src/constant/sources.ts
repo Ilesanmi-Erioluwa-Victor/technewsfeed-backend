@@ -1,4 +1,9 @@
-export const sources = [
+export interface Source {
+  name: string;
+  url: string;
+}
+
+export const sources: Source[] = [
   { url: "https://blogs.nvidia.com/feed/", name: "NVIDIA Blog" },
   { url: "https://blog.jetbrains.com/feed/", name: "JetBrains Blog" },
   { url: "https://stackoverflow.blog/feed/", name: "Stack Overflow Blog" },

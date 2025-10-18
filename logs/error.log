@@ -103,3 +103,74 @@ Please make sure your database server is running at `aws-1-us-east-1.pooler.supa
 [2025-10-18T05:34:38.317Z] ERROR: ❌ MDN Blog failed: Failed to fetch MDN Blog: timeout of 10000ms exceeded
 [2025-10-18T05:34:45.053Z] ERROR: ❌ Schneier on Security failed: Failed to fetch Schneier on Security: Cannot read properties of undefined (reading 'channel')
 [2025-10-18T05:36:20.929Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-18T06:56:32.455Z] ERROR: ❌ NVIDIA Blog failed: 
+Invalid `prisma.newsSource.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:9:42
+
+  6 
+  7 export const fetchFromSource = async (source: Source) => {
+  8   logger.info(`🔍 Checking ${source.name} for new articles...`);
+→ 9   let dbSource = await prisma.newsSource.findUnique(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:01:44.551Z] ERROR: ❌ Failed to save article from Stack Overflow Blog: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:53:25
+
+  50   await sleep(1500);
+  51 }
+  52 
+→ 53 await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:07:09.459Z] ERROR: ❌ Hugging Face failed: Failed to fetch Hugging Face: self-signed certificate
+[2025-10-18T07:07:14.465Z] ERROR: ❌ Tech Crunch failed: 
+Invalid `prisma.newsSource.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:9:42
+
+  6 
+  7 export const fetchFromSource = async (source: Source) => {
+  8   logger.info(`🔍 Checking ${source.name} for new articles...`);
+→ 9   let dbSource = await prisma.newsSource.findUnique(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:07:19.469Z] ERROR: ❌ WebKit failed: 
+Invalid `prisma.newsSource.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:9:42
+
+  6 
+  7 export const fetchFromSource = async (source: Source) => {
+  8   logger.info(`🔍 Checking ${source.name} for new articles...`);
+→ 9   let dbSource = await prisma.newsSource.findUnique(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:07:31.902Z] ERROR: ❌ Chromium Blog failed: Failed to fetch Chromium Blog: content.replace is not a function
+[2025-10-18T07:12:26.784Z] ERROR: ❌ Failed to save article from MDN Blog: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:53:25
+
+  50   await sleep(1500);
+  51 }
+  52 
+→ 53 await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:16:51.786Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-18T07:21:46.900Z] ERROR: ❌ Hugging Face failed: Failed to fetch Hugging Face: self-signed certificate
+[2025-10-18T07:22:25.885Z] ERROR: ❌ Failed to save article from Tech Crunch: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/services/newsFetcher.service.ts:53:25
+
+  50   await sleep(1500);
+  51 }
+  52 
+→ 53 await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T07:25:39.910Z] ERROR: ❌ Chromium Blog failed: Failed to fetch Chromium Blog: content.replace is not a function

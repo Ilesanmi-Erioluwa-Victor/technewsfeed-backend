@@ -23,7 +23,7 @@ jobs:
 
           # Make the API call with detailed error handling
           response=$(curl -f -s -w "%{http_code}" -X GET \
-            "https://your-backend-domain.com/api/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
+            "http://localhost:3000/api/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
 
           http_code=${response: -3}
 
