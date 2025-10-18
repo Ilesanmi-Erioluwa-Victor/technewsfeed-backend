@@ -1,0 +1,105 @@
+[2025-10-16T14:43:43.600Z] ERROR: GET /api/news - Failed to fetch news
+[2025-10-16T14:55:41.003Z] ERROR: GET /api/news - Failed to fetch news
+[2025-10-16T15:00:09.845Z] ERROR: GET /api/news - Failed to fetch news
+[2025-10-16T15:06:03.972Z] ERROR: ❌ TechCrunch failed: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:29:27
+
+  26 try {
+  27   const articles = await fetchRSSFeed(source.url, source.name);
+  28   for (const article of articles) {
+→ 29     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-16T15:07:00.832Z] ERROR: ❌ Google Cloud failed: Failed to fetch Google Cloud: Invalid character in entity name
+Line: 0
+Column: 59421
+Char: &
+[2025-10-16T15:24:46.753Z] ERROR: ❌ TechCrunch failed: Failed to fetch TechCrunch: Client network socket disconnected before secure TLS connection was established
+[2025-10-16T15:25:14.129Z] ERROR: ❌ TechCrunch failed: Failed to fetch TechCrunch: Client network socket disconnected before secure TLS connection was established
+[2025-10-16T15:25:17.080Z] ERROR: ❌ TechCrunch failed: Failed to fetch TechCrunch: Client network socket disconnected before secure TLS connection was established
+[2025-10-16T15:26:02.020Z] ERROR: ❌ AWS Blog failed: Failed to fetch AWS Blog: Client network socket disconnected before secure TLS connection was established
+[2025-10-16T15:26:02.224Z] ERROR: ❌ AWS Blog failed: Failed to fetch AWS Blog: Client network socket disconnected before secure TLS connection was established
+[2025-10-16T15:26:19.467Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-16T15:26:39.286Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-17T00:07:16.576Z] ERROR: ❌ TechCrunch failed: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:34:27
+
+  31 try {
+  32   const articles = await fetchRSSFeed(source.url, source.name);
+  33   for (const article of articles) {
+→ 34     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-17T00:09:53.061Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-17T00:10:37.274Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-17T00:25:33.734Z] ERROR: ❌ AWS Blog failed: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:34:27
+
+  31 try {
+  32   const articles = await fetchRSSFeed(source.url, source.name);
+  33   for (const article of articles) {
+→ 34     await prisma.news.upsert(
+Server has closed the connection.
+[2025-10-17T01:55:24.576Z] ERROR: ❌ TechCrunch failed: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:34:27
+
+  31 try {
+  32   const articles = await fetchRSSFeed(source.url, source.name);
+  33   for (const article of articles) {
+→ 34     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-17T01:55:30.574Z] ERROR: ❌ AWS Blog failed: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:34:27
+
+  31 try {
+  32   const articles = await fetchRSSFeed(source.url, source.name);
+  33   for (const article of articles) {
+→ 34     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-17T01:55:32.161Z] ERROR: ❌ Google Cloud failed: Failed to fetch Google Cloud: Invalid character in entity name
+Line: 0
+Column: 59467
+Char: &
+[2025-10-17T02:02:39.532Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-10-17T10:51:58.362Z] ERROR: ❌ Hugging Face failed: Failed to fetch Hugging Face: self-signed certificate
+[2025-10-17T10:52:36.374Z] ERROR: ❌ Chromium Blog failed: Failed to fetch Chromium Blog: Cannot read properties of undefined (reading 'channel')
+[2025-10-17T10:55:41.810Z] ERROR: ❌ Schneier on Security failed: Failed to fetch Schneier on Security: Cannot read properties of undefined (reading 'channel')
+[2025-10-18T05:31:25.265Z] ERROR: ❌ NVIDIA Blog failed: Failed to fetch NVIDIA Blog: timeout of 10000ms exceeded
+[2025-10-18T05:31:37.977Z] ERROR: Failed to save article from JetBrains Blog: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:77:29
+
+  74 let savedCount = 0;
+  75 for (const article of articles) {
+  76   try {
+→ 77     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T05:31:43.236Z] ERROR: Failed to save article from JetBrains Blog: 
+Invalid `prisma.news.upsert()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/controllers/News/newsController.ts:77:29
+
+  74 let savedCount = 0;
+  75 for (const article of articles) {
+  76   try {
+→ 77     await prisma.news.upsert(
+Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
+
+Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
+[2025-10-18T05:33:54.152Z] ERROR: ❌ Hugging Face failed: Failed to fetch Hugging Face: self-signed certificate
+[2025-10-18T05:34:28.311Z] ERROR: ❌ Chromium Blog failed: Failed to fetch Chromium Blog: Cannot read properties of undefined (reading 'channel')
+[2025-10-18T05:34:38.317Z] ERROR: ❌ MDN Blog failed: Failed to fetch MDN Blog: timeout of 10000ms exceeded
+[2025-10-18T05:34:45.053Z] ERROR: ❌ Schneier on Security failed: Failed to fetch Schneier on Security: Cannot read properties of undefined (reading 'channel')
+[2025-10-18T05:36:20.929Z] ERROR: GET /api/news/ - Failed to fetch news
