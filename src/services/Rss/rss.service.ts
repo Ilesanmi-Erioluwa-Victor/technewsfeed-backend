@@ -66,7 +66,7 @@ async function fetchWithRetries(
         responseType: "text",
         headers: {
           "User-Agent":
-            "TechNewsFeedBot/1.0 (+https://yourdomain.example) rss-fetcher",
+            "TechNewsFeedBot/1.0 (+http://localhost:3000) rss-fetcher",
           Accept: "application/rss+xml, application/xml, text/xml, */*",
         },
         ...opts,
@@ -81,7 +81,6 @@ async function fetchWithRetries(
         `Fetch attempt ${attempt}/${attempts} failed for ${url}: ${err?.message}`
       );
 
-      // If SSL error, break early (we will fallback at caller level)
       if (isSslError(err)) {
         throw err;
       }
@@ -99,23 +98,18 @@ async function fetchWithRetries(
   throw lastError;
 }
 
-/** parse xml into items (supports RSS & Atom) */
 async function parseFeedXml(xml: string, sourceName: string): Promise<any[]> {
   const parsed = await xml2js.parseStringPromise(xml, {
     trim: true,
     explicitArray: true,
   });
 
-  // RSS feed
   const rssItems = parsed?.rss?.channel?.[0]?.item;
   if (Array.isArray(rssItems) && rssItems.length) return rssItems;
 
-  // Atom feed
   const atomEntries = parsed?.feed?.entry;
   if (Array.isArray(atomEntries) && atomEntries.length) return atomEntries;
 
-  // Some feeds use different root names
-  // Try to find the first array that looks like items
   for (const key of Object.keys(parsed)) {
     if (Array.isArray(parsed[key]) && parsed[key].some((n: any) => n.title)) {
       return parsed[key];
@@ -126,13 +120,10 @@ async function parseFeedXml(xml: string, sourceName: string): Promise<any[]> {
   return [];
 }
 
-/** Public fetchRSSFeed -------------------------------------------------- */
-
 export const fetchRSSFeed = async (
   url: string,
   sourceName: string
 ): Promise<Article[]> => {
-  // Step 1: try direct fetch with retries
   try {
     const xml = await fetchWithRetries(url);
     const items = await parseFeedXml(xml, sourceName);
@@ -178,13 +169,11 @@ export const fetchRSSFeed = async (
 
     return articles;
   } catch (err: any) {
-    // If we detect SSL issues, try a proxy fallback (safer than disabling TLS globally)
     if (isSslError(err)) {
       logger.warn(
         `SSL error for ${sourceName} (${url}) — attempting proxy fallback`
       );
       try {
-        // rss2json is an example; choose a reliable proxy or your own microservice
         const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(
           url
         )}`;
