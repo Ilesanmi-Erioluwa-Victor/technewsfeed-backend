@@ -49,7 +49,7 @@ jobs:
           password: ${{ secrets.EMAIL_PASSWORD }}
           to: ${{ secrets.NOTIFICATION_EMAIL }}
           from: ${{ secrets.EMAIL_USERNAME }}
-          subject: ${{ steps.fetch-news.outputs.success == 'true' && '✅ Tech News Fetch Successful' || '🚨 Tech News Fetch Failed - Immediate Attention Required' }}
+          subject: ${{ steps.fetch-news.outputs.success == 'true' && 'Tech News Fetch Successful' || '🚨 Tech News Fetch Failed - Immediate Attention Required' }}
           html_body: |
             <!DOCTYPE html>
             <html>
