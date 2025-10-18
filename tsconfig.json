@@ -3,14 +3,14 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler", // Changed from "node"
+    "module": "CommonJS", // Changed from ESNext
+    "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {
       "@/*": ["*"]
     },
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true, // Added
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "types": ["node"],
@@ -20,15 +20,11 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "verbatimModuleSyntax": false, // Changed from true
+    "verbatimModuleSyntax": false,
     "moduleDetection": "force",
     "isolatedModules": true,
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true
   },
-  "include": ["src"],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
+  "include": ["src"]
 }
