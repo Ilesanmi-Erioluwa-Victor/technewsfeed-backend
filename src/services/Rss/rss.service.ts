@@ -57,6 +57,8 @@ async function fetchWithRetries(
 ): Promise<string> {
   let lastError: any = null;
 
+  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const cfg: AxiosRequestConfig = {
@@ -65,8 +67,7 @@ async function fetchWithRetries(
         timeout: opts.timeout ?? DEFAULT_TIMEOUT,
         responseType: "text",
         headers: {
-          "User-Agent":
-            "TechNewsFeedBot/1.0 (+http://localhost:3000) rss-fetcher",
+          "User-Agent": `TechNewsFeedBot/1.0 (+${baseUrl}) rss-fetcher`,
           Accept: "application/rss+xml, application/xml, text/xml, */*",
         },
         ...opts,
