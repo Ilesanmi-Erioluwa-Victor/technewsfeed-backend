@@ -22,7 +22,7 @@ jobs:
           echo "🕐 Starting news fetch at $(date)"
           # Make the API call with detailed error handling
           response=$(curl -f -s -w "%{http_code}" -X GET \
-            "http://localhost:3000/api/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
+            "https://technewsfeed-backend.onrender.com/api/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
           http_code=${response: -3}
           if [ "$http_code" -eq 200 ]; then
             echo "✅ News fetch completed successfully"
