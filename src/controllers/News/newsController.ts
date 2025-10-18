@@ -1,6 +1,6 @@
 import { sources } from "@/constant/sources";
 import { Prisma } from "@/generated/prisma";
-import { fetchRSSFeed } from "@/services/Rss/rss.service";
+import { fetchRSSFeed, sleep } from "@/services/Rss/rss.service";
 import { AppError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
@@ -37,20 +37,29 @@ export const getNews = async (
 };
 
 export const fetchAndStoreNews = async () => {
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
   let totalProcessed = 0;
   let totalFailed = 0;
 
   for (const source of sources) {
+    logger.info(`🔎 Fetching ${source.name} — ${source.url}`);
     try {
       const articles = await fetchRSSFeed(source.url, source.name);
-      await delay(2000);
+      await sleep(1200);
+
+      if (!articles || articles.length === 0) {
+        logger.warn(`No articles returned for ${source.name}`);
+      }
 
       let savedCount = 0;
       for (const article of articles) {
         try {
+          if (!article.link || article.link.trim().length === 0) {
+            logger.warn(
+              `Skipping article with empty link from ${source.name}: ${article.title}`
+            );
+            continue;
+          }
+
           await prisma.news.upsert({
             where: { link: article.link },
             update: {
@@ -73,11 +82,13 @@ export const fetchAndStoreNews = async () => {
               publishedAt: article.publishedAt,
             },
           });
+
           savedCount++;
-        } catch (articleError) {
+        } catch (articleError: any) {
           logger.error(
-            `Failed to save article from ${source.name}:`,
-            articleError
+            `Failed to save article from ${source.name}: ${
+              articleError?.message || articleError
+            }`
           );
         }
       }
@@ -88,7 +99,7 @@ export const fetchAndStoreNews = async () => {
       );
     } catch (err: any) {
       totalFailed++;
-      logger.error(`❌ ${source.name} failed: ${err.message}`);
+      logger.error(`❌ ${source.name} failed: ${err?.message || err}`);
     }
   }
 

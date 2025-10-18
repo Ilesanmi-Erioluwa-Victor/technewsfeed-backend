@@ -23,7 +23,7 @@ const DEFAULT_TIMEOUT = 20000;
 const DEFAULT_RETRIES = 3;
 const BACKOFF_BASE_MS = 800;
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function isSslError(err: any): boolean {
   const msg = (err?.message || "").toLowerCase();
@@ -178,7 +178,6 @@ export const fetchRSSFeed = async (
           url
         )}`;
         const res = await axios.get(proxyUrl, { timeout: DEFAULT_TIMEOUT });
-        // rss2json returns JSON with `items`
         const items = res.data?.items || [];
         return items
           .map((it: any) => {
@@ -204,108 +203,6 @@ export const fetchRSSFeed = async (
         throw new Error(`Failed to fetch ${sourceName}: ${proxyErr?.message}`);
       }
     }
-
-    // For other errors, bubble up
     throw new Error(`Failed to fetch ${sourceName}: ${err?.message || err}`);
   }
-};
-
-/** fetchAndStoreNews -------------------------------------------------- */
-export const fetchAndStoreNews = async () => {
-  const sources = [
-    { url: "https://blogs.nvidia.com/feed/", name: "NVIDIA Blog" },
-    { url: "https://blog.jetbrains.com/feed/", name: "JetBrains Blog" },
-    { url: "https://stackoverflow.blog/feed/", name: "Stack Overflow Blog" },
-    {
-      url: "https://aws.amazon.com/blogs/machine-learning/feed/",
-      name: "AWS ML",
-    },
-    { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
-    { url: "https://webkit.org/feed/", name: "WebKit" },
-    {
-      url: "https://blog.chromium.org/feeds/posts/default",
-      name: "Chromium Blog",
-    },
-    {
-      url: "https://developer.mozilla.org/en-US/blog/rss.xml",
-      name: "MDN Blog",
-    },
-    {
-      url: "https://www.schneier.com/feed/atom/",
-      name: "Schneier on Security",
-    },
-  ];
-
-  let totalProcessed = 0;
-  let totalFailed = 0;
-
-  for (const source of sources) {
-    logger.info(`🔎 Fetching ${source.name} — ${source.url}`);
-    try {
-      const articles = await fetchRSSFeed(source.url, source.name);
-      // polite delay between sources
-      await sleep(1200);
-
-      if (!articles || articles.length === 0) {
-        logger.warn(`No articles returned for ${source.name}`);
-      }
-
-      let savedCount = 0;
-      for (const article of articles) {
-        try {
-          // guard: skip if no link
-          if (!article.link || article.link.trim().length === 0) {
-            logger.warn(
-              `Skipping article with empty link from ${source.name}: ${article.title}`
-            );
-            continue;
-          }
-
-          await prisma.news.upsert({
-            where: { link: article.link },
-            update: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              author: article.author,
-              category: article.category,
-              publishedAt: article.publishedAt,
-              updatedAt: new Date(),
-            },
-            create: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              link: article.link,
-              source: article.source,
-              author: article.author,
-              category: article.category,
-              publishedAt: article.publishedAt,
-            },
-          });
-
-          savedCount++;
-        } catch (articleError: any) {
-          logger.error(
-            `Failed to save article from ${source.name}: ${
-              articleError?.message || articleError
-            }`
-          );
-        }
-      }
-
-      totalProcessed += savedCount;
-      logger.info(
-        `✅ ${source.name}: Saved ${savedCount}/${articles.length} articles`
-      );
-    } catch (err: any) {
-      totalFailed++;
-      logger.error(`❌ ${source.name} failed: ${err?.message || err}`);
-    }
-  }
-
-  logger.info(
-    `📊 News fetch completed: ${totalProcessed} articles processed, ${totalFailed} sources failed`
-  );
-  return { processed: totalProcessed, failed: totalFailed };
 };
