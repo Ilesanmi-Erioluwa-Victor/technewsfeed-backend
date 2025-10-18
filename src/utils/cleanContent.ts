@@ -1,4 +1,6 @@
 export const cleanContent = (content: string): string => {
+  if (!content || typeof content !== "string") return "";
+
   return content
     .replace(/<[^>]*>/g, "")
     .replace(/\s+/g, " ")
