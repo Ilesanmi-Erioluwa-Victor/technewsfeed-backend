@@ -4,6 +4,8 @@ import { fetchRSSFeed, sleep } from "@/services/Rss/rss.service";
 import { AppError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
+import { summarizeText } from "@/services/huggingface.service";
+
 import { NextFunction, Response, Request } from "express";
 
 export const getNews = async (
@@ -39,6 +41,7 @@ export const getNews = async (
 export const fetchAndStoreNews = async () => {
   let totalProcessed = 0;
   let totalFailed = 0;
+  let aiSummary: string | null = null;
 
   for (const source of sources) {
     logger.info(`🔎 Fetching ${source.name} — ${source.url}`);
@@ -60,6 +63,11 @@ export const fetchAndStoreNews = async () => {
             continue;
           }
 
+          if (article.content && article.content.length > 100) {
+            aiSummary = await summarizeText(article.content);
+            await sleep(1500);
+          }
+
           await prisma.news.upsert({
             where: { link: article.link },
             update: {
@@ -68,6 +76,7 @@ export const fetchAndStoreNews = async () => {
               excerpt: article.excerpt,
               author: article.author,
               category: article.category,
+              summary: (aiSummary as string) ?? undefined,
               publishedAt: article.publishedAt,
               updatedAt: new Date(),
             },
@@ -79,6 +88,7 @@ export const fetchAndStoreNews = async () => {
               source: article.source,
               author: article.author,
               category: article.category,
+              summary: (aiSummary as string) ?? undefined,
               publishedAt: article.publishedAt,
             },
           });
