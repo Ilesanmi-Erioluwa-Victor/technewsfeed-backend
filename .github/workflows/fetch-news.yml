@@ -82,9 +82,13 @@ jobs:
             <p><strong>Triggered by:</strong> ${{ github.event_name }}</p>
             <p><strong>Time:</strong> ${{ steps.time.outputs.timestamp }}</p>
             </div>
-            <a href="${{ github.serverUrl }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="button">
-            ${{ steps.fetch-news.outputs.success == 'true' && 'View Run Details' || 'Investigate Failure' }}
+            <a
+            href="/Ilesanmi-Erioluwa-Victor/technewsfeed-backend/actions/runs/18614338483"
+            style="background: ${{ steps.fetch-news.outputs.success == 'true' && '#22c55e' || '#dc2626' }}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;"
+             >
+            ${{ steps.fetch-news.outputs.success == 'true' && '✅ View Success Logs' || '🚨 Investigate Failure' }}
             </a>
+
             <div class="footer">
             <p>This is an automated notification from your GitHub Actions workflow.</p>
             <p>Best regards,<br>Your Tech News Bot</p>
