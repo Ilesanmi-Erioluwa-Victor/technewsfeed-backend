@@ -1,7 +1,7 @@
 {
   "name": "technewsfeed-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tech news Bot",
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

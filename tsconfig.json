@@ -3,7 +3,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "target": "ES2022",
-    "module": "CommonJS", // Changed from ESNext
+    "module": "CommonJS",
     "moduleResolution": "node",
     "baseUrl": "./src",
     "paths": {

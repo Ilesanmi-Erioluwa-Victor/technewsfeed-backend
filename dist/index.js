@@ -5840,7 +5840,7 @@ var require_prisma = __commonJS({
         "db"
       ],
       "activeProvider": "postgresql",
-      "postinstall": false,
+      "postinstall": true,
       "inlineDatasources": {
         "db": {
           "url": {
