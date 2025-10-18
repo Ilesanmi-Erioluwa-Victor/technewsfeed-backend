@@ -5,7 +5,6 @@ import logger from "@/utils/logger";
 import { Source } from "@/constant/sources";
 
 export const fetchFromSource = async (source: Source) => {
-  logger.info(`🔍 Checking ${source.name} for new articles...`);
   let dbSource = await prisma.newsSource.findUnique({
     where: { name: source.name },
   });
