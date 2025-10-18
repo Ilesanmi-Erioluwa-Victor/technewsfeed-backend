@@ -27,8 +27,4 @@ export const sources: Source[] = [
     url: "https://developer.mozilla.org/en-US/blog/rss.xml",
     name: "MDN Blog",
   },
-  // {
-  //   url: "https://www.schneier.com/feed/atom/",
-  //   name: "Schneier on Security",
-  // },
 ];

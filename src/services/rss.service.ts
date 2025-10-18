@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
 import * as xml2js from "xml2js";
-import https from "https";
-import prisma from "@/utils/prismaClient";
 import logger from "@/utils/logger";
 import { generateExcerpt } from "@/utils/generateExcerpt";
 import { cleanContent } from "@/utils/cleanContent";
@@ -50,13 +48,19 @@ function extractLink(item: any): string {
   return "";
 }
 
+function normalizeContentValue(raw: any): string {
+  if (!raw) return "";
+  if (typeof raw === "string") return raw;
+  if (typeof raw === "object" && raw._) return raw._;
+  return "";
+}
+
 async function fetchWithRetries(
   url: string,
   opts: AxiosRequestConfig = {},
   attempts = DEFAULT_RETRIES
 ): Promise<string> {
   let lastError: any = null;
-
   const baseUrl = process.env.APP_URL || "http://localhost:3000";
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
@@ -82,9 +86,7 @@ async function fetchWithRetries(
         `Fetch attempt ${attempt}/${attempts} failed for ${url}: ${err?.message}`
       );
 
-      if (isSslError(err)) {
-        throw err;
-      }
+      if (isSslError(err)) throw err;
 
       if (!isLast) {
         const backoff = BACKOFF_BASE_MS * Math.pow(2, attempt - 1);
@@ -131,12 +133,14 @@ export const fetchRSSFeed = async (
 
     const articles: Article[] = items
       .map((item: any) => {
-        const content =
+        const rawContent =
           item["content:encoded"]?.[0] ||
           item.content?.[0] ||
           item.summary?.[0] ||
           item.description?.[0] ||
           "";
+
+        const content = normalizeContentValue(rawContent);
 
         const excerpt = generateExcerpt(content, 150);
         const author =
@@ -182,8 +186,9 @@ export const fetchRSSFeed = async (
         const items = res.data?.items || [];
         return items
           .map((it: any) => {
-            const content =
-              it.content || it.content_snippet || it.description || "";
+            const content = normalizeContentValue(
+              it.content || it.content_snippet || it.description || ""
+            );
             const title = it.title || "No Title";
             return {
               title,
@@ -193,7 +198,7 @@ export const fetchRSSFeed = async (
               source: sourceName,
               author: it.author || "Unknown",
               category: classifyContent(content, title),
-              publishedAt: new Date(it.pubDate || it.pubDate || Date.now()),
+              publishedAt: new Date(it.pubDate || Date.now()),
             } as Article;
           })
           .filter((a: Article) => a.link);
