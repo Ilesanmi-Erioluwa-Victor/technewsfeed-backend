@@ -19,10 +19,10 @@ export const sources: Source[] = [
   { url: " https://techcrunch.com/feed/", name: "Tech Crunch" },
 
   { url: "https://webkit.org/feed/", name: "WebKit" },
-  {
-    url: "https://blog.chromium.org/feeds/posts/default",
-    name: "Chromium Blog",
-  },
+  // {
+  //   url: "https://blog.chromium.org/feeds/posts/default",
+  //   name: "Chromium Blog",
+  // },
   {
     url: "https://developer.mozilla.org/en-US/blog/rss.xml",
     name: "MDN Blog",

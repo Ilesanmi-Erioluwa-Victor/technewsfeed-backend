@@ -1,7 +1,7 @@
 import { sources } from "@/constant/sources";
 import { Prisma } from "@/generated/prisma";
 import { sleep } from "@/services/rss.service";
-import { AppError } from "@/types/errors";
+import { AppError, InternalServerError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
 import { NextFunction, Response, Request } from "express";
@@ -18,13 +18,13 @@ export const getNews = async (
     const parsedLimit = Math.min(parseInt(limit as string, 10), 50);
 
     const where: any = {};
-    if (category) where.category = category as string;
-    if (source) where.source = source as string;
+    if (category) where.category = { name: category as string };
+    if (source) where.sourceRef = { name: source as string };
 
     const news = await prisma.news.findMany({
       where: {
-        ...(category && { category: category as string }),
-        ...(source && { source: source as string }),
+        ...(category && { category: { name: category as string } }),
+        ...(source && { sourceRef: { name: source as string } }),
       },
       orderBy: { publishedAt: "desc" },
       skip: parseInt(skip as string, 10),
@@ -33,7 +33,7 @@ export const getNews = async (
 
     res.json(news);
   } catch (err) {
-    next(new AppError("Failed to fetch news", 500));
+    next(new InternalServerError("Failed to fetch news"));
   }
 };
 
@@ -82,7 +82,6 @@ export const getNewsForAnalysis = async (
         title: true,
         content: true,
         excerpt: true,
-        source: true,
         category: true,
       },
     });

@@ -9,6 +9,20 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  name        String?
+  avatarUrl   String?
+  isVerified  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  preferences UserPreference[]
+  subscriptions NewsletterSubscription[]
+}
+
 model News {
   id          Int      @id @default(autoincrement())
   title       String
@@ -16,8 +30,6 @@ model News {
   summary     String?
   excerpt     String?
   link        String   @unique
-  source      String
-  category    String?
   author      String?
   publishedAt DateTime
   createdAt   DateTime @default(now())
@@ -25,11 +37,12 @@ model News {
   embeddings  Json?
   sentiment   String?
   tags        Json?
-
   sourceRefId Int?
   sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])
+  categoryId  Int?
+  category    Category?   @relation(fields: [categoryId], references: [id])
 
-  @@index([source, category])
+  @@index([categoryId])
   @@index([publishedAt])
 }
 
@@ -40,6 +53,34 @@ model NewsSource {
   lastFetched DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  News        News[]
+}
 
-  News News[]
+model UserPreference {
+  id        String   @id @default(uuid())
+  userId    String
+  topics    String[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([userId]) 
+}
+
+model NewsletterSubscription {
+  id        String   @id @default(uuid())
+  userId    String?
+  email     String   @unique
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  News        News[]
 }
