@@ -27,7 +27,7 @@ import prisma from "@/utils/prismaClient";
           },
         },
 
-        take: 10, // limit to first 10 for preview
+        take: 10, 
       });
       console.table(missing);
     }
