@@ -5753,6 +5753,16 @@ var require_prisma = __commonJS({
       RepeatableRead: "RepeatableRead",
       Serializable: "Serializable"
     });
+    exports2.Prisma.UserScalarFieldEnum = {
+      id: "id",
+      email: "email",
+      password: "password",
+      name: "name",
+      avatarUrl: "avatarUrl",
+      isVerified: "isVerified",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
     exports2.Prisma.NewsScalarFieldEnum = {
       id: "id",
       title: "title",
@@ -5760,8 +5770,6 @@ var require_prisma = __commonJS({
       summary: "summary",
       excerpt: "excerpt",
       link: "link",
-      source: "source",
-      category: "category",
       author: "author",
       publishedAt: "publishedAt",
       createdAt: "createdAt",
@@ -5769,13 +5777,35 @@ var require_prisma = __commonJS({
       embeddings: "embeddings",
       sentiment: "sentiment",
       tags: "tags",
-      sourceRefId: "sourceRefId"
+      sourceRefId: "sourceRefId",
+      categoryId: "categoryId"
     };
     exports2.Prisma.NewsSourceScalarFieldEnum = {
       id: "id",
       name: "name",
       url: "url",
       lastFetched: "lastFetched",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports2.Prisma.UserPreferenceScalarFieldEnum = {
+      id: "id",
+      userId: "userId",
+      topics: "topics",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports2.Prisma.NewsletterSubscriptionScalarFieldEnum = {
+      id: "id",
+      userId: "userId",
+      email: "email",
+      verified: "verified",
+      createdAt: "createdAt"
+    };
+    exports2.Prisma.CategoryScalarFieldEnum = {
+      id: "id",
+      name: "name",
+      description: "description",
       createdAt: "createdAt",
       updatedAt: "updatedAt"
     };
@@ -5791,18 +5821,22 @@ var require_prisma = __commonJS({
       default: "default",
       insensitive: "insensitive"
     };
+    exports2.Prisma.NullsOrder = {
+      first: "first",
+      last: "last"
+    };
     exports2.Prisma.JsonNullValueFilter = {
       DbNull: Prisma2.DbNull,
       JsonNull: Prisma2.JsonNull,
       AnyNull: Prisma2.AnyNull
     };
-    exports2.Prisma.NullsOrder = {
-      first: "first",
-      last: "last"
-    };
     exports2.Prisma.ModelName = {
+      User: "User",
       News: "News",
-      NewsSource: "NewsSource"
+      NewsSource: "NewsSource",
+      UserPreference: "UserPreference",
+      NewsletterSubscription: "NewsletterSubscription",
+      Category: "Category"
     };
     var config = {
       "generator": {
@@ -5840,7 +5874,7 @@ var require_prisma = __commonJS({
         "db"
       ],
       "activeProvider": "postgresql",
-      "postinstall": true,
+      "postinstall": false,
       "inlineDatasources": {
         "db": {
           "url": {
@@ -5849,8 +5883,8 @@ var require_prisma = __commonJS({
           }
         }
       },
-      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n  output   = "../src/generated/prisma"\n}\n\ndatasource db {\n  provider  = "postgresql"\n  url       = env("DATABASE_URL")\n  directUrl = env("DIRECT_URL")\n}\n\nmodel News {\n  id          Int      @id @default(autoincrement())\n  title       String\n  content     String?\n  summary     String?\n  excerpt     String?\n  link        String   @unique\n  source      String\n  category    String?\n  author      String?\n  publishedAt DateTime\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  embeddings  Json?\n  sentiment   String?\n  tags        Json?\n\n  sourceRefId Int?\n  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])\n\n  @@index([source, category])\n  @@index([publishedAt])\n}\n\nmodel NewsSource {\n  id          Int       @id @default(autoincrement())\n  name        String    @unique\n  url         String\n  lastFetched DateTime?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n\n  News News[]\n}\n',
-      "inlineSchemaHash": "a8c43f9f571a4607533b72ee55db327c85e2a2fb7a2afc7e0b3bde3309640f2b",
+      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n  output   = "../src/generated/prisma"\n}\n\ndatasource db {\n  provider  = "postgresql"\n  url       = env("DATABASE_URL")\n  directUrl = env("DIRECT_URL")\n}\n\nmodel User {\n  id         String   @id @default(uuid())\n  email      String   @unique\n  password   String\n  name       String?\n  avatarUrl  String?\n  isVerified Boolean  @default(false)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  preferences   UserPreference[]\n  subscriptions NewsletterSubscription[]\n}\n\nmodel News {\n  id          Int         @id @default(autoincrement())\n  title       String\n  content     String?\n  summary     String?\n  excerpt     String?\n  link        String      @unique\n  author      String?\n  publishedAt DateTime\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime    @updatedAt\n  embeddings  Json?\n  sentiment   String?\n  tags        Json?\n  sourceRefId Int?\n  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])\n  categoryId  Int?\n  category    Category?   @relation(fields: [categoryId], references: [id])\n\n  @@index([categoryId])\n  @@index([publishedAt])\n}\n\nmodel NewsSource {\n  id          Int       @id @default(autoincrement())\n  name        String    @unique\n  url         String\n  lastFetched DateTime?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  News        News[]\n}\n\nmodel UserPreference {\n  id        String   @id @default(uuid())\n  userId    String\n  topics    String[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  user      User     @relation(fields: [userId], references: [id])\n\n  @@unique([userId])\n}\n\nmodel NewsletterSubscription {\n  id        String   @id @default(uuid())\n  userId    String?\n  email     String   @unique\n  verified  Boolean  @default(false)\n  createdAt DateTime @default(now())\n  user      User?    @relation(fields: [userId], references: [id])\n}\n\nmodel Category {\n  id          Int      @id @default(autoincrement())\n  name        String   @unique\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  News        News[]\n}\n',
+      "inlineSchemaHash": "a9683305819532156c79f21b0f142b4d51ff6c5ddf690c7cf93d2dc9aaa04f58",
       "copyEngine": true
     };
     var fs = require("fs");
@@ -5866,7 +5900,7 @@ var require_prisma = __commonJS({
       config.dirname = path.join(process.cwd(), alternativePath);
       config.isBundled = true;
     }
-    config.runtimeDataModel = JSON.parse('{"models":{"News":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"summary","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"excerpt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"link","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"source","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"category","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"publishedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"embeddings","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sentiment","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"tags","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRefId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRef","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsSource","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":["sourceRefId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"NewsSource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"url","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"lastFetched","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"News","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"News","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{},"types":{}}');
+    config.runtimeDataModel = JSON.parse('{"models":{"User":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"password","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"avatarUrl","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isVerified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"preferences","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UserPreference","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"subscriptions","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsletterSubscription","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"News":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"summary","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"excerpt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"link","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"publishedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"embeddings","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sentiment","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"tags","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRefId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRef","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsSource","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":["sourceRefId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"categoryId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"category","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Category","nativeType":null,"relationName":"CategoryToNews","relationFromFields":["categoryId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"NewsSource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"url","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"lastFetched","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"News","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"News","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"UserPreference":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"topics","kind":"scalar","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["userId"]],"uniqueIndexes":[{"name":null,"fields":["userId"]}],"isGenerated":false},"NewsletterSubscription":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"verified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Category":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"News","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"News","nativeType":null,"relationName":"CategoryToNews","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{},"types":{}}');
     defineDmmfProperty2(exports2.Prisma, config.runtimeDataModel);
     config.engineWasm = void 0;
     config.compilerWasm = void 0;
@@ -5936,18 +5970,14 @@ var sources = [
   { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
   { url: " https://techcrunch.com/feed/", name: "Tech Crunch" },
   { url: "https://webkit.org/feed/", name: "WebKit" },
-  {
-    url: "https://blog.chromium.org/feeds/posts/default",
-    name: "Chromium Blog"
-  },
+  // {
+  //   url: "https://blog.chromium.org/feeds/posts/default",
+  //   name: "Chromium Blog",
+  // },
   {
     url: "https://developer.mozilla.org/en-US/blog/rss.xml",
     name: "MDN Blog"
   }
-  // {
-  //   url: "https://www.schneier.com/feed/atom/",
-  //   name: "Schneier on Security",
-  // },
 ];
 
 // src/controllers/News/newsController.ts
@@ -5959,12 +5989,14 @@ var xml2js = __toESM(require("xml2js"));
 
 // src/utils/generateExcerpt.ts
 var generateExcerpt = (content, length = 150) => {
-  const cleanText = content.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+  if (!content || typeof content !== "string") return "";
+  const cleanText = content.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").replace(/[^\x20-\x7E\n\r\t]/g, "").trim();
   return cleanText.length > length ? cleanText.substring(0, length) + "..." : cleanText;
 };
 
 // src/utils/cleanContent.ts
 var cleanContent = (content) => {
+  if (!content || typeof content !== "string") return "";
   return content.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").replace(/[^\x20-\x7E\n\r\t]/g, "").trim();
 };
 
@@ -6009,6 +6041,12 @@ function extractLink(item) {
   if (item.guid && typeof item.guid[0] === "string") return item.guid[0];
   return "";
 }
+function normalizeContentValue(raw2) {
+  if (!raw2) return "";
+  if (typeof raw2 === "string") return raw2;
+  if (typeof raw2 === "object" && raw2._) return raw2._;
+  return "";
+}
 async function fetchWithRetries(url, opts = {}, attempts = DEFAULT_RETRIES) {
   let lastError = null;
   const baseUrl = process.env.APP_URL || "http://localhost:3000";
@@ -6033,9 +6071,7 @@ async function fetchWithRetries(url, opts = {}, attempts = DEFAULT_RETRIES) {
       logger_default.warn(
         `Fetch attempt ${attempt}/${attempts} failed for ${url}: ${err?.message}`
       );
-      if (isSslError(err)) {
-        throw err;
-      }
+      if (isSslError(err)) throw err;
       if (!isLast) {
         const backoff = BACKOFF_BASE_MS * Math.pow(2, attempt - 1);
         await sleep(backoff);
@@ -6069,7 +6105,8 @@ var fetchRSSFeed = async (url, sourceName) => {
     const xml = await fetchWithRetries(url);
     const items = await parseFeedXml(xml, sourceName);
     const articles = items.map((item) => {
-      const content = item["content:encoded"]?.[0] || item.content?.[0] || item.summary?.[0] || item.description?.[0] || "";
+      const rawContent = item["content:encoded"]?.[0] || item.content?.[0] || item.summary?.[0] || item.description?.[0] || "";
+      const content = normalizeContentValue(rawContent);
       const excerpt = generateExcerpt(content, 150);
       const author = item["dc:creator"]?.[0] || item.author && item.author[0]?.name || item.author?.[0] || "Unknown";
       const title = item.title?.[0] || item.name?.[0] || "No Title";
@@ -6102,7 +6139,9 @@ var fetchRSSFeed = async (url, sourceName) => {
         const res = await import_axios.default.get(proxyUrl, { timeout: DEFAULT_TIMEOUT });
         const items = res.data?.items || [];
         return items.map((it) => {
-          const content = it.content || it.content_snippet || it.description || "";
+          const content = normalizeContentValue(
+            it.content || it.content_snippet || it.description || ""
+          );
           const title = it.title || "No Title";
           return {
             title,
@@ -6112,7 +6151,7 @@ var fetchRSSFeed = async (url, sourceName) => {
             source: sourceName,
             author: it.author || "Unknown",
             category: classifyContent(content, title),
-            publishedAt: new Date(it.pubDate || it.pubDate || Date.now())
+            publishedAt: new Date(it.pubDate || Date.now())
           };
         }).filter((a) => a.link);
       } catch (proxyErr) {
@@ -6130,11 +6169,16 @@ var fetchRSSFeed = async (url, sourceName) => {
 var AppError = class extends Error {
   statusCode;
   isOperational;
-  constructor(message, statusCode = 500, isOperational = true) {
+  constructor(message, statusCode, isOperational = true) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
     Error.captureStackTrace(this, this.constructor);
+  }
+};
+var InternalServerError = class extends AppError {
+  constructor(message = "Internal Server Error") {
+    super(message, 500, false);
   }
 };
 
@@ -6174,6 +6218,8 @@ var summarizeText = async (text) => {
 
 // src/services/newsFetcher.service.ts
 var fetchFromSource = async (source) => {
+  let aiSummary = null;
+  let savedCount = 0;
   let dbSource = await prismaClient_default.newsSource.findUnique({
     where: { name: source.name }
   });
@@ -6194,43 +6240,47 @@ var fetchFromSource = async (source) => {
     logger_default.info(`\u{1F7E1} No new articles since last fetch for ${source.name}`);
     return [];
   }
-  let savedCount = 0;
   for (const article of newArticles) {
     try {
       if (!article.link || article.link.trim().length === 0) {
         logger_default.warn(`Skipping article with missing link: ${article.title}`);
         continue;
       }
-      let aiSummary = null;
       if (article.content && article.content.length > 100) {
         aiSummary = await summarizeText(article.content);
         await sleep(1500);
       }
-      await prismaClient_default.news.upsert({
-        where: { link: article.link },
-        update: {
-          title: article.title,
-          content: article.content,
-          excerpt: article.excerpt,
-          author: article.author,
-          category: article.category,
-          summary: aiSummary ?? void 0,
-          publishedAt: article.publishedAt,
-          updatedAt: /* @__PURE__ */ new Date(),
-          sourceRefId: dbSource.id
-        },
-        create: {
-          title: article.title,
-          content: article.content,
-          excerpt: article.excerpt,
-          link: article.link,
-          source: article.source,
-          author: article.author,
-          category: article.category,
-          summary: aiSummary ?? void 0,
-          publishedAt: article.publishedAt,
-          sourceRefId: dbSource.id
-        }
+      await prismaClient_default.$transaction(async (tx) => {
+        const category = article.category ? await tx.category.upsert({
+          where: { name: article.category },
+          create: { name: article.category },
+          update: {}
+        }) : null;
+        await tx.news.upsert({
+          where: { link: article.link },
+          update: {
+            title: article.title,
+            content: article.content,
+            excerpt: article.excerpt,
+            author: article.author,
+            summary: aiSummary ?? void 0,
+            publishedAt: article.publishedAt,
+            updatedAt: /* @__PURE__ */ new Date(),
+            sourceRefId: dbSource.id,
+            categoryId: category?.id
+          },
+          create: {
+            title: article.title,
+            content: article.content,
+            excerpt: article.excerpt,
+            link: article.link,
+            author: article.author,
+            summary: aiSummary ?? void 0,
+            publishedAt: article.publishedAt,
+            sourceRef: { connect: { id: dbSource.id } },
+            ...category?.id && { categoryId: category.id }
+          }
+        });
       });
       savedCount++;
     } catch (articleError) {
@@ -6255,12 +6305,12 @@ var getNews = async (req, res, next) => {
     const { category, source, limit = 20, skip: skip2 = 0 } = req.query;
     const parsedLimit = Math.min(parseInt(limit, 10), 50);
     const where = {};
-    if (category) where.category = category;
-    if (source) where.source = source;
+    if (category) where.category = { name: category };
+    if (source) where.sourceRef = { name: source };
     const news = await prismaClient_default.news.findMany({
       where: {
-        ...category && { category },
-        ...source && { source }
+        ...category && { category: { name: category } },
+        ...source && { sourceRef: { name: source } }
       },
       orderBy: { publishedAt: "desc" },
       skip: parseInt(skip2, 10),
@@ -6268,7 +6318,7 @@ var getNews = async (req, res, next) => {
     });
     res.json(news);
   } catch (err) {
-    next(new AppError("Failed to fetch news", 500));
+    next(new InternalServerError("Failed to fetch news"));
   }
 };
 var fetchAndStoreNews = async () => {
@@ -6307,7 +6357,6 @@ var getNewsForAnalysis = async (req, res, next) => {
         title: true,
         content: true,
         excerpt: true,
-        source: true,
         category: true
       }
     });
@@ -6369,7 +6418,11 @@ var newsRoute_default = router;
 var app = (0, import_express2.default)();
 app.use((0, import_cors.default)());
 app.use(import_express2.default.json());
-app.use("/api/news", newsRoute_default);
+app.use(import_express2.default.urlencoded({ extended: true }));
+app.use("/api/v1/news", newsRoute_default);
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "OK", service: "Tech News API" });
+});
 app.use(errorHandler);
 var app_default = app;
 

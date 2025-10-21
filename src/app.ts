@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/news", newsRoutes);
 
-app.get("/health", (req, res) => {
+app.get("/api/v1/health", (req, res) => {
   res.status(200).json({ status: "OK", service: "Tech News API" });
 });
 
