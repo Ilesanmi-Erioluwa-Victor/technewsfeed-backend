@@ -64,19 +64,19 @@ export const fetchFromSource = async (source: Source) => {
         Array.isArray(article.category) ? article.category : [article.category]
       )
         .filter(Boolean)
-        .map((c) => c.trim().toLowerCase());
+        .map((c: string) => c.trim().toLowerCase())
+        .filter((name: string) => name.length > 0);
 
       const normalizedTags = tags
         .map((t) => t.trim().toLowerCase())
-        .filter(Boolean);
+        .filter((name: string) => name.length > 0 && name.length <= 50);
 
-      // Build relations
       const categoryRelations = categories.map((name: string) => ({
         where: { name },
         create: { name },
       }));
 
-      const tagRelations = normalizedTags.map((name) => ({
+      const tagRelations = normalizedTags.map((name: string) => ({
         where: { name },
         create: { name },
       }));
@@ -95,8 +95,14 @@ export const fetchFromSource = async (source: Source) => {
             publishedAt: article.publishedAt,
             updatedAt: new Date(),
             sourceRef: { connect: { id: dbSource.id } },
-            categories: { connectOrCreate: categoryRelations },
-            tags: { connectOrCreate: tagRelations },
+            categories: {
+              set: [],
+              connectOrCreate: categoryRelations,
+            },
+            tags: {
+              set: [],
+              connectOrCreate: tagRelations,
+            },
           },
           create: {
             title: article.title,
@@ -114,7 +120,6 @@ export const fetchFromSource = async (source: Source) => {
           },
         });
       });
-
       savedCount++;
     } catch (error: any) {
       logger.error(

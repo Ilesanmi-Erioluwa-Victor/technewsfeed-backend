@@ -17,14 +17,27 @@ export const getNews = async (
 
     const parsedLimit = Math.min(parseInt(limit as string, 10), 50);
 
-    const where: any = {};
-    if (category) where.category = { name: category as string };
-    if (source) where.sourceRef = { name: source as string };
-
     const news = await prisma.news.findMany({
       where: {
-        ...(category && { category: { name: category as string } }),
-        ...(source && { sourceRef: { name: source as string } }),
+        ...(category && {
+          categories: {
+            some: { name: category as string },
+          },
+        }),
+        ...(source && {
+          sourceRef: { name: source as string },
+        }),
+      },
+      include: {
+        tags: {
+          select: { id: true, name: true },
+        },
+        categories: {
+          select: { id: true, name: true },
+        },
+        sourceRef: {
+          select: { id: true, name: true, url: true },
+        },
       },
       orderBy: { publishedAt: "desc" },
       skip: parseInt(skip as string, 10),
@@ -82,7 +95,7 @@ export const getNewsForAnalysis = async (
         title: true,
         content: true,
         excerpt: true,
-        category: true,
+        categories: true,
       },
     });
 
