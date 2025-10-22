@@ -40,7 +40,6 @@ export const fetchFromSource = async (source: Source) => {
     return [];
   }
 
-  // Process articles in smaller batches to avoid timeouts
   const BATCH_SIZE = 5;
   for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
     const batch = newArticles.slice(i, i + BATCH_SIZE);
@@ -52,7 +51,6 @@ export const fetchFromSource = async (source: Source) => {
           continue;
         }
 
-        // Process AI features with shorter text to avoid 400 errors
         const contentToProcess =
           article.content?.substring(0, 1000) || article.title;
 
@@ -63,7 +61,6 @@ export const fetchFromSource = async (source: Source) => {
 
         if (contentToProcess && contentToProcess.length > 50) {
           try {
-            // Process AI features sequentially with delays
             aiSummary = await summarizeText(contentToProcess);
             await sleep(1000);
 
@@ -73,8 +70,6 @@ export const fetchFromSource = async (source: Source) => {
             tags = await extractTags(contentToProcess);
             await sleep(1000);
 
-            // Skip embeddings if not critical to save time
-            // embeddings = await generateEmbeddings(contentToProcess);
           } catch (aiError: any) {
             logger.warn(
               `AI processing failed for article, continuing without AI data: ${aiError.message}`
@@ -105,13 +100,11 @@ export const fetchFromSource = async (source: Source) => {
           create: { name },
         }));
 
-        // Remove transaction to avoid timeouts, use individual operations
         const existingNews = await prisma.news.findUnique({
           where: { link: article.link },
         });
 
         if (existingNews) {
-          // Update existing
           await prisma.news.update({
             where: { id: existingNews.id },
             data: {
@@ -136,7 +129,6 @@ export const fetchFromSource = async (source: Source) => {
             },
           });
         } else {
-          // Create new
           await prisma.news.create({
             data: {
               title: article.title,
@@ -164,7 +156,6 @@ export const fetchFromSource = async (source: Source) => {
       }
     }
 
-    // Delay between batches
     if (i + BATCH_SIZE < newArticles.length) {
       await sleep(2000);
     }
