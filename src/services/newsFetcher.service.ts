@@ -70,6 +70,8 @@ export const fetchFromSource = async (source: Source) => {
             tags = await extractTags(contentToProcess);
             await sleep(1000);
 
+            embeddings = await generateEmbeddings(contentToProcess);
+            await sleep(1500);
           } catch (aiError: any) {
             logger.warn(
               `AI processing failed for article, continuing without AI data: ${aiError.message}`
@@ -114,7 +116,7 @@ export const fetchFromSource = async (source: Source) => {
               author: article.author,
               summary: (aiSummary as string) || null,
               sentiment: (sentiment as string) || null,
-              embeddings: (embeddings as any) || undefined,
+              embeddings: (embeddings as number[]) || undefined,
               publishedAt: article.publishedAt,
               updatedAt: new Date(),
               sourceRef: { connect: { id: dbSource.id } },
@@ -138,7 +140,7 @@ export const fetchFromSource = async (source: Source) => {
               author: article.author,
               summary: (aiSummary as string) || null,
               sentiment: (sentiment as string) || null,
-              embeddings: (embeddings as any) || undefined,
+              embeddings: (embeddings as number[]) || undefined,
               publishedAt: article.publishedAt,
               sourceRef: { connect: { id: dbSource.id } },
               categories: { connectOrCreate: categoryRelations },
