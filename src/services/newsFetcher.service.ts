@@ -40,91 +40,133 @@ export const fetchFromSource = async (source: Source) => {
     return [];
   }
 
-  for (const article of newArticles) {
-    try {
-      if (!article.link || article.link.trim().length === 0) {
-        logger.warn(`Skipping article with missing link: ${article.title}`);
-        continue;
-      }
+  // Process articles in smaller batches to avoid timeouts
+  const BATCH_SIZE = 5;
+  for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
+    const batch = newArticles.slice(i, i + BATCH_SIZE);
 
-      let aiSummary: string | null = null;
-      let sentiment: string | null = null;
-      let tags: string[] = [];
-      let embeddings: number[] | null = null;
+    for (const article of batch) {
+      try {
+        if (!article.link || article.link.trim().length === 0) {
+          logger.warn(`Skipping article with missing link: ${article.title}`);
+          continue;
+        }
 
-      if (article.content && article.content.length > 100) {
-        aiSummary = await summarizeText(article.content);
-        sentiment = await analyzeSentiment(article.content);
-        tags = await extractTags(article.content);
-        embeddings = await generateEmbeddings(article.content);
-        await sleep(1500);
-      }
+        // Process AI features with shorter text to avoid 400 errors
+        const contentToProcess =
+          article.content?.substring(0, 1000) || article.title;
 
-      const categories = (
-        Array.isArray(article.category) ? article.category : [article.category]
-      )
-        .filter(Boolean)
-        .map((c: string) => c.trim().toLowerCase())
-        .filter((name: string) => name.length > 0);
+        let aiSummary: string | null = null;
+        let sentiment: string | null = null;
+        let tags: string[] = [];
+        let embeddings: number[] | null = null;
 
-      const normalizedTags = tags
-        .map((t) => t.trim().toLowerCase())
-        .filter((name: string) => name.length > 0 && name.length <= 50);
+        if (contentToProcess && contentToProcess.length > 50) {
+          try {
+            // Process AI features sequentially with delays
+            aiSummary = await summarizeText(contentToProcess);
+            await sleep(1000);
 
-      const categoryRelations = categories.map((name: string) => ({
-        where: { name },
-        create: { name },
-      }));
+            sentiment = await analyzeSentiment(contentToProcess);
+            await sleep(1000);
 
-      const tagRelations = normalizedTags.map((name: string) => ({
-        where: { name },
-        create: { name },
-      }));
+            tags = await extractTags(contentToProcess);
+            await sleep(1000);
 
-      await prisma.$transaction(async (tx) => {
-        await tx.news.upsert({
+            // Skip embeddings if not critical to save time
+            // embeddings = await generateEmbeddings(contentToProcess);
+          } catch (aiError: any) {
+            logger.warn(
+              `AI processing failed for article, continuing without AI data: ${aiError.message}`
+            );
+          }
+        }
+
+        const categories = (
+          Array.isArray(article.category)
+            ? article.category
+            : [article.category]
+        )
+          .filter(Boolean)
+          .map((c) => c?.toString().trim().toLowerCase())
+          .filter((name) => name && name.length > 0);
+
+        const normalizedTags = tags
+          .map((t) => t.trim().toLowerCase())
+          .filter((name) => name.length > 0 && name.length <= 50);
+
+        const categoryRelations = categories.map((name: string) => ({
+          where: { name },
+          create: { name },
+        }));
+
+        const tagRelations = normalizedTags.map((name) => ({
+          where: { name },
+          create: { name },
+        }));
+
+        // Remove transaction to avoid timeouts, use individual operations
+        const existingNews = await prisma.news.findUnique({
           where: { link: article.link },
-          update: {
-            title: article.title,
-            content: article.content,
-            excerpt: article.excerpt,
-            author: article.author,
-            summary: (aiSummary as string) ?? undefined,
-            sentiment: (sentiment as string) ?? undefined,
-            embeddings: (embeddings as number[]) ?? undefined,
-            publishedAt: article.publishedAt,
-            updatedAt: new Date(),
-            sourceRef: { connect: { id: dbSource.id } },
-            categories: {
-              set: [],
-              connectOrCreate: categoryRelations,
-            },
-            tags: {
-              set: [],
-              connectOrCreate: tagRelations,
-            },
-          },
-          create: {
-            title: article.title,
-            content: article.content,
-            excerpt: article.excerpt,
-            link: article.link,
-            author: article.author,
-            summary: (aiSummary as string) ?? undefined,
-            sentiment: (sentiment as string) ?? undefined,
-            embeddings: (embeddings as number[]) ?? undefined,
-            publishedAt: article.publishedAt,
-            sourceRef: { connect: { id: dbSource.id } },
-            categories: { connectOrCreate: categoryRelations },
-            tags: { connectOrCreate: tagRelations },
-          },
         });
-      });
-      savedCount++;
-    } catch (error: any) {
-      logger.error(
-        `❌ Failed to save article from ${source.name}: ${error.message}`
-      );
+
+        if (existingNews) {
+          // Update existing
+          await prisma.news.update({
+            where: { id: existingNews.id },
+            data: {
+              title: article.title,
+              content: article.content,
+              excerpt: article.excerpt,
+              author: article.author,
+              summary: (aiSummary as string) || null,
+              sentiment: (sentiment as string) || null,
+              embeddings: (embeddings as any) || undefined,
+              publishedAt: article.publishedAt,
+              updatedAt: new Date(),
+              sourceRef: { connect: { id: dbSource.id } },
+              categories: {
+                set: [],
+                connectOrCreate: categoryRelations,
+              },
+              tags: {
+                set: [],
+                connectOrCreate: tagRelations,
+              },
+            },
+          });
+        } else {
+          // Create new
+          await prisma.news.create({
+            data: {
+              title: article.title,
+              content: article.content,
+              excerpt: article.excerpt,
+              link: article.link,
+              author: article.author,
+              summary: (aiSummary as string) || null,
+              sentiment: (sentiment as string) || null,
+              embeddings: (embeddings as any) || undefined,
+              publishedAt: article.publishedAt,
+              sourceRef: { connect: { id: dbSource.id } },
+              categories: { connectOrCreate: categoryRelations },
+              tags: { connectOrCreate: tagRelations },
+            },
+          });
+        }
+
+        savedCount++;
+        await sleep(500);
+      } catch (error: any) {
+        logger.error(
+          `❌ Failed to save article from ${source.name}: ${error.message}`
+        );
+      }
+    }
+
+    // Delay between batches
+    if (i + BATCH_SIZE < newArticles.length) {
+      await sleep(2000);
     }
   }
 
@@ -134,8 +176,7 @@ export const fetchFromSource = async (source: Source) => {
   });
 
   logger.info(
-    `✅ ${source.name}: ${savedCount}/${newArticles.length} new articles saved`
+    `✅ ${source.name}: ${savedCount}/${newArticles.length} articles processed`
   );
-
   return newArticles;
 };
