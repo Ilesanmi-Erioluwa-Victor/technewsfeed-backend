@@ -1,41 +1,91 @@
-import {
-  summarizeText,
-  extractTags,
-  analyzeSentiment,
-  generateEmbeddings,
-} from "@/services/huggingface.service";
-import { fetchRSSFeed, sleep } from "@/services/rss.service";
 import prisma from "@/utils/prismaClient";
 import logger from "@/utils/logger";
+import { fetchRSSFeed, sleep } from "@/services/rss.service";
+import {
+  summarizeText,
+  analyzeSentiment,
+  extractTags,
+  generateEmbeddings,
+} from "@/services/huggingface.service";
 import { Source } from "@/constant/sources";
 
+// ------------------------------
+// Helper: canonical categories
+// ------------------------------
+async function getCanonicalCategories(
+  sourceName: string,
+  sourceCategories: string[]
+) {
+  const categories: { id: number; name: string }[] = [];
+
+  for (const cat of sourceCategories) {
+    const trimmed = cat?.trim().toLowerCase();
+    if (!trimmed) continue;
+
+    // Lookup mapping table
+    let mapping = await prisma.sourceCategoryMapping.findUnique({
+      where: { sourceName_sourceCat: { sourceName, sourceCat: trimmed } },
+      include: { canonical: true },
+    });
+
+    if (mapping) {
+      categories.push(mapping.canonical);
+      continue;
+    }
+
+    // Upsert canonical category
+    const canonical = await prisma.category.upsert({
+      where: { name: trimmed },
+      create: { name: trimmed },
+      update: {},
+    });
+
+    // Save mapping
+    await prisma.sourceCategoryMapping.create({
+      data: {
+        sourceName,
+        sourceCat: trimmed,
+        canonicalId: canonical.id,
+      },
+    });
+
+    categories.push(canonical);
+  }
+
+  return categories;
+}
+
+// ------------------------------
+// Main fetch function
+// ------------------------------
 export const fetchFromSource = async (source: Source) => {
   let savedCount = 0;
 
+  // Ensure source exists in DB
   let dbSource = await prisma.newsSource.findUnique({
     where: { name: source.name },
   });
-
   if (!dbSource) {
     dbSource = await prisma.newsSource.create({
       data: { name: source.name, url: source.url, lastFetched: null },
     });
   }
 
+  // Fetch articles from RSS
   const articles = await fetchRSSFeed(source.url, source.name);
-
-  if (!articles || articles.length === 0) {
+  if (!articles?.length) {
     logger.warn(`⚠️ No articles found for ${source.name}`);
     return [];
   }
 
+  // Filter new articles since last fetch
   const newArticles = dbSource.lastFetched
     ? articles.filter(
         (a) => new Date(a.publishedAt) > new Date(dbSource.lastFetched!)
       )
     : articles;
 
-  if (newArticles.length === 0) {
+  if (!newArticles.length) {
     logger.info(`🟡 No new articles since last fetch for ${source.name}`);
     return [];
   }
@@ -46,67 +96,81 @@ export const fetchFromSource = async (source: Source) => {
 
     for (const article of batch) {
       try {
-        if (!article.link || article.link.trim().length === 0) {
-          logger.warn(`Skipping article with missing link: ${article.title}`);
-          continue;
-        }
+        if (!article.link || !article.title) continue;
 
         const contentToProcess =
-          article.content?.substring(0, 1000) || article.title;
+          article.content?.substring(0, 1024) || article.title;
 
+        // --------------------------
+        // AI processing
+        // --------------------------
         let aiSummary: string | null = null;
         let sentiment: string | null = null;
         let tags: string[] = [];
         let embeddings: number[] | null = null;
 
-        if (contentToProcess && contentToProcess.length > 50) {
-          try {
+        try {
+          if (contentToProcess.length > 50) {
             aiSummary = await summarizeText(contentToProcess);
-            await sleep(1000);
+            await sleep(800);
 
             sentiment = await analyzeSentiment(contentToProcess);
-            await sleep(1000);
+            await sleep(800);
 
             tags = await extractTags(contentToProcess);
-            await sleep(1000);
+            await sleep(800);
 
             embeddings = await generateEmbeddings(contentToProcess);
-            await sleep(1500);
-          } catch (aiError: any) {
-            logger.warn(
-              `AI processing failed for article, continuing without AI data: ${aiError.message}`
-            );
+            await sleep(1200);
           }
+        } catch (aiError: any) {
+          logger.warn(`AI processing failed for article: ${aiError.message}`);
         }
 
-        const categories = (
-          Array.isArray(article.category)
-            ? article.category
-            : [article.category]
-        )
-          .filter(Boolean)
-          .map((c) => c?.toString().trim().toLowerCase())
-          .filter((name) => name && name.length > 0);
+        // --------------------------
+        // Categories
+        // --------------------------
+        const sourceCategories = Array.isArray(article.category)
+          ? article.category
+          : [article.category];
 
+        const canonicalCategories = await getCanonicalCategories(
+          source.name,
+          sourceCategories
+        );
+        const categoryRelations = canonicalCategories.map((c) => ({
+          where: { id: c.id },
+          create: { name: c.name },
+        }));
+
+        // --------------------------
+        // Tags
+        // --------------------------
         const normalizedTags = tags
           .map((t) => t.trim().toLowerCase())
-          .filter((name) => name.length > 0 && name.length <= 50);
-
-        const categoryRelations = categories.map((name: string) => ({
-          where: { name },
-          create: { name },
-        }));
+          .filter((t) => t.length > 0 && t.length <= 50);
 
         const tagRelations = normalizedTags.map((name) => ({
           where: { name },
           create: { name },
         }));
 
+        // --------------------------
+        // Upsert news
+        // --------------------------
         const existingNews = await prisma.news.findUnique({
           where: { link: article.link },
+          include: { categories: true },
         });
 
         if (existingNews) {
+          // Only connect new categories
+          const newCategories = canonicalCategories
+            .filter(
+              (c) => !existingNews.categories.some((ec) => ec.id === c.id)
+            )
+            .map((c) => ({ where: { id: c.id }, create: { name: c.name } }));
+
           await prisma.news.update({
             where: { id: existingNews.id },
             data: {
@@ -120,14 +184,8 @@ export const fetchFromSource = async (source: Source) => {
               publishedAt: article.publishedAt,
               updatedAt: new Date(),
               sourceRef: { connect: { id: dbSource.id } },
-              categories: {
-                set: [],
-                connectOrCreate: categoryRelations,
-              },
-              tags: {
-                set: [],
-                connectOrCreate: tagRelations,
-              },
+              categories: { connectOrCreate: newCategories },
+              tags: { connectOrCreate: tagRelations },
             },
           });
         } else {
@@ -151,16 +209,14 @@ export const fetchFromSource = async (source: Source) => {
 
         savedCount++;
         await sleep(500);
-      } catch (error: any) {
+      } catch (err: any) {
         logger.error(
-          `❌ Failed to save article from ${source.name}: ${error.message}`
+          `❌ Failed to process article ${article.title}: ${err.message}`
         );
       }
     }
 
-    if (i + BATCH_SIZE < newArticles.length) {
-      await sleep(2000);
-    }
+    if (i + BATCH_SIZE < newArticles.length) await sleep(1500);
   }
 
   await prisma.newsSource.update({

@@ -75,12 +75,13 @@ model NewsletterSubscription {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  news        News[]   @relation("NewsCategories")
+  id             Int                     @id @default(autoincrement())
+  name           String                  @unique
+  description    String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  news           News[]                  @relation("NewsCategories")
+  sourceMappings SourceCategoryMapping[]
 }
 
 model Tag {
@@ -89,4 +90,14 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   News      News[]   @relation("NewsTags")
+}
+
+model SourceCategoryMapping {
+  id          Int      @id @default(autoincrement())
+  sourceName  String
+  sourceCat   String
+  canonicalId Int
+  canonical   Category @relation(fields: [canonicalId], references: [id])
+
+  @@unique([sourceName, sourceCat])
 }
