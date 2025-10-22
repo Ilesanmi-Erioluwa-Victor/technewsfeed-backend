@@ -10,39 +10,37 @@ datasource db {
 }
 
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  password    String
-  name        String?
-  avatarUrl   String?
-  isVerified  Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String?
+  avatarUrl  String?
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  preferences UserPreference[]
+  preferences   UserPreference[]
   subscriptions NewsletterSubscription[]
 }
 
 model News {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
   content     String?
   summary     String?
   excerpt     String?
-  link        String   @unique
+  link        String      @unique
   author      String?
   publishedAt DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
   embeddings  Json?
   sentiment   String?
-  tags        Json?
+  tags        Tag[]       @relation("NewsTags")
   sourceRefId Int?
   sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])
-  categoryId  Int?
-  category    Category?   @relation(fields: [categoryId], references: [id])
+  categories  Category[]  @relation("NewsCategories")
 
-  @@index([categoryId])
   @@index([publishedAt])
 }
 
@@ -60,11 +58,11 @@ model UserPreference {
   id        String   @id @default(uuid())
   userId    String
   topics    String[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([userId]) 
+  @@unique([userId])
 }
 
 model NewsletterSubscription {
@@ -77,10 +75,18 @@ model NewsletterSubscription {
 }
 
 model Category {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
   description String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  News        News[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  news        News[]   @relation("NewsCategories")
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  News      News[]   @relation("NewsTags")
 }
