@@ -15,7 +15,7 @@ export const sources: Source[] = [
     url: "https://aws.amazon.com/blogs/machine-learning/feed/",
     name: "AWS ML",
   },
-  { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
+  // { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
   { url: " https://techcrunch.com/feed/", name: "Tech Crunch" },
 
   { url: "https://webkit.org/feed/", name: "WebKit" },
