@@ -3,7 +3,6 @@ import { fetchRSSFeed, sleep } from "@/services/rss.service";
 import prisma from "@/utils/prismaClient";
 import logger from "@/utils/logger";
 import { Source } from "@/constant/sources";
-import { Prisma } from "@/generated/prisma";
 
 export const fetchFromSource = async (source: Source) => {
   let aiSummary: string | null = null;
@@ -50,6 +49,7 @@ export const fetchFromSource = async (source: Source) => {
       }
 
       await prisma.$transaction(async (tx) => {
+        // Create or reuse category if available
         const category = article.category
           ? await tx.category.upsert({
               where: { name: article.category },
@@ -58,6 +58,16 @@ export const fetchFromSource = async (source: Source) => {
             })
           : null;
 
+        // Build reusable relation objects
+        const relations: any = {
+          sourceRef: { connect: { id: dbSource.id } },
+        };
+
+        if (category) {
+          relations.category = { connect: { id: category.id } };
+        }
+
+        // Safe upsert
         await tx.news.upsert({
           where: { link: article.link },
           update: {
@@ -65,11 +75,10 @@ export const fetchFromSource = async (source: Source) => {
             content: article.content,
             excerpt: article.excerpt,
             author: article.author,
-            summary: (aiSummary as string) ?? undefined,
+            summary: aiSummary ?? undefined,
             publishedAt: article.publishedAt,
             updatedAt: new Date(),
-            sourceRefId: dbSource.id,
-            categoryId: category?.id as number,
+            ...relations, // includes sourceRef and category (if exists)
           },
           create: {
             title: article.title,
@@ -79,9 +88,8 @@ export const fetchFromSource = async (source: Source) => {
             author: article.author,
             summary: aiSummary ?? undefined,
             publishedAt: article.publishedAt,
-            sourceRef: { connect: { id: dbSource.id } },
-            ...(category?.id && { categoryId: category.id }),
-          } as Prisma.NewsCreateInput,
+            ...relations,
+          },
         });
       });
 

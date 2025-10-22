@@ -25,6 +25,12 @@ import prisma from "@/utils/prismaClient";
               url: true,
             },
           },
+          category: {
+            select: {
+              name: true,
+              description: true
+            }
+          }
         },
 
         take: 10, 
