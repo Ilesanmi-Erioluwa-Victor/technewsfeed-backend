@@ -4,9 +4,6 @@ import logger from "@/utils/logger";
 const HUGGINGFACE_API_KEY = process.env.HUGGING_FACE_TOKEN;
 if (!HUGGINGFACE_API_KEY) logger.warn("⚠️ Missing Hugging Face API key");
 
-// -----------------------------
-// Generic request helper
-// -----------------------------
 async function huggingFaceRequest(
   model: string,
   inputs: any,

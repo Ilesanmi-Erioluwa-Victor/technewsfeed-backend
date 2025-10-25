@@ -9,9 +9,7 @@ import {
 } from "@/services/huggingface.service";
 import { Source } from "@/constant/sources";
 
-// ------------------------------
-// Helper: canonical categories
-// ------------------------------
+
 async function getCanonicalCategories(
   sourceName: string,
   sourceCategories: string[]
@@ -55,13 +53,9 @@ async function getCanonicalCategories(
   return categories;
 }
 
-// ------------------------------
-// Main fetch function
-// ------------------------------
 export const fetchFromSource = async (source: Source) => {
   let savedCount = 0;
 
-  // Ensure source exists in DB
   let dbSource = await prisma.newsSource.findUnique({
     where: { name: source.name },
   });
@@ -71,14 +65,12 @@ export const fetchFromSource = async (source: Source) => {
     });
   }
 
-  // Fetch articles from RSS
   const articles = await fetchRSSFeed(source.url, source.name);
   if (!articles?.length) {
     logger.warn(`⚠️ No articles found for ${source.name}`);
     return [];
   }
 
-  // Filter new articles since last fetch
   const newArticles = dbSource.lastFetched
     ? articles.filter(
         (a) => new Date(a.publishedAt) > new Date(dbSource.lastFetched!)
@@ -101,9 +93,6 @@ export const fetchFromSource = async (source: Source) => {
         const contentToProcess =
           article.content?.substring(0, 1024) || article.title;
 
-        // --------------------------
-        // AI processing
-        // --------------------------
         let aiSummary: string | null = null;
         let sentiment: string | null = null;
         let tags: string[] = [];
@@ -127,9 +116,6 @@ export const fetchFromSource = async (source: Source) => {
           logger.warn(`AI processing failed for article: ${aiError.message}`);
         }
 
-        // --------------------------
-        // Categories
-        // --------------------------
         const sourceCategories = Array.isArray(article.category)
           ? article.category
           : [article.category];
@@ -143,9 +129,6 @@ export const fetchFromSource = async (source: Source) => {
           create: { name: c.name },
         }));
 
-        // --------------------------
-        // Tags
-        // --------------------------
         const normalizedTags = tags
           .map((t) => t.trim().toLowerCase())
           .filter((t) => t.length > 0 && t.length <= 50);
@@ -155,16 +138,12 @@ export const fetchFromSource = async (source: Source) => {
           create: { name },
         }));
 
-        // --------------------------
-        // Upsert news
-        // --------------------------
         const existingNews = await prisma.news.findUnique({
           where: { link: article.link },
           include: { categories: true },
         });
 
         if (existingNews) {
-          // Only connect new categories
           const newCategories = canonicalCategories
             .filter(
               (c) => !existingNews.categories.some((ec) => ec.id === c.id)
