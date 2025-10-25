@@ -37,14 +37,11 @@ async function huggingFaceRequest(
     } catch (err: any) {
       logger.warn(`Attempt ${attempt} failed for ${model}: ${err.message}`);
       if (attempt === maxRetries) throw err;
-      await new Promise((r) => setTimeout(r, 3000 * attempt)); // exponential backoff
+      await new Promise((r) => setTimeout(r, 3000 * attempt));
     }
   }
 }
 
-// -----------------------------
-// Summarization
-// -----------------------------
 export async function summarizeText(text: string): Promise<string | null> {
   if (!text || text.trim().length === 0) return null;
 
@@ -60,9 +57,6 @@ export async function summarizeText(text: string): Promise<string | null> {
   }
 }
 
-// -----------------------------
-// Sentiment analysis
-// -----------------------------
 export async function analyzeSentiment(
   text: string
 ): Promise<"positive" | "neutral" | "negative"> {
@@ -103,9 +97,6 @@ export async function analyzeSentiment(
   }
 }
 
-// -----------------------------
-// Keyphrase extraction / Tags
-// -----------------------------
 export async function extractTags(text: string): Promise<string[]> {
   if (!text || text.trim().length === 0) return [];
 
@@ -136,9 +127,6 @@ export async function extractTags(text: string): Promise<string[]> {
   }
 }
 
-// -----------------------------
-// Embeddings
-// -----------------------------
 export async function generateEmbeddings(text: string): Promise<number[]> {
   if (!text || text.trim().length === 0) return [];
 
