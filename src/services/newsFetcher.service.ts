@@ -9,7 +9,6 @@ import {
 } from "@/services/huggingface.service";
 import { Source } from "@/constant/sources";
 
-
 async function getCanonicalCategories(
   sourceName: string,
   sourceCategories: string[]
@@ -20,7 +19,6 @@ async function getCanonicalCategories(
     const trimmed = cat?.trim().toLowerCase();
     if (!trimmed) continue;
 
-    // Lookup mapping table
     let mapping = await prisma.sourceCategoryMapping.findUnique({
       where: { sourceName_sourceCat: { sourceName, sourceCat: trimmed } },
       include: { canonical: true },
@@ -31,14 +29,12 @@ async function getCanonicalCategories(
       continue;
     }
 
-    // Upsert canonical category
     const canonical = await prisma.category.upsert({
       where: { name: trimmed },
       create: { name: trimmed },
       update: {},
     });
 
-    // Save mapping
     await prisma.sourceCategoryMapping.create({
       data: {
         sourceName,

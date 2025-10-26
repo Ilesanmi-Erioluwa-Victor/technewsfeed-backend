@@ -8,10 +8,6 @@ import prisma from "@/utils/prismaClient";
     });
     const unlinkedNews = totalNews - linkedNews;
 
-    console.log(`📰 Total news articles: ${totalNews}`);
-    console.log(`🔗 Linked to NewsSource: ${linkedNews}`);
-    console.log(`🚫 Without sourceRef: ${unlinkedNews}`);
-
     if (unlinkedNews === 0) {
       console.log("✅ All news articles are linked to a NewsSource!");
     } else {
@@ -25,17 +21,10 @@ import prisma from "@/utils/prismaClient";
               url: true,
             },
           },
-          category: {
-            select: {
-              name: true,
-              description: true
-            }
-          }
         },
 
-        take: 10, 
+        take: 10,
       });
-      console.table(missing);
     }
   } catch (err) {
     console.error("❌ Error checking News sources:", err);
