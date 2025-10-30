@@ -34,9 +34,14 @@ jobs:
           fi
 
       # Step 3: Get current timestamp
-      - name: Get current time
+      - name: Get current time and next run
         id: time
-        run: echo "timestamp=$(date '+%A, %B %d %Y at %I:%M %p %Z')" >> $GITHUB_OUTPUT
+        run: |
+          export TZ="Africa/Lagos"
+          current_time=$(date '+%A, %B %d %Y at %I:%M %p %Z')
+          next_time=$(date -d "+2 hours" '+%A, %B %d %Y at %I:%M %p %Z')
+          echo "timestamp=$current_time" >> $GITHUB_OUTPUT
+          echo "next_run=$next_time" >> $GITHUB_OUTPUT
 
       # Step 4: Send Notification Email (handles both success and failure)
       - name: Send Notification Email
@@ -81,6 +86,7 @@ jobs:
             <p><strong>Run ID:</strong> ${{ github.run_id }}</p>
             <p><strong>Triggered by:</strong> ${{ github.event_name }}</p>
             <p><strong>Time:</strong> ${{ steps.time.outputs.timestamp }}</p>
+             <p><strong>Next Scheduled Run:</strong> ${{ steps.time.outputs.next_run }}</p>
             </div>
             <a
             href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
