@@ -107,16 +107,6 @@ export const getExternalNewsForAnalysis = async (
         sourceName: true,
         coverImage: true,
         publishedAt: true,
-        blogPost: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            categories: {
-              select: { id: true, name: true, slug: true },
-            },
-          },
-        },
       },
     });
 
