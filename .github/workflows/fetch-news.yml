@@ -36,7 +36,7 @@ jobs:
       # Step 3: Get current timestamp
       - name: Get current time
         id: time
-        run: echo "timestamp=$(date -Iseconds)" >> $GITHUB_OUTPUT
+        run: echo "timestamp=$(date '+%A, %B %d %Y at %I:%M %p %Z')" >> $GITHUB_OUTPUT
 
       # Step 4: Send Notification Email (handles both success and failure)
       - name: Send Notification Email
@@ -83,7 +83,7 @@ jobs:
             <p><strong>Time:</strong> ${{ steps.time.outputs.timestamp }}</p>
             </div>
             <a
-            href="/Ilesanmi-Erioluwa-Victor/technewsfeed-backend/actions/runs/18614338483"
+            href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             style="background: ${{ steps.fetch-news.outputs.success == 'true' && '#22c55e' || '#dc2626' }}; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;"
              >
             ${{ steps.fetch-news.outputs.success == 'true' && '✅ View Success Logs' || '🚨 Investigate Failure' }}

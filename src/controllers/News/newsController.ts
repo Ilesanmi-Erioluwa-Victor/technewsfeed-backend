@@ -12,7 +12,7 @@ export const getExternalNews = async (
   next: NextFunction
 ) => {
   try {
-    const { category, source, limit = 20, skip = 0, featured } = req.query;
+    const { source, limit = 20, skip = 0, featured } = req.query;
 
     const parsedLimit = Math.min(parseInt(limit as string, 10), 50);
     const parsedSkip = parseInt(skip as string, 10);
@@ -25,27 +25,10 @@ export const getExternalNews = async (
         ...(featured && {
           isFeatured: featured === "true",
         }),
-        ...(category && {
-          blogPost: {
-            categories: {
-              some: { name: category as string },
-            },
-          },
-        }),
       },
       include: {
         sourceRef: {
           select: { id: true, name: true, url: true },
-        },
-        blogPost: {
-          select: {
-            id: true,
-            title: true,
-            slug: true,
-            categories: {
-              select: { id: true, name: true },
-            },
-          },
         },
       },
       orderBy: { publishedAt: "desc" },
