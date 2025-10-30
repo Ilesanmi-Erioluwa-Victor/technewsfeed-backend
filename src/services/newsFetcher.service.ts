@@ -10,70 +10,105 @@ import { Source } from "@/constant/sources";
 export const fetchFromSource = async (source: Source) => {
   let savedCount = 0;
 
-  // Ensure source exists
-  let dbSource = await prisma.newsSource.upsert({
+  let dbSource = await prisma.newsSource.findUnique({
     where: { name: source.name },
-    update: {},
-    create: { name: source.name, url: source.url },
   });
+
+  if (!dbSource) {
+    dbSource = await prisma.newsSource.create({
+      data: { name: source.name, url: source.url, lastFetched: null },
+    });
+  }
 
   const articles = await fetchRSSFeed(source.url, source.name);
   if (!articles?.length) {
-    logger.warn(`⚠️ No articles found for ${source.name}`);
     return [];
   }
 
+  const newArticles = dbSource.lastFetched
+    ? articles.filter(
+        (a) => new Date(a.publishedAt) > new Date(dbSource.lastFetched!)
+      )
+    : articles;
 
-  for (const article of articles) {
-    try {
-      if (!article.link || !article.title) continue;
+  if (!newArticles.length) {
+    logger.info(`🟡 No new articles since last fetch for ${source.name}`);
+    return [];
+  }
 
-      const aiSummary = await summarizeText(article.content);
-      const sentiment = await analyzeSentiment(article.content);
+  const BATCH_SIZE = 5;
+  for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
+    const batch = newArticles.slice(i, i + BATCH_SIZE);
 
-      const existing = await prisma.externalPost.findUnique({
-        where: { link: article.link },
-      });
+    for (const article of batch) {
+      try {
+        if (!article.link || !article.title) continue;
 
-      if (existing) {
-        await prisma.externalPost.update({
-          where: { id: existing.id },
-          data: {
-            title: article.title,
-            summary: aiSummary,
-            coverImage: article.image || existing.coverImage || null,
-            publishedAt: article.publishedAt,
-            sourceName: source.name,
-            authorName: article.author,
-            sentiment: sentiment,
-            sourceRef: { connect: { id: dbSource.id } },
-          },
+        const contentToProcess =
+          article.content?.substring(0, 1024) || article.title;
+
+        let aiSummary: string | null = null;
+        let sentiment: string | null = null;
+
+        try {
+          if (contentToProcess.length > 50) {
+            aiSummary = await summarizeText(contentToProcess);
+            await sleep(700);
+            sentiment = await analyzeSentiment(contentToProcess);
+            await sleep(700);
+          }
+        } catch (aiError: any) {
+          logger.warn(
+            `⚠️ AI processing failed for article: ${aiError.message}`
+          );
+        }
+
+        const existing = await prisma.externalPost.findUnique({
+          where: { link: article.link },
         });
-      } else {
-        await prisma.externalPost.create({
-          data: {
-            title: article.title,
-            summary: aiSummary,
-            coverImage: article.image || null,
-            link: article.link,
-            publishedAt: article.publishedAt,
-            sourceName: source.name,
-            sourceUrl: source.url,
-            sentiment: sentiment,
-            authorName: article.author,
-            isFeatured: false,
-            sourceRef: { connect: { id: dbSource.id } },
-          },
-        });
+
+        if (existing) {
+          await prisma.externalPost.update({
+            where: { id: existing.id },
+            data: {
+              title: article.title,
+              summary: aiSummary || existing.summary,
+              coverImage: article.image || existing.coverImage || null,
+              publishedAt: article.publishedAt,
+              sentiment: sentiment || existing.sentiment,
+              authorName: article.author,
+              sourceName: source.name,
+              sourceUrl: source.url,
+              sourceRef: { connect: { id: dbSource.id } },
+            },
+          });
+        } else {
+          await prisma.externalPost.create({
+            data: {
+              title: article.title,
+              summary: aiSummary,
+              link: article.link,
+              coverImage: article.image || null,
+              publishedAt: article.publishedAt,
+              sourceName: source.name,
+              sourceUrl: source.url,
+              sentiment,
+              authorName: article.author,
+              isFeatured: false,
+              sourceRef: { connect: { id: dbSource.id } },
+            },
+          });
+        }
+
+        savedCount++;
+      } catch (err: any) {
+        logger.error(
+          `❌ Failed to process article ${article.title}: ${err.message}`
+        );
       }
-
-      savedCount++;
-      await sleep(400);
-    } catch (err: any) {
-      logger.error(
-        `❌ Failed to process article ${article.title}: ${err.message}`
-      );
     }
+
+    if (i + BATCH_SIZE < newArticles.length) await sleep(1500);
   }
 
   await prisma.newsSource.update({
@@ -82,7 +117,7 @@ export const fetchFromSource = async (source: Source) => {
   });
 
   logger.info(
-    `✅ ${source.name}: ${savedCount}/${articles.length} external articles saved and attached to BlogPost`
+    `✅ ${source.name}: ${savedCount}/${newArticles.length} new articles processed`
   );
-  return articles;
+  return newArticles;
 };
