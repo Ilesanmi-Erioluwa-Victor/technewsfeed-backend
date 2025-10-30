@@ -1,7 +1,7 @@
 import {
-  getNews,
-  getNewsForAnalysis,
-  updateNewsWithAI,
+  getExternalNews,
+  getExternalNewsForAnalysis,
+  updateExternalNewsWithAI,
   fetchNews,
 } from "@/controllers/News/newsController";
 import express from "express";
@@ -9,9 +9,9 @@ import express from "express";
 const router = express.Router();
 
 router.get("/fetch", fetchNews);
-router.get("/", getNews);
+router.get("/", getExternalNews);
 
-router.get("/for-analysis", getNewsForAnalysis);
-router.patch("/:id/ai-update", updateNewsWithAI);
+router.get("/for-analysis", getExternalNewsForAnalysis);
+router.patch("/:id/ai-update", updateExternalNewsWithAI);
 
 export default router;
