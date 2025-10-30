@@ -9,57 +9,15 @@ import {
 } from "@/services/huggingface.service";
 import { Source } from "@/constant/sources";
 
-async function getCanonicalCategories(
-  sourceName: string,
-  sourceCategories: string[]
-) {
-  const categories: { id: number; name: string }[] = [];
-
-  for (const cat of sourceCategories) {
-    const trimmed = cat?.trim().toLowerCase();
-    if (!trimmed) continue;
-
-    let mapping = await prisma.sourceCategoryMapping.findUnique({
-      where: { sourceName_sourceCat: { sourceName, sourceCat: trimmed } },
-      include: { canonical: true },
-    });
-
-    if (mapping) {
-      categories.push(mapping.canonical);
-      continue;
-    }
-
-    const canonical = await prisma.category.upsert({
-      where: { name: trimmed },
-      create: { name: trimmed },
-      update: {},
-    });
-
-    await prisma.sourceCategoryMapping.create({
-      data: {
-        sourceName,
-        sourceCat: trimmed,
-        canonicalId: canonical.id,
-      },
-    });
-
-    categories.push(canonical);
-  }
-
-  return categories;
-}
-
 export const fetchFromSource = async (source: Source) => {
   let savedCount = 0;
 
-  let dbSource = await prisma.newsSource.findUnique({
+  // Ensure source exists
+  let dbSource = await prisma.newsSource.upsert({
     where: { name: source.name },
+    update: {},
+    create: { name: source.name, url: source.url },
   });
-  if (!dbSource) {
-    dbSource = await prisma.newsSource.create({
-      data: { name: source.name, url: source.url, lastFetched: null },
-    });
-  }
 
   const articles = await fetchRSSFeed(source.url, source.name);
   if (!articles?.length) {
@@ -67,131 +25,75 @@ export const fetchFromSource = async (source: Source) => {
     return [];
   }
 
-  const newArticles = dbSource.lastFetched
-    ? articles.filter(
-        (a) => new Date(a.publishedAt) > new Date(dbSource.lastFetched!)
-      )
-    : articles;
+  // Optional: find a BlogPost to attach to (for grouping)
+  // e.g. one titled like the source name
+  let parentBlogPost = await prisma.blogPost.findFirst({
+    where: { title: { contains: source.name, mode: "insensitive" } },
+  });
 
-  if (!newArticles.length) {
-    logger.info(`🟡 No new articles since last fetch for ${source.name}`);
-    return [];
+  if (!parentBlogPost) {
+    parentBlogPost = await prisma.blogPost.create({
+      data: {
+        title: `${source.name} News Feed`,
+        slug: `${source.name.toLowerCase().replace(/\s+/g, "-")}-feed`,
+        summary: `Aggregated latest news from ${source.name}`,
+        publishedAt: new Date(),
+      },
+    });
   }
 
-  const BATCH_SIZE = 5;
-  for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
-    const batch = newArticles.slice(i, i + BATCH_SIZE);
+  for (const article of articles) {
+    try {
+      if (!article.link || !article.title) continue;
 
-    for (const article of batch) {
-      try {
-        if (!article.link || !article.title) continue;
+      const aiSummary = await summarizeText(article.content);
+      const sentiment = await analyzeSentiment(article.content);
+      const tags = await extractTags(article.content);
+      const embeddings = await generateEmbeddings(article.content);
 
-        const contentToProcess =
-          article.content?.substring(0, 1024) || article.title;
+      const existing = await prisma.externalPost.findUnique({
+        where: { link: article.link },
+      });
 
-        let aiSummary: string | null = null;
-        let sentiment: string | null = null;
-        let tags: string[] = [];
-        let embeddings: number[] | null = null;
-
-        try {
-          if (contentToProcess.length > 50) {
-            aiSummary = await summarizeText(contentToProcess);
-            await sleep(800);
-
-            sentiment = await analyzeSentiment(contentToProcess);
-            await sleep(800);
-
-            tags = await extractTags(contentToProcess);
-            await sleep(800);
-
-            embeddings = await generateEmbeddings(contentToProcess);
-            await sleep(1200);
-          }
-        } catch (aiError: any) {
-          logger.warn(`AI processing failed for article: ${aiError.message}`);
-        }
-
-        const sourceCategories = Array.isArray(article.category)
-          ? article.category
-          : [article.category];
-
-        const canonicalCategories = await getCanonicalCategories(
-          source.name,
-          sourceCategories
-        );
-        const categoryRelations = canonicalCategories.map((c) => ({
-          where: { id: c.id },
-          create: { name: c.name },
-        }));
-
-        const normalizedTags = tags
-          .map((t) => t.trim().toLowerCase())
-          .filter((t) => t.length > 0 && t.length <= 50);
-
-        const tagRelations = normalizedTags.map((name) => ({
-          where: { name },
-          create: { name },
-        }));
-
-        const existingNews = await prisma.news.findUnique({
-          where: { link: article.link },
-          include: { categories: true },
+      if (existing) {
+        await prisma.externalPost.update({
+          where: { id: existing.id },
+          data: {
+            title: article.title,
+            summary: aiSummary,
+            coverImage: existing.coverImage || null,
+            publishedAt: article.publishedAt,
+            sourceName: source.name,
+            authorName: article.author,
+            sourceRef: { connect: { id: dbSource.id } },
+            blogPost: { connect: { id: parentBlogPost.id } },
+          },
         });
-
-        if (existingNews) {
-          const newCategories = canonicalCategories
-            .filter(
-              (c) => !existingNews.categories.some((ec) => ec.id === c.id)
-            )
-            .map((c) => ({ where: { id: c.id }, create: { name: c.name } }));
-
-          await prisma.news.update({
-            where: { id: existingNews.id },
-            data: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              author: article.author,
-              summary: (aiSummary as string) || null,
-              sentiment: (sentiment as string) || null,
-              embeddings: (embeddings as number[]) || undefined,
-              publishedAt: article.publishedAt,
-              updatedAt: new Date(),
-              sourceRef: { connect: { id: dbSource.id } },
-              categories: { connectOrCreate: newCategories },
-              tags: { connectOrCreate: tagRelations },
-            },
-          });
-        } else {
-          await prisma.news.create({
-            data: {
-              title: article.title,
-              content: article.content,
-              excerpt: article.excerpt,
-              link: article.link,
-              author: article.author,
-              summary: (aiSummary as string) || null,
-              sentiment: (sentiment as string) || null,
-              embeddings: (embeddings as number[]) || undefined,
-              publishedAt: article.publishedAt,
-              sourceRef: { connect: { id: dbSource.id } },
-              categories: { connectOrCreate: categoryRelations },
-              tags: { connectOrCreate: tagRelations },
-            },
-          });
-        }
-
-        savedCount++;
-        await sleep(500);
-      } catch (err: any) {
-        logger.error(
-          `❌ Failed to process article ${article.title}: ${err.message}`
-        );
+      } else {
+        await prisma.externalPost.create({
+          data: {
+            title: article.title,
+            summary: aiSummary,
+            coverImage: null,
+            link: article.link,
+            publishedAt: article.publishedAt,
+            sourceName: source.name,
+            sourceUrl: source.url,
+            authorName: article.author,
+            isFeatured: false,
+            sourceRef: { connect: { id: dbSource.id } },
+            blogPost: { connect: { id: parentBlogPost.id } },
+          },
+        });
       }
-    }
 
-    if (i + BATCH_SIZE < newArticles.length) await sleep(1500);
+      savedCount++;
+      await sleep(400);
+    } catch (err: any) {
+      logger.error(
+        `❌ Failed to process article ${article.title}: ${err.message}`
+      );
+    }
   }
 
   await prisma.newsSource.update({
@@ -200,7 +102,7 @@ export const fetchFromSource = async (source: Source) => {
   });
 
   logger.info(
-    `✅ ${source.name}: ${savedCount}/${newArticles.length} articles processed`
+    `✅ ${source.name}: ${savedCount}/${articles.length} external articles saved and attached to BlogPost`
   );
-  return newArticles;
+  return articles;
 };

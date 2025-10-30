@@ -1,5 +1,4 @@
 import { sources } from "@/constant/sources";
-import { Prisma } from "@/generated/prisma";
 import { sleep } from "@/services/rss.service";
 import { AppError, InternalServerError } from "@/types/errors";
 import logger from "@/utils/logger";
@@ -7,46 +6,60 @@ import prisma from "@/utils/prismaClient";
 import { NextFunction, Response, Request } from "express";
 import { fetchFromSource } from "@/services/newsFetcher.service";
 
-export const getNews = async (
+export const getExternalNews = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { category, source, limit = 20, skip = 0 } = req.query;
+    const { category, source, limit = 20, skip = 0, featured } = req.query;
 
     const parsedLimit = Math.min(parseInt(limit as string, 10), 50);
+    const parsedSkip = parseInt(skip as string, 10);
 
-    const news = await prisma.news.findMany({
+    const externalNews = await prisma.externalPost.findMany({
       where: {
-        ...(category && {
-          categories: {
-            some: { name: category as string },
-          },
-        }),
         ...(source && {
           sourceRef: { name: source as string },
         }),
+        ...(featured && {
+          isFeatured: featured === "true",
+        }),
+        ...(category && {
+          blogPost: {
+            categories: {
+              some: { name: category as string },
+            },
+          },
+        }),
       },
       include: {
-        tags: {
-          select: { id: true, name: true },
-        },
-        categories: {
-          select: { id: true, name: true },
-        },
         sourceRef: {
           select: { id: true, name: true, url: true },
         },
+        blogPost: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            categories: {
+              select: { id: true, name: true },
+            },
+          },
+        },
       },
       orderBy: { publishedAt: "desc" },
-      skip: parseInt(skip as string, 10),
+      skip: parsedSkip,
       take: parsedLimit,
     });
 
-    res.json(news);
+    res.json({
+      count: externalNews.length,
+      data: externalNews,
+    });
   } catch (err) {
-    next(new InternalServerError("Failed to fetch news"));
+    console.error("❌ getExternalNews error:", err);
+    next(new InternalServerError("Failed to fetch external news"));
   }
 };
 
@@ -72,7 +85,7 @@ export const fetchAndStoreNews = async () => {
   return { processed: totalProcessed, failed: totalFailed };
 };
 
-export const getNewsForAnalysis = async (
+export const getExternalNewsForAnalysis = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -80,58 +93,64 @@ export const getNewsForAnalysis = async (
   try {
     const { limit = 50 } = req.query;
 
-    const news = await prisma.news.findMany({
+    const externalPosts = await prisma.externalPost.findMany({
       where: {
-        OR: [
-          { summary: null },
-          { embeddings: { equals: Prisma.DbNull } },
-          { embeddings: { equals: Prisma.JsonNull } },
-        ],
+        OR: [{ summary: null }, { summary: "" }],
       },
       orderBy: { publishedAt: "desc" },
-      take: parseInt(limit as string),
+      take: parseInt(limit as string, 10),
       select: {
         id: true,
         title: true,
-        content: true,
-        excerpt: true,
-        categories: true,
+        summary: true,
+        link: true,
+        sourceName: true,
+        coverImage: true,
+        publishedAt: true,
+        blogPost: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            categories: {
+              select: { id: true, name: true, slug: true },
+            },
+          },
+        },
       },
     });
 
-    res.json(news);
+    res.json(externalPosts);
   } catch (err) {
-    next(new AppError("Failed to fetch news for analysis", 500));
+    console.error("❌ getExternalNewsForAnalysis error:", err);
+    next(new AppError("Failed to fetch external posts for analysis", 500));
   }
 };
 
-export const updateNewsWithAI = async (
+export const updateExternalNewsWithAI = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const { id } = req?.params;
-    const { summary, sentiment, tags, embeddings } = req.body;
+    const { id } = req.params;
+    const { summary, coverImage, isFeatured } = req.body;
 
-    if (!id) return next(new AppError("News ID is required", 400));
-    if (!summary && !sentiment && !tags && !embeddings)
-      return next(new AppError("No data provided for update", 400));
+    if (!id) return next(new AppError("External post ID is required", 400));
 
-    const updatedNews = await prisma.news.update({
-      where: { id: parseInt(id as string) },
+    const updatedExternalPost = await prisma.externalPost.update({
+      where: { id: parseInt(id, 10) },
       data: {
-        summary,
-        sentiment,
-        tags,
-        embeddings,
-        updatedAt: new Date(),
+        ...(summary && { summary }),
+        ...(coverImage && { coverImage }),
+        ...(typeof isFeatured === "boolean" && { isFeatured }),
       },
     });
 
-    res.json(updatedNews);
+    res.json(updatedExternalPost);
   } catch (err) {
-    next(new AppError("Failed to update news with AI data", 500));
+    console.error("❌ updateExternalNewsWithAI error:", err);
+    next(new AppError("Failed to update external post with AI data", 500));
   }
 };
 

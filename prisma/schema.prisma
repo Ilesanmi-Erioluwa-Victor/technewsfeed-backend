@@ -9,6 +9,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
 model User {
   id         String   @id @default(uuid())
   email      String   @unique
@@ -19,29 +20,71 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  preferences   UserPreference[]
-  subscriptions NewsletterSubscription[]
+  posts          BlogPost[]
+  preferences    UserPreference[]
+  subscriptions  NewsletterSubscription[]
 }
 
-model News {
-  id          Int         @id @default(autoincrement())
-  title       String
-  content     String?
-  summary     String?
-  excerpt     String?
-  link        String      @unique
-  author      String?
-  publishedAt DateTime
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  embeddings  Json?
-  sentiment   String?
-  tags        Tag[]       @relation("NewsTags")
-  sourceRefId Int?
-  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])
-  categories  Category[]  @relation("NewsCategories")
+model BlogPost {
+  id             Int          @id @default(autoincrement())
+  title          String
+  slug           String        @unique
+  content        String?
+  summary        String?
+  excerpt        String?
+  authorName     String?
+  coverImage     String? 
+  publishedAt    DateTime
+  isPublished    Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
+  author         User?         @relation(fields: [authorId], references: [id])
+  authorId       String?
+  categories     Category[]    @relation("BlogPostCategories")
+  tags           Tag[]         @relation("BlogPostTags")
+
+  externalPosts  ExternalPost[]
+  @@index([slug])
   @@index([publishedAt])
+}
+
+model ExternalPost {
+  id             Int        @id @default(autoincrement())
+  title          String
+  summary        String?
+  link           String      @unique       
+  coverImage     String?
+  publishedAt    DateTime
+  sourceName     String                 
+  sourceUrl      String?      @unique           
+  authorName     String?
+  isFeatured     Boolean     @default(false)
+  blogPost       BlogPost?   @relation(fields: [blogPostId], references: [id])
+  blogPostId     Int?
+  sourceRef      NewsSource? @relation(fields: [sourceRefId], references: [id])
+  sourceRefId    Int?
+  createdAt      DateTime    @default(now())
+}
+
+
+model Category {
+  id             Int                     @id @default(autoincrement())
+  name           String                  @unique
+  slug           String                  @unique
+  description    String?
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  posts          BlogPost[]              @relation("BlogPostCategories")
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  posts     BlogPost[] @relation("BlogPostTags")
 }
 
 model NewsSource {
@@ -51,7 +94,7 @@ model NewsSource {
   lastFetched DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  News        News[]
+  externalPosts ExternalPost[]
 }
 
 model UserPreference {
@@ -72,32 +115,4 @@ model NewsletterSubscription {
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
-}
-
-model Category {
-  id             Int                     @id @default(autoincrement())
-  name           String                  @unique
-  description    String?
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  news           News[]                  @relation("NewsCategories")
-  sourceMappings SourceCategoryMapping[]
-}
-
-model Tag {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  News      News[]   @relation("NewsTags")
-}
-
-model SourceCategoryMapping {
-  id          Int      @id @default(autoincrement())
-  sourceName  String
-  sourceCat   String
-  canonicalId Int
-  canonical   Category @relation(fields: [canonicalId], references: [id])
-
-  @@unique([sourceName, sourceCat])
 }
