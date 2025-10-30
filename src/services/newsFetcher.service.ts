@@ -4,8 +4,6 @@ import { fetchRSSFeed, sleep } from "@/services/rss.service";
 import {
   summarizeText,
   analyzeSentiment,
-  extractTags,
-  generateEmbeddings,
 } from "@/services/huggingface.service";
 import { Source } from "@/constant/sources";
 
@@ -48,8 +46,8 @@ export const fetchFromSource = async (source: Source) => {
 
       const aiSummary = await summarizeText(article.content);
       const sentiment = await analyzeSentiment(article.content);
-      const tags = await extractTags(article.content);
-      const embeddings = await generateEmbeddings(article.content);
+      // const tags = await extractTags(article.content);
+      // const embeddings = await generateEmbeddings(article.content);
 
       const existing = await prisma.externalPost.findUnique({
         where: { link: article.link },
@@ -65,6 +63,7 @@ export const fetchFromSource = async (source: Source) => {
             publishedAt: article.publishedAt,
             sourceName: source.name,
             authorName: article.author,
+            sentiment: sentiment,
             sourceRef: { connect: { id: dbSource.id } },
             blogPost: { connect: { id: parentBlogPost.id } },
           },
@@ -79,6 +78,7 @@ export const fetchFromSource = async (source: Source) => {
             publishedAt: article.publishedAt,
             sourceName: source.name,
             sourceUrl: source.url,
+            sentiment: sentiment,
             authorName: article.author,
             isFeatured: false,
             sourceRef: { connect: { id: dbSource.id } },

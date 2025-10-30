@@ -59,6 +59,7 @@ model ExternalPost {
   sourceName     String                 
   sourceUrl      String?      @unique           
   authorName     String?
+  sentiment      String?
   isFeatured     Boolean     @default(false)
   blogPost       BlogPost?   @relation(fields: [blogPostId], references: [id])
   blogPostId     Int?
