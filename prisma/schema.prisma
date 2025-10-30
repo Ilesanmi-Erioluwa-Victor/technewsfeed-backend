@@ -57,7 +57,7 @@ model ExternalPost {
   coverImage     String?
   publishedAt    DateTime
   sourceName     String                 
-  sourceUrl      String?      @unique           
+  sourceUrl      String?              
   authorName     String?
   sentiment      String?
   isFeatured     Boolean     @default(false)

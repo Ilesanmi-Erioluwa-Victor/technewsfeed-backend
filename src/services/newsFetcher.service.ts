@@ -23,22 +23,6 @@ export const fetchFromSource = async (source: Source) => {
     return [];
   }
 
-  // Optional: find a BlogPost to attach to (for grouping)
-  // e.g. one titled like the source name
-  let parentBlogPost = await prisma.blogPost.findFirst({
-    where: { title: { contains: source.name, mode: "insensitive" } },
-  });
-
-  if (!parentBlogPost) {
-    parentBlogPost = await prisma.blogPost.create({
-      data: {
-        title: `${source.name} News Feed`,
-        slug: `${source.name.toLowerCase().replace(/\s+/g, "-")}-feed`,
-        summary: `Aggregated latest news from ${source.name}`,
-        publishedAt: new Date(),
-      },
-    });
-  }
 
   for (const article of articles) {
     try {
@@ -46,8 +30,6 @@ export const fetchFromSource = async (source: Source) => {
 
       const aiSummary = await summarizeText(article.content);
       const sentiment = await analyzeSentiment(article.content);
-      // const tags = await extractTags(article.content);
-      // const embeddings = await generateEmbeddings(article.content);
 
       const existing = await prisma.externalPost.findUnique({
         where: { link: article.link },
@@ -59,13 +41,12 @@ export const fetchFromSource = async (source: Source) => {
           data: {
             title: article.title,
             summary: aiSummary,
-            coverImage: existing.coverImage || null,
+            coverImage: article.image || existing.coverImage || null,
             publishedAt: article.publishedAt,
             sourceName: source.name,
             authorName: article.author,
             sentiment: sentiment,
             sourceRef: { connect: { id: dbSource.id } },
-            blogPost: { connect: { id: parentBlogPost.id } },
           },
         });
       } else {
@@ -73,7 +54,7 @@ export const fetchFromSource = async (source: Source) => {
           data: {
             title: article.title,
             summary: aiSummary,
-            coverImage: null,
+            coverImage: article.image || null,
             link: article.link,
             publishedAt: article.publishedAt,
             sourceName: source.name,
@@ -82,7 +63,6 @@ export const fetchFromSource = async (source: Source) => {
             authorName: article.author,
             isFeatured: false,
             sourceRef: { connect: { id: dbSource.id } },
-            blogPost: { connect: { id: parentBlogPost.id } },
           },
         });
       }

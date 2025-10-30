@@ -15,6 +15,7 @@ export interface Article {
   category: string;
   publishedAt: Date;
   guid?: string;
+  image?: string;
 }
 
 const DEFAULT_TIMEOUT = 20000;
@@ -141,7 +142,6 @@ export const fetchRSSFeed = async (
           "";
 
         const content = normalizeContentValue(rawContent);
-
         const excerpt = generateExcerpt(content, 150);
         const author =
           item["dc:creator"]?.[0] ||
@@ -156,6 +156,16 @@ export const fetchRSSFeed = async (
           item["dc:subject"]?.[0] ||
           classifyContent(content, title);
 
+        // 🖼️ Extract image from multiple possible RSS fields
+        const image =
+          item["media:content"]?.[0]?.$?.url ||
+          item["media:thumbnail"]?.[0]?.$?.url ||
+          item["enclosure"]?.[0]?.$?.url ||
+          (typeof content === "string"
+            ? content.match(/https?:\/\/[^\s"]+\.(?:jpg|jpeg|png|gif)/)?.[0]
+            : null) ||
+          null;
+
         return {
           title,
           content: cleanContent(content),
@@ -168,6 +178,7 @@ export const fetchRSSFeed = async (
             item.pubDate?.[0] || item.updated?.[0] || Date.now()
           ),
           guid: item.guid?.[0] || item.id?.[0],
+          image, // 🖼️ Include extracted image
         } as Article;
       })
       .filter((a) => a.link && a.title && a.link.length > 0);
@@ -184,12 +195,20 @@ export const fetchRSSFeed = async (
         )}`;
         const res = await axios.get(proxyUrl, { timeout: DEFAULT_TIMEOUT });
         const items = res.data?.items || [];
+
         return items
           .map((it: any) => {
             const content = normalizeContentValue(
               it.content || it.content_snippet || it.description || ""
             );
             const title = it.title || "No Title";
+
+            // Try to extract image from proxy fallback too
+            const image =
+              it.thumbnail ||
+              (content.match(/https?:\/\/[^\s"]+\.(?:jpg|jpeg|png|gif)/)?.[0] ??
+                null);
+
             return {
               title,
               content: cleanContent(content),
@@ -199,6 +218,7 @@ export const fetchRSSFeed = async (
               author: it.author || "Unknown",
               category: classifyContent(content, title),
               publishedAt: new Date(it.pubDate || Date.now()),
+              image,
             } as Article;
           })
           .filter((a: Article) => a.link);
