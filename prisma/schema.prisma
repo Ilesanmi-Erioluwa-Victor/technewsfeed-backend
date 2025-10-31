@@ -100,12 +100,12 @@ model Comment {
   content     String
   post        BlogPost @relation("PostComments", fields: [postId], references: [id])
   postId      Int
-  author      User?    @relation(fields: [authorId], references: [id])
+  author      User?    @relation("UserComments", fields: [authorId], references: [id])
   authorId    String?
   parentId    String?              
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  isApproved  Boolean  @default(false) 
+  isApproved  Boolean  @default(true) 
   isDeleted   Boolean  @default(false) 
   metadata    Json?                  
 
@@ -113,6 +113,7 @@ model Comment {
   @@index([authorId])
   @@index([createdAt])
 }
+
 
 
 model AuditLog {
