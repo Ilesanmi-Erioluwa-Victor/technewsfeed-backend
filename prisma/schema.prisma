@@ -9,45 +9,124 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-
 model User {
   id         String   @id @default(uuid())
   email      String   @unique
   password   String
   name       String?
   avatarUrl  String?
+  role       UserRole @default(USER)
   isVerified Boolean  @default(false)
+  isActive   Boolean  @default(true)
+  invitedBy  String?  
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  auditLogs  AuditLog[]  @relation("UserAuditLogs")
   posts          BlogPost[]
   preferences    UserPreference[]
   subscriptions  NewsletterSubscription[]
+  sentInvitations WriterInvitation[] @relation("InvitationSender")
+  
+  @@index([role])
+  @@index([isActive])
+}
+
+model WriterInvitation {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  token       String   @unique
+  role        UserRole @default(WRITER)
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invitedBy   User   @relation("InvitationSender", fields: [invitedById], references: [id])
+  invitedById String
+  invitedUser User?  @relation(fields: [invitedUserId], references: [id])
+  invitedUserId String?
+  
+  @@index([token])
+  @@index([status])
+  @@index([expiresAt])
 }
 
 model BlogPost {
-  id             Int          @id @default(autoincrement())
-  title          String
-  slug           String        @unique
-  content        String?
-  summary        String?
-  excerpt        String?
-  authorName     String?
-  coverImage     String? 
-  publishedAt    DateTime
-  isPublished    Boolean       @default(true)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id          Int       @id @default(autoincrement())
+  title       String
+  slug        String    @unique
+  content     String?
+  summary     String?
+  excerpt     String?
+  coverImage  String?
+  status      PostStatus @default(DRAFT)
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
+  authorName  String? 
+  views        Int       @default(0)         
+  readingTime  Int?                           
+  seoTitle     String?                       
+  seoDescription String?                      
+  isFeatured   Boolean   @default(false) 
+  publishedAt DateTime?
+  isPublished Boolean   @default(false)
+  reviewedBy  User?    @relation("PostReviewer", fields: [reviewedById], references: [id])
+  reviewedById String?
+  reviewedAt  DateTime?
+  scheduledPublish DateTime? 
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  author         User?         @relation(fields: [authorId], references: [id])
-  authorId       String?
-  categories     Category[]    @relation("BlogPostCategories")
-  tags           Tag[]         @relation("BlogPostTags")
+  comments      Comment[]     @relation("PostComments")
+  categories    Category[]    @relation("BlogPostCategories")
+  tags          Tag[]         @relation("BlogPostTags")
+  externalPosts ExternalPost[]
 
-  externalPosts  ExternalPost[]
   @@index([slug])
   @@index([publishedAt])
+  @@index([status])
+  @@index([authorId])
+  @@index([isPublished])
 }
+
+model Comment {
+  id          String   @id @default(uuid())
+  content     String
+  post        BlogPost @relation("PostComments", fields: [postId], references: [id])
+  postId      Int
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    String?
+  parentId    String?              
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isApproved  Boolean  @default(false) 
+  isDeleted   Boolean  @default(false) 
+  metadata    Json?                  
+
+  @@index([postId])
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  actorId     String?
+  actor       User?    @relation("UserAuditLogs", fields: [actorId], references: [id])
+  targetId    String?
+  targetType  String?
+  description String?
+  payload     Json?
+  ipHash      String?
+  createdAt   DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+
 
 model ExternalPost {
   id             Int        @id @default(autoincrement())
@@ -116,4 +195,26 @@ model NewsletterSubscription {
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User?    @relation(fields: [userId], references: [id])
+}
+
+enum UserRole {
+  USER   
+  WRITER  
+  ADMIN   
+}
+
+enum PostStatus {
+  DRAFT     
+  REVIEW    
+  APPROVED  
+  PUBLISHED 
+  REJECTED  
+  ARCHIVED  
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
 }
