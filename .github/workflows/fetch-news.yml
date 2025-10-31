@@ -21,18 +21,16 @@ jobs:
         run: |
           echo "🕐 Starting news fetch at $(date)"
           # Make the API call with detailed error handling
-          response=$(curl -s -w "HTTPSTATUS:%{http_code}" -X GET \
-          "https://technewsfeed-backend.onrender.com/api/v1/news/fetch?secret=${{ secrets.FETCH_SECRET }}")
-           body=$(echo "$response" | sed -e 's/HTTPSTATUS\:.*//g')
-           http_code=$(echo "$response" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-           if [ "$http_code" -eq 200 ]; then
-          echo "✅ News fetch completed successfully"
-          echo "success=true" >> $GITHUB_OUTPUT
+          response=$(curl -f -s -w "%{http_code}" -X GET \
+            "https://technewsfeed-backend.onrender.com/api/v1/blogs/fetch?secret=${{ secrets.FETCH_SECRET }}")
+          http_code=${response: -3}
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ News fetch completed successfully"
+            echo "success=true" >> $GITHUB_OUTPUT
           else
-          echo "❌ News fetch failed with HTTP code: $http_code"
-          echo "Response body: $body"
-          echo "success=false" >> $GITHUB_OUTPUT
-          exit 1
+            echo "❌ News fetch failed with HTTP code: $http_code"
+            echo "success=false" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
       # Step 3: Get current timestamp
