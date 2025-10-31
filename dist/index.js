@@ -6023,7 +6023,7 @@ var require_prisma = __commonJS({
 var import_dotenv2 = __toESM(require("dotenv"));
 
 // src/app.ts
-var import_express4 = __toESM(require("express"));
+var import_express5 = __toESM(require("express"));
 var import_cors = __toESM(require("cors"));
 
 // src/utils/logger.ts
@@ -6055,10 +6055,10 @@ var errorHandler = (err, req, res, next) => {
 };
 
 // src/api/index.ts
-var import_express3 = __toESM(require("express"));
+var import_express4 = __toESM(require("express"));
 
 // src/api/v1/index.ts
-var import_express2 = __toESM(require("express"));
+var import_express3 = __toESM(require("express"));
 
 // src/api/v1/constant/sources.ts
 var sources = [
@@ -6106,6 +6106,13 @@ var InternalServerError = class extends AppError {
   constructor(message = "Internal Server Error") {
     super(message, 500, false);
   }
+};
+var successResponse = (res, data, message = "Success", status = 200) => {
+  return res.status(status).json({
+    success: true,
+    message,
+    data
+  });
 };
 
 // src/utils/prismaClient.ts
@@ -6170,26 +6177,35 @@ var envSchema = import_zod.z.object({
   FETCH_SECRET: import_zod.z.string().optional(),
   EMAIL_APP_PASSWORD: import_zod.z.string().optional(),
   HUGGING_FACE_TOKEN: import_zod.z.string().optional(),
-  APP_URL: import_zod.z.string().optional()
+  APP_URL: import_zod.z.string().optional(),
+  GOOGLE_CLIENT_ID: import_zod.z.string().optional(),
+  GOOGLE_CLIENT_SECRET: import_zod.z.string().optional(),
+  GOOGLE_REDIRECT_URI: import_zod.z.string().optional(),
+  JWT_SECRET: import_zod.z.string(),
+  JWT_EXPIRES_IN: import_zod.z.string().default("20d")
 });
 var parsed = envSchema.safeParse(process.env);
 if (!parsed.success) {
   console.error("\u274C Invalid environment configuration:");
   console.error(parsed.error.format());
   throw new BadRequestError(
-    "Invalid environment variables. Please check your .env file."
+    "Invalid environment variables. Please check your .env or Render dashboard settings."
   );
 }
 var env = parsed.data;
-var envFilePath = import_path.default.resolve(process.cwd(), ".env");
-var envFileContent = import_fs.default.readFileSync(envFilePath, "utf-8");
-var envFileKeys = envFileContent.split("\n").map((line) => line.split("=")[0]?.trim()).filter((key) => key && !key.startsWith("#"));
-var allowedKeys = Object.keys(envSchema.shape);
-for (const key of envFileKeys) {
-  if (!allowedKeys.includes(key)) {
-    throw new BadRequestError(
-      `\u274C Unknown environment variable in .env: ${key}`
-    );
+if (env.NODE_ENV !== "production") {
+  const envFilePath = import_path.default.resolve(process.cwd(), ".env");
+  if (import_fs.default.existsSync(envFilePath)) {
+    const envFileContent = import_fs.default.readFileSync(envFilePath, "utf-8");
+    const envFileKeys = envFileContent.split("\n").map((line) => line.split("=")[0]?.trim()).filter((key) => key && !key.startsWith("#"));
+    const allowedKeys = Object.keys(envSchema.shape);
+    for (const key of envFileKeys) {
+      if (!allowedKeys.includes(key)) {
+        throw new BadRequestError(
+          `\u274C Unknown environment variable in .env: ${key}`
+        );
+      }
+    }
   }
 }
 
@@ -6631,21 +6647,69 @@ router.get("/for-analysis", getExternalNewsForAnalysis);
 router.patch("/:id/ai-update", updateExternalNewsWithAI);
 var blog_Route_default = router;
 
+// src/api/v1/modules/auth/routes/auth.routes.ts
+var import_express2 = require("express");
+
+// src/api/v1/modules/auth/service/auth.service.ts
+var import_bcryptjs = __toESM(require("bcryptjs"));
+var import_jsonwebtoken = __toESM(require("jsonwebtoken"));
+async function registerUserService(name, email, password) {
+  const existing = await prismaClient_default.user.findUnique({ where: { email } });
+  if (existing) throw new BadRequestError("Email already registered");
+  const hashed = await import_bcryptjs.default.hash(password, 10);
+  const user = await prismaClient_default.user.create({
+    data: { name, email, password: hashed }
+  });
+  const token = import_jsonwebtoken.default.sign({ userId: user.id }, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN
+  });
+  return { user, token };
+}
+async function loginUserService(email, password) {
+  const user = await prismaClient_default.user.findUnique({ where: { email } });
+  if (!user || !await import_bcryptjs.default.compare(password, user.password)) {
+    throw new BadRequestError("Invalid credentials");
+  }
+  const token = import_jsonwebtoken.default.sign({ userId: user.id }, env.JWT_SECRET, {
+    expiresIn: env.JWT_EXPIRES_IN
+  });
+  return { user, token };
+}
+
+// src/api/v1/modules/auth/controller/auth.controller.ts
+var registerUser = async (req, res) => {
+  const { name, email, password } = req.body;
+  const user = await registerUserService(name, email, password);
+  return successResponse(res, user, "user registered successfully", 201);
+};
+var loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  const tokens = await loginUserService(email, password);
+  return successResponse(res, tokens, "login successful", 200);
+};
+
+// src/api/v1/modules/auth/routes/auth.routes.ts
+var router2 = (0, import_express2.Router)();
+router2.post("/register", registerUser);
+router2.post("/login", loginUser);
+var auth_routes_default = router2;
+
 // src/api/v1/index.ts
-var router2 = import_express2.default.Router();
-router2.use("/blogs", blog_Route_default);
-var v1_default = router2;
+var router3 = import_express3.default.Router();
+router3.use("/auth", auth_routes_default);
+router3.use("/blogs", blog_Route_default);
+var v1_default = router3;
 
 // src/api/index.ts
-var router3 = import_express3.default.Router();
-router3.use("/v1", v1_default);
-var api_default = router3;
+var router4 = import_express4.default.Router();
+router4.use("/v1", v1_default);
+var api_default = router4;
 
 // src/app.ts
-var app = (0, import_express4.default)();
+var app = (0, import_express5.default)();
 app.use((0, import_cors.default)());
-app.use(import_express4.default.json());
-app.use(import_express4.default.urlencoded({ extended: true }));
+app.use(import_express5.default.json());
+app.use(import_express5.default.urlencoded({ extended: true }));
 app.use("/api", api_default);
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "OK", service: "Tech News API" });

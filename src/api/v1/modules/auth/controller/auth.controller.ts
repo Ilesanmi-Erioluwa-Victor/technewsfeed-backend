@@ -1,9 +1,6 @@
-import {
-  loginUserService,
-  registerUserService,
-} from "@/api/v1/routes/auth.service";
 import { successResponse } from "@/types/errors";
 import { Request, Response } from "express";
+import { loginUserService, registerUserService } from "../service/auth.service";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
