@@ -1,8 +1,8 @@
 import { z } from "zod";
 import dotenv from "dotenv";
-import { BadRequestError } from "@/types/errors";
 import fs from "fs";
 import path from "path";
+import { BadRequestError } from "@/types/errors";
 
 dotenv.config();
 
@@ -32,24 +32,29 @@ if (!parsed.success) {
   console.error("❌ Invalid environment configuration:");
   console.error(parsed.error.format());
   throw new BadRequestError(
-    "Invalid environment variables. Please check your .env file."
+    "Invalid environment variables. Please check your .env or Render dashboard settings."
   );
 }
 
 export const env = parsed.data;
 
-const envFilePath = path.resolve(process.cwd(), ".env");
-const envFileContent = fs.readFileSync(envFilePath, "utf-8");
-const envFileKeys = envFileContent
-  .split("\n")
-  .map((line) => line.split("=")[0]?.trim())
-  .filter((key) => key && !key.startsWith("#"));
+if (env.NODE_ENV !== "production") {
+  const envFilePath = path.resolve(process.cwd(), ".env");
 
-const allowedKeys = Object.keys(envSchema.shape);
-for (const key of envFileKeys) {
-  if (!allowedKeys.includes(key as string)) {
-    throw new BadRequestError(
-      `❌ Unknown environment variable in .env: ${key}`
-    );
+  if (fs.existsSync(envFilePath)) {
+    const envFileContent = fs.readFileSync(envFilePath, "utf-8");
+    const envFileKeys = envFileContent
+      .split("\n")
+      .map((line) => line.split("=")[0]?.trim())
+      .filter((key) => key && !key.startsWith("#"));
+
+    const allowedKeys = Object.keys(envSchema.shape);
+    for (const key of envFileKeys) {
+      if (!allowedKeys.includes(key as string)) {
+        throw new BadRequestError(
+          `❌ Unknown environment variable in .env: ${key}`
+        );
+      }
+    }
   }
 }
