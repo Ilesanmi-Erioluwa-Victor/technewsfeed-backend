@@ -24,6 +24,16 @@ const envSchema = z.object({
   HUGGING_FACE_TOKEN: z.string().optional(),
 
   APP_URL: z.string().optional(),
+
+  GOOGLE_CLIENT_ID: z.string().optional(),
+
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+
+  GOOGLE_REDIRECT_URI: z.string().optional(),
+
+  JWT_SECRET: z.string(),
+
+  JWT_EXPIRES_IN: z.string().default("20d"),
 });
 
 const parsed = envSchema.safeParse(process.env);
