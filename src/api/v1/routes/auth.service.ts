@@ -4,7 +4,7 @@ import { env } from "@/config/env";
 import prisma from "@/utils/prismaClient";
 import { BadRequestError } from "@/types/errors";
 
-export async function registerUser(
+export async function registerUserService(
   name: string,
   email: string,
   password: string
@@ -24,7 +24,7 @@ export async function registerUser(
   return { user, token };
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUserService(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new BadRequestError("Invalid credentials");
