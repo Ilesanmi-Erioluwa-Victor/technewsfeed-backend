@@ -21,66 +21,71 @@ model User {
   invitedBy  String?  
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+   receivedInvitations WriterInvitation[] @relation("InvitationReceiver") 
+  reviewedPosts        BlogPost[]        @relation("PostReviewer")       
+  comments             Comment[]         @relation("UserComments")  
 
-  auditLogs  AuditLog[]  @relation("UserAuditLogs")
-  posts          BlogPost[]
-  preferences    UserPreference[]
-  subscriptions  NewsletterSubscription[]
-  sentInvitations WriterInvitation[] @relation("InvitationSender")
-  
+  auditLogs        AuditLog[]  @relation("UserAuditLogs")
+  posts            BlogPost[]  @relation("UserPosts") 
+  preferences      UserPreference[]
+  subscriptions    NewsletterSubscription[]
+  sentInvitations  WriterInvitation[] @relation("InvitationSender")     
+
   @@index([role])
   @@index([isActive])
 }
 
+
 model WriterInvitation {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  token       String   @unique
-  role        UserRole @default(WRITER)
-  status      InvitationStatus @default(PENDING)
-  expiresAt   DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  invitedBy   User   @relation("InvitationSender", fields: [invitedById], references: [id])
-  invitedById String
-  invitedUser User?  @relation(fields: [invitedUserId], references: [id])
-  invitedUserId String?
-  
+  id             String   @id @default(uuid())
+  email          String   @unique
+  token          String   @unique
+  role           UserRole @default(WRITER)
+  status         InvitationStatus @default(PENDING)
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  invitedBy      User   @relation("InvitationSender", fields: [invitedById], references: [id])
+  invitedById    String
+  invitedUser    User?  @relation("InvitationReceiver", fields: [invitedUserId], references: [id])
+  invitedUserId  String?
+
   @@index([token])
   @@index([status])
   @@index([expiresAt])
 }
 
-model BlogPost {
-  id          Int       @id @default(autoincrement())
-  title       String
-  slug        String    @unique
-  content     String?
-  summary     String?
-  excerpt     String?
-  coverImage  String?
-  status      PostStatus @default(DRAFT)
-  author      User?    @relation(fields: [authorId], references: [id])
-  authorId    String?
-  authorName  String? 
-  views        Int       @default(0)         
-  readingTime  Int?                           
-  seoTitle     String?                       
-  seoDescription String?                      
-  isFeatured   Boolean   @default(false) 
-  publishedAt DateTime?
-  isPublished Boolean   @default(false)
-  reviewedBy  User?    @relation("PostReviewer", fields: [reviewedById], references: [id])
-  reviewedById String?
-  reviewedAt  DateTime?
-  scheduledPublish DateTime? 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 
-  comments      Comment[]     @relation("PostComments")
-  categories    Category[]    @relation("BlogPostCategories")
-  tags          Tag[]         @relation("BlogPostTags")
-  externalPosts ExternalPost[]
+model BlogPost {
+  id             Int       @id @default(autoincrement())
+  title          String
+  slug           String    @unique
+  content        String?
+  summary        String?
+  excerpt        String?
+  coverImage     String?
+  status         PostStatus @default(DRAFT)
+  author         User?    @relation("UserPosts", fields: [authorId], references: [id])
+  authorId       String?
+  authorName     String? 
+  views          Int       @default(0)         
+  readingTime    Int?                           
+  seoTitle       String?                       
+  seoDescription String?                      
+  isFeatured     Boolean   @default(false) 
+  publishedAt    DateTime?
+  isPublished    Boolean   @default(false)
+  reviewedBy     User?    @relation("PostReviewer", fields: [reviewedById], references: [id])
+  reviewedById   String?
+  reviewedAt     DateTime?
+  scheduledPublish DateTime? 
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  comments       Comment[]     @relation("PostComments")
+  categories     Category[]    @relation("BlogPostCategories")
+  tags           Tag[]         @relation("BlogPostTags")
+  externalPosts  ExternalPost[]
 
   @@index([slug])
   @@index([publishedAt])
@@ -88,6 +93,7 @@ model BlogPost {
   @@index([authorId])
   @@index([isPublished])
 }
+
 
 model Comment {
   id          String   @id @default(uuid())
