@@ -31,7 +31,7 @@ model User {
   updatedAt   DateTime @updatedAt
 
   avatar           Avatar?              @relation(fields: [avatarId], references: [id])
-  avatarId         String?
+  avatarId         String?               @unique
   receivedInvitations WriterInvitation[] @relation("InvitationReceiver")
   reviewedPosts        BlogPost[]        @relation("PostReviewer")
   comments             Comment[]         @relation("UserComments")
