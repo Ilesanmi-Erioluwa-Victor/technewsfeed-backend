@@ -11,5 +11,17 @@ export const registerUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const tokens = await loginUserService(email, password);
-  return successResponse(res, tokens, "login successful", 200);
+  return successResponse(
+    res,
+    {
+      id: tokens.user.id,
+      email: tokens.user.email,
+      role: tokens.user.role,
+      name: tokens.user.name,
+      isVerified: tokens.user.isVerified,
+      token: tokens.token,
+    },
+    "login successful",
+    200
+  );
 };
