@@ -1,11 +1,11 @@
 import prisma from "@/utils/prismaClient";
 import logger from "@/utils/logger";
-import { fetchRSSFeed, sleep } from "@/services/rss.service";
+import { fetchRSSFeed, sleep } from "../services/rss.service";
 import {
   summarizeText,
   analyzeSentiment,
-} from "@/services/huggingface.service";
-import { Source } from "@/constant/sources";
+} from "../services/huggingface.service";
+import { Source } from "@/api/v1/constant/sources";
 
 export const fetchFromSource = async (source: Source) => {
   let savedCount = 0;

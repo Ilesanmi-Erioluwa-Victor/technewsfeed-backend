@@ -366,7 +366,7 @@ var require_library = __commonJS({
       "use strict";
     });
     var jf = {};
-    tr(jf, { DMMF: () => ct, Debug: () => N, Decimal: () => Fe, Extensions: () => ni, MetricsClient: () => Lr, PrismaClientInitializationError: () => P, PrismaClientKnownRequestError: () => z, PrismaClientRustPanicError: () => ae, PrismaClientUnknownRequestError: () => V, PrismaClientValidationError: () => Z, Public: () => ii, Sql: () => ie, createParam: () => va, defineDmmfProperty: () => Ca, deserializeJsonResponse: () => Vr, deserializeRawResult: () => Xn, dmmfToRuntimeDataModel: () => Ns, empty: () => Oa, getPrismaClient: () => fu, getRuntime: () => Kn, join: () => Da, makeStrictEnum: () => gu, makeTypedQueryFactory: () => Ia, objectEnumValues: () => On, raw: () => no, serializeJsonQuery: () => $n, skip: () => Mn, sqltag: () => io, warnEnvConflicts: () => hu, warnOnce: () => at });
+    tr(jf, { DMMF: () => ct, Debug: () => N, Decimal: () => Fe, Extensions: () => ni, MetricsClient: () => Lr, PrismaClientInitializationError: () => P, PrismaClientKnownRequestError: () => z2, PrismaClientRustPanicError: () => ae, PrismaClientUnknownRequestError: () => V, PrismaClientValidationError: () => Z, Public: () => ii, Sql: () => ie, createParam: () => va, defineDmmfProperty: () => Ca, deserializeJsonResponse: () => Vr, deserializeRawResult: () => Xn, dmmfToRuntimeDataModel: () => Ns, empty: () => Oa, getPrismaClient: () => fu, getRuntime: () => Kn, join: () => Da, makeStrictEnum: () => gu, makeTypedQueryFactory: () => Ia, objectEnumValues: () => On, raw: () => no, serializeJsonQuery: () => $n, skip: () => Mn, sqltag: () => io, warnEnvConflicts: () => hu, warnOnce: () => at });
     module2.exports = vu(jf);
     var ni = {};
     tr(ni, { defineExtension: () => ko, getExtensionContext: () => _o });
@@ -1001,16 +1001,16 @@ ${c}`);
     M.default.join(__dirname, "../libquery_engine-rhel-openssl-3.0.x.so.node");
     M.default.join(__dirname, "../query_engine-windows.dll.node");
     var Si = O(require("fs"));
-    var fs = gr("chmodPlusX");
+    var fs2 = gr("chmodPlusX");
     function Ri(e) {
       if (process.platform === "win32") return;
       let r = Si.default.statSync(e), t = r.mode | 64 | 8 | 1;
       if (r.mode === t) {
-        fs(`Execution permissions of ${e} are fine`);
+        fs2(`Execution permissions of ${e} are fine`);
         return;
       }
       let n = t.toString(8).slice(-3);
-      fs(`Have to call chmodPlusX on ${e}`), Si.default.chmodSync(e, n);
+      fs2(`Have to call chmodPlusX on ${e}`), Si.default.chmodSync(e, n);
     }
     function Ai(e) {
       let r = e.e, t = (a) => `Prisma cannot find the required \`${a}\` system library in your system`, n = r.message.includes("cannot open shared object file"), i = `Please refer to the documentation about Prisma's system requirements: ${wi("https://pris.ly/d/system-requirements")}`, o = `Unable to require(\`${Ce(e.id)}\`).`, s = hr({ message: r.message, code: r.code }).with({ code: "ENOENT" }, () => "File does not exist.").when(({ message: a }) => n && a.includes("libz"), () => `${t("libz")}. Please install it and try again.`).when(({ message: a }) => n && a.includes("libgcc_s"), () => `${t("libgcc_s")}. Please install it and try again.`).when(({ message: a }) => n && a.includes("libssl"), () => {
@@ -1210,7 +1210,7 @@ Env vars from ${Y(l)} overwrite the ones from ${Y(a)}
       }
     };
     x(P, "PrismaClientInitializationError");
-    var z = class extends Error {
+    var z2 = class extends Error {
       code;
       meta;
       clientVersion;
@@ -1222,7 +1222,7 @@ Env vars from ${Y(l)} overwrite the ones from ${Y(a)}
         return "PrismaClientKnownRequestError";
       }
     };
-    x(z, "PrismaClientKnownRequestError");
+    x(z2, "PrismaClientKnownRequestError");
     var ae = class extends Error {
       clientVersion;
       constructor(r, t) {
@@ -3613,7 +3613,7 @@ Note that ${s.bold("include")} statements only accept relation fields.`, a;
     }
     var lm = "P2037";
     function $r({ error: e, user_facing_error: r }, t, n) {
-      return r.error_code ? new z(um(r, n), { code: r.error_code, clientVersion: t, meta: r.meta, batchRequestIdx: r.batch_request_idx }) : new V(e, { clientVersion: t, batchRequestIdx: r.batch_request_idx });
+      return r.error_code ? new z2(um(r, n), { code: r.error_code, clientVersion: t, meta: r.meta, batchRequestIdx: r.batch_request_idx }) : new V(e, { clientVersion: t, batchRequestIdx: r.batch_request_idx });
     }
     function um(e, r) {
       let t = e.message;
@@ -4400,7 +4400,7 @@ how you used Prisma Client in the issue.
     async function Ft(e, r) {
       if (e.ok) return;
       let t = { clientVersion: r, response: e }, n = await uf(e);
-      if (n.type === "QueryEngineError") throw new z(n.body.message, { code: n.body.error_code, clientVersion: r });
+      if (n.type === "QueryEngineError") throw new z2(n.body.message, { code: n.body.error_code, clientVersion: r });
       if (n.type === "DataProxyError") {
         if (n.body === "InternalDataProxyError") throw new Ur(t, "Internal Data Proxy error");
         if ("EngineNotStarted" in n.body) {
@@ -4765,7 +4765,7 @@ ${r}`, R(t, true));
         let a = this.parseEngineResponse(s);
         if (xf(a)) {
           let l = this.getExternalAdapterError(a, i?.errorRegistry);
-          throw l ? l.error : new z(a.message, { code: a.error_code, clientVersion: this.config.clientVersion, meta: a.meta });
+          throw l ? l.error : new z2(a.message, { code: a.error_code, clientVersion: this.config.clientVersion, meta: a.meta });
         } else if (typeof a.message == "string") throw new V(a.message, { clientVersion: this.config.clientVersion });
         return a;
       }
@@ -5261,14 +5261,14 @@ More Information: https://pris.ly/d/execute-raw
       }
       handleRequestError({ error: r, clientMethod: t, callsite: n, transaction: i, args: o, modelName: s, globalOmit: a }) {
         if (Cf(r), Df(r, i)) throw r;
-        if (r instanceof z && Of(r)) {
+        if (r instanceof z2 && Of(r)) {
           let u = eu(r.meta);
           Nn({ args: o, errors: [u], callsite: n, errorFormat: this.client._errorFormat, originalMethod: t, clientVersion: this.client._clientVersion, globalOmit: a });
         }
         let l = r.message;
         if (n && (l = Tn({ callsite: n, originalMethod: t, isPanic: r.isPanic, showColors: this.client._errorFormat === "pretty", message: l })), l = this.sanitizeMessage(l), r.code) {
           let u = s ? { modelName: s, ...r.meta } : r.meta;
-          throw new z(l, { code: r.code, clientVersion: this.client._clientVersion, meta: u, batchRequestIdx: r.batchRequestIdx });
+          throw new z2(l, { code: r.code, clientVersion: this.client._clientVersion, meta: u, batchRequestIdx: r.batchRequestIdx });
         } else {
           if (r.isPanic) throw new ae(l, this.client._clientVersion);
           if (r instanceof V) throw new V(l, { clientVersion: this.client._clientVersion, batchRequestIdx: r.batchRequestIdx });
@@ -5538,7 +5538,7 @@ ${n}`;
             let p = ri.default.resolve(e.dirname, e.relativePath);
             mu.default.existsSync(p) || (p = e.dirname), rr("dirname", e.dirname), rr("relativePath", e.relativePath), rr("cwd", p);
             let d = u.engine || {};
-            if (l.errorFormat ? this._errorFormat = l.errorFormat : process.env.NODE_ENV === "production" ? this._errorFormat = "minimal" : process.env.NO_COLOR ? this._errorFormat = "colorless" : this._errorFormat = "colorless", this._runtimeDataModel = e.runtimeDataModel, this._engineConfig = { cwd: p, dirname: e.dirname, enableDebugLogs: c, allowTriggerPanic: d.allowTriggerPanic, prismaPath: d.binaryPath ?? void 0, engineEndpoint: d.endpoint, generator: e.generator, showColors: this._errorFormat === "pretty", logLevel: l.log && zl(l.log), logQueries: l.log && !!(typeof l.log == "string" ? l.log === "query" : l.log.find((f) => typeof f == "string" ? f === "query" : f.level === "query")), env: a?.parsed ?? {}, flags: [], engineWasm: e.engineWasm, compilerWasm: e.compilerWasm, clientVersion: e.clientVersion, engineVersion: e.engineVersion, previewFeatures: this._previewFeatures, activeProvider: e.activeProvider, inlineSchema: e.inlineSchema, overrideDatasources: al(l, e.datasourceNames), inlineDatasources: e.inlineDatasources, inlineSchemaHash: e.inlineSchemaHash, tracingHelper: this._tracingHelper, transactionOptions: { maxWait: l.transactionOptions?.maxWait ?? 2e3, timeout: l.transactionOptions?.timeout ?? 5e3, isolationLevel: l.transactionOptions?.isolationLevel }, logEmitter: i, isBundled: e.isBundled, adapter: s }, this._accelerateEngineConfig = { ...this._engineConfig, accelerateUtils: { resolveDatasourceUrl: jr, getBatchRequestPayload: Mr, prismaGraphQLToJSError: $r, PrismaClientUnknownRequestError: V, PrismaClientInitializationError: P, PrismaClientKnownRequestError: z, debug: N("prisma:client:accelerateEngine"), engineVersion: cu.version, clientVersion: e.clientVersion } }, rr("clientVersion", e.clientVersion), this._engine = Ml(e, this._engineConfig), this._requestHandler = new ei(this, i), l.log) for (let f of l.log) {
+            if (l.errorFormat ? this._errorFormat = l.errorFormat : process.env.NODE_ENV === "production" ? this._errorFormat = "minimal" : process.env.NO_COLOR ? this._errorFormat = "colorless" : this._errorFormat = "colorless", this._runtimeDataModel = e.runtimeDataModel, this._engineConfig = { cwd: p, dirname: e.dirname, enableDebugLogs: c, allowTriggerPanic: d.allowTriggerPanic, prismaPath: d.binaryPath ?? void 0, engineEndpoint: d.endpoint, generator: e.generator, showColors: this._errorFormat === "pretty", logLevel: l.log && zl(l.log), logQueries: l.log && !!(typeof l.log == "string" ? l.log === "query" : l.log.find((f) => typeof f == "string" ? f === "query" : f.level === "query")), env: a?.parsed ?? {}, flags: [], engineWasm: e.engineWasm, compilerWasm: e.compilerWasm, clientVersion: e.clientVersion, engineVersion: e.engineVersion, previewFeatures: this._previewFeatures, activeProvider: e.activeProvider, inlineSchema: e.inlineSchema, overrideDatasources: al(l, e.datasourceNames), inlineDatasources: e.inlineDatasources, inlineSchemaHash: e.inlineSchemaHash, tracingHelper: this._tracingHelper, transactionOptions: { maxWait: l.transactionOptions?.maxWait ?? 2e3, timeout: l.transactionOptions?.timeout ?? 5e3, isolationLevel: l.transactionOptions?.isolationLevel }, logEmitter: i, isBundled: e.isBundled, adapter: s }, this._accelerateEngineConfig = { ...this._engineConfig, accelerateUtils: { resolveDatasourceUrl: jr, getBatchRequestPayload: Mr, prismaGraphQLToJSError: $r, PrismaClientUnknownRequestError: V, PrismaClientInitializationError: P, PrismaClientKnownRequestError: z2, debug: N("prisma:client:accelerateEngine"), engineVersion: cu.version, clientVersion: e.clientVersion } }, rr("clientVersion", e.clientVersion), this._engine = Ml(e, this._engineConfig), this._requestHandler = new ei(this, i), l.log) for (let f of l.log) {
               let h = typeof f == "string" ? f : f.emit === "stdout" ? f.level : null;
               h && this.$on(h, (g) => {
                 nt.log(`${nt.tags[h] ?? ""}`, g.message || g.query);
@@ -5718,67 +5718,150 @@ var require_prisma = __commonJS({
       getRuntime: getRuntime2,
       createParam: createParam2
     } = require_library();
-    var Prisma2 = {};
-    exports2.Prisma = Prisma2;
+    var Prisma = {};
+    exports2.Prisma = Prisma;
     exports2.$Enums = {};
-    Prisma2.prismaVersion = {
+    Prisma.prismaVersion = {
       client: "6.17.1",
       engine: "272a37d34178c2894197e17273bf937f25acdeac"
     };
-    Prisma2.PrismaClientKnownRequestError = PrismaClientKnownRequestError2;
-    Prisma2.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError2;
-    Prisma2.PrismaClientRustPanicError = PrismaClientRustPanicError2;
-    Prisma2.PrismaClientInitializationError = PrismaClientInitializationError2;
-    Prisma2.PrismaClientValidationError = PrismaClientValidationError2;
-    Prisma2.Decimal = Decimal2;
-    Prisma2.sql = sqltag2;
-    Prisma2.empty = empty2;
-    Prisma2.join = join2;
-    Prisma2.raw = raw2;
-    Prisma2.validator = Public2.validator;
-    Prisma2.getExtensionContext = Extensions2.getExtensionContext;
-    Prisma2.defineExtension = Extensions2.defineExtension;
-    Prisma2.DbNull = objectEnumValues2.instances.DbNull;
-    Prisma2.JsonNull = objectEnumValues2.instances.JsonNull;
-    Prisma2.AnyNull = objectEnumValues2.instances.AnyNull;
-    Prisma2.NullTypes = {
+    Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError2;
+    Prisma.PrismaClientUnknownRequestError = PrismaClientUnknownRequestError2;
+    Prisma.PrismaClientRustPanicError = PrismaClientRustPanicError2;
+    Prisma.PrismaClientInitializationError = PrismaClientInitializationError2;
+    Prisma.PrismaClientValidationError = PrismaClientValidationError2;
+    Prisma.Decimal = Decimal2;
+    Prisma.sql = sqltag2;
+    Prisma.empty = empty2;
+    Prisma.join = join2;
+    Prisma.raw = raw2;
+    Prisma.validator = Public2.validator;
+    Prisma.getExtensionContext = Extensions2.getExtensionContext;
+    Prisma.defineExtension = Extensions2.defineExtension;
+    Prisma.DbNull = objectEnumValues2.instances.DbNull;
+    Prisma.JsonNull = objectEnumValues2.instances.JsonNull;
+    Prisma.AnyNull = objectEnumValues2.instances.AnyNull;
+    Prisma.NullTypes = {
       DbNull: objectEnumValues2.classes.DbNull,
       JsonNull: objectEnumValues2.classes.JsonNull,
       AnyNull: objectEnumValues2.classes.AnyNull
     };
-    var path = require("path");
+    var path2 = require("path");
     exports2.Prisma.TransactionIsolationLevel = makeStrictEnum2({
       ReadUncommitted: "ReadUncommitted",
       ReadCommitted: "ReadCommitted",
       RepeatableRead: "RepeatableRead",
       Serializable: "Serializable"
     });
+    exports2.Prisma.AvatarScalarFieldEnum = {
+      id: "id",
+      url: "url",
+      fileType: "fileType",
+      size: "size",
+      uploadedAt: "uploadedAt"
+    };
     exports2.Prisma.UserScalarFieldEnum = {
       id: "id",
       email: "email",
       password: "password",
       name: "name",
-      avatarUrl: "avatarUrl",
+      role: "role",
       isVerified: "isVerified",
+      isActive: "isActive",
+      invitedBy: "invitedBy",
       createdAt: "createdAt",
-      updatedAt: "updatedAt"
+      updatedAt: "updatedAt",
+      avatarId: "avatarId"
     };
-    exports2.Prisma.NewsScalarFieldEnum = {
+    exports2.Prisma.WriterInvitationScalarFieldEnum = {
+      id: "id",
+      email: "email",
+      token: "token",
+      role: "role",
+      status: "status",
+      expiresAt: "expiresAt",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt",
+      invitedById: "invitedById",
+      invitedUserId: "invitedUserId"
+    };
+    exports2.Prisma.BlogPostScalarFieldEnum = {
       id: "id",
       title: "title",
+      slug: "slug",
       content: "content",
       summary: "summary",
       excerpt: "excerpt",
-      link: "link",
-      author: "author",
+      coverImage: "coverImage",
+      status: "status",
+      authorId: "authorId",
+      authorName: "authorName",
+      views: "views",
+      readingTime: "readingTime",
+      seoTitle: "seoTitle",
+      seoDescription: "seoDescription",
+      isFeatured: "isFeatured",
       publishedAt: "publishedAt",
+      isPublished: "isPublished",
+      reviewedById: "reviewedById",
+      reviewedAt: "reviewedAt",
+      scheduledPublish: "scheduledPublish",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports2.Prisma.CommentScalarFieldEnum = {
+      id: "id",
+      content: "content",
+      postId: "postId",
+      authorId: "authorId",
+      parentId: "parentId",
       createdAt: "createdAt",
       updatedAt: "updatedAt",
-      embeddings: "embeddings",
+      isApproved: "isApproved",
+      isDeleted: "isDeleted",
+      metadata: "metadata"
+    };
+    exports2.Prisma.AuditLogScalarFieldEnum = {
+      id: "id",
+      action: "action",
+      actorId: "actorId",
+      targetId: "targetId",
+      targetType: "targetType",
+      description: "description",
+      payload: "payload",
+      ipHash: "ipHash",
+      createdAt: "createdAt"
+    };
+    exports2.Prisma.ExternalPostScalarFieldEnum = {
+      id: "id",
+      title: "title",
+      summary: "summary",
+      link: "link",
+      coverImage: "coverImage",
+      publishedAt: "publishedAt",
+      sourceName: "sourceName",
+      sourceUrl: "sourceUrl",
+      authorName: "authorName",
       sentiment: "sentiment",
-      tags: "tags",
+      isFeatured: "isFeatured",
+      blogPostId: "blogPostId",
       sourceRefId: "sourceRefId",
-      categoryId: "categoryId"
+      createdAt: "createdAt"
+    };
+    exports2.Prisma.CategoryScalarFieldEnum = {
+      id: "id",
+      name: "name",
+      slug: "slug",
+      description: "description",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
+    };
+    exports2.Prisma.TagScalarFieldEnum = {
+      id: "id",
+      name: "name",
+      slug: "slug",
+      createdAt: "createdAt",
+      updatedAt: "updatedAt"
     };
     exports2.Prisma.NewsSourceScalarFieldEnum = {
       id: "id",
@@ -5802,20 +5885,13 @@ var require_prisma = __commonJS({
       verified: "verified",
       createdAt: "createdAt"
     };
-    exports2.Prisma.CategoryScalarFieldEnum = {
-      id: "id",
-      name: "name",
-      description: "description",
-      createdAt: "createdAt",
-      updatedAt: "updatedAt"
-    };
     exports2.Prisma.SortOrder = {
       asc: "asc",
       desc: "desc"
     };
     exports2.Prisma.NullableJsonNullValueInput = {
-      DbNull: Prisma2.DbNull,
-      JsonNull: Prisma2.JsonNull
+      DbNull: Prisma.DbNull,
+      JsonNull: Prisma.JsonNull
     };
     exports2.Prisma.QueryMode = {
       default: "default",
@@ -5826,17 +5902,42 @@ var require_prisma = __commonJS({
       last: "last"
     };
     exports2.Prisma.JsonNullValueFilter = {
-      DbNull: Prisma2.DbNull,
-      JsonNull: Prisma2.JsonNull,
-      AnyNull: Prisma2.AnyNull
+      DbNull: Prisma.DbNull,
+      JsonNull: Prisma.JsonNull,
+      AnyNull: Prisma.AnyNull
+    };
+    exports2.UserRole = exports2.$Enums.UserRole = {
+      USER: "USER",
+      WRITER: "WRITER",
+      ADMIN: "ADMIN"
+    };
+    exports2.PostStatus = exports2.$Enums.PostStatus = {
+      DRAFT: "DRAFT",
+      REVIEW: "REVIEW",
+      APPROVED: "APPROVED",
+      PUBLISHED: "PUBLISHED",
+      REJECTED: "REJECTED",
+      ARCHIVED: "ARCHIVED"
+    };
+    exports2.InvitationStatus = exports2.$Enums.InvitationStatus = {
+      PENDING: "PENDING",
+      ACCEPTED: "ACCEPTED",
+      EXPIRED: "EXPIRED",
+      REVOKED: "REVOKED"
     };
     exports2.Prisma.ModelName = {
+      Avatar: "Avatar",
       User: "User",
-      News: "News",
+      WriterInvitation: "WriterInvitation",
+      BlogPost: "BlogPost",
+      Comment: "Comment",
+      AuditLog: "AuditLog",
+      ExternalPost: "ExternalPost",
+      Category: "Category",
+      Tag: "Tag",
       NewsSource: "NewsSource",
       UserPreference: "UserPreference",
-      NewsletterSubscription: "NewsletterSubscription",
-      Category: "Category"
+      NewsletterSubscription: "NewsletterSubscription"
     };
     var config = {
       "generator": {
@@ -5874,7 +5975,6 @@ var require_prisma = __commonJS({
         "db"
       ],
       "activeProvider": "postgresql",
-      "postinstall": false,
       "inlineDatasources": {
         "db": {
           "url": {
@@ -5883,47 +5983,47 @@ var require_prisma = __commonJS({
           }
         }
       },
-      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n  output   = "../src/generated/prisma"\n}\n\ndatasource db {\n  provider  = "postgresql"\n  url       = env("DATABASE_URL")\n  directUrl = env("DIRECT_URL")\n}\n\nmodel User {\n  id         String   @id @default(uuid())\n  email      String   @unique\n  password   String\n  name       String?\n  avatarUrl  String?\n  isVerified Boolean  @default(false)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  preferences   UserPreference[]\n  subscriptions NewsletterSubscription[]\n}\n\nmodel News {\n  id          Int         @id @default(autoincrement())\n  title       String\n  content     String?\n  summary     String?\n  excerpt     String?\n  link        String      @unique\n  author      String?\n  publishedAt DateTime\n  createdAt   DateTime    @default(now())\n  updatedAt   DateTime    @updatedAt\n  embeddings  Json?\n  sentiment   String?\n  tags        Json?\n  sourceRefId Int?\n  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])\n  categoryId  Int?\n  category    Category?   @relation(fields: [categoryId], references: [id])\n\n  @@index([categoryId])\n  @@index([publishedAt])\n}\n\nmodel NewsSource {\n  id          Int       @id @default(autoincrement())\n  name        String    @unique\n  url         String\n  lastFetched DateTime?\n  createdAt   DateTime  @default(now())\n  updatedAt   DateTime  @updatedAt\n  News        News[]\n}\n\nmodel UserPreference {\n  id        String   @id @default(uuid())\n  userId    String\n  topics    String[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  user      User     @relation(fields: [userId], references: [id])\n\n  @@unique([userId])\n}\n\nmodel NewsletterSubscription {\n  id        String   @id @default(uuid())\n  userId    String?\n  email     String   @unique\n  verified  Boolean  @default(false)\n  createdAt DateTime @default(now())\n  user      User?    @relation(fields: [userId], references: [id])\n}\n\nmodel Category {\n  id          Int      @id @default(autoincrement())\n  name        String   @unique\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  News        News[]\n}\n',
-      "inlineSchemaHash": "a9683305819532156c79f21b0f142b4d51ff6c5ddf690c7cf93d2dc9aaa04f58",
+      "inlineSchema": 'generator client {\n  provider = "prisma-client-js"\n  output   = "../src/generated/prisma"\n}\n\ndatasource db {\n  provider  = "postgresql"\n  url       = env("DATABASE_URL")\n  directUrl = env("DIRECT_URL")\n}\n\nmodel Avatar {\n  id         String   @id @default(uuid())\n  url        String\n  fileType   String?\n  size       Int?\n  uploadedAt DateTime @default(now())\n  user       User?    @relation\n}\n\nmodel User {\n  id         String   @id @default(uuid())\n  email      String   @unique\n  password   String\n  name       String?\n  role       UserRole @default(USER)\n  isVerified Boolean  @default(false)\n  isActive   Boolean  @default(true)\n  invitedBy  String?\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  avatar              Avatar?                  @relation(fields: [avatarId], references: [id])\n  avatarId            String?                  @unique\n  receivedInvitations WriterInvitation[]       @relation("InvitationReceiver")\n  reviewedPosts       BlogPost[]               @relation("PostReviewer")\n  comments            Comment[]                @relation("UserComments")\n  auditLogs           AuditLog[]               @relation("UserAuditLogs")\n  posts               BlogPost[]               @relation("UserPosts")\n  preferences         UserPreference[]\n  subscriptions       NewsletterSubscription[]\n  sentInvitations     WriterInvitation[]       @relation("InvitationSender")\n\n  @@index([role])\n  @@index([isActive])\n}\n\nmodel WriterInvitation {\n  id            String           @id @default(uuid())\n  email         String           @unique\n  token         String           @unique\n  role          UserRole         @default(WRITER)\n  status        InvitationStatus @default(PENDING)\n  expiresAt     DateTime\n  createdAt     DateTime         @default(now())\n  updatedAt     DateTime         @updatedAt\n  invitedBy     User             @relation("InvitationSender", fields: [invitedById], references: [id])\n  invitedById   String\n  invitedUser   User?            @relation("InvitationReceiver", fields: [invitedUserId], references: [id])\n  invitedUserId String?\n\n  @@index([token])\n  @@index([status])\n  @@index([expiresAt])\n}\n\nmodel BlogPost {\n  id               Int        @id @default(autoincrement())\n  title            String\n  slug             String     @unique\n  content          String?\n  summary          String?\n  excerpt          String?\n  coverImage       String?\n  status           PostStatus @default(DRAFT)\n  author           User?      @relation("UserPosts", fields: [authorId], references: [id])\n  authorId         String?\n  authorName       String?\n  views            Int        @default(0)\n  readingTime      Int?\n  seoTitle         String?\n  seoDescription   String?\n  isFeatured       Boolean    @default(false)\n  publishedAt      DateTime?\n  isPublished      Boolean    @default(false)\n  reviewedBy       User?      @relation("PostReviewer", fields: [reviewedById], references: [id])\n  reviewedById     String?\n  reviewedAt       DateTime?\n  scheduledPublish DateTime?\n  createdAt        DateTime   @default(now())\n  updatedAt        DateTime   @updatedAt\n\n  comments      Comment[]      @relation("PostComments")\n  categories    Category[]     @relation("BlogPostCategories")\n  tags          Tag[]          @relation("BlogPostTags")\n  externalPosts ExternalPost[]\n\n  @@index([slug])\n  @@index([publishedAt])\n  @@index([status])\n  @@index([authorId])\n  @@index([isPublished])\n}\n\nmodel Comment {\n  id         String   @id @default(uuid())\n  content    String\n  post       BlogPost @relation("PostComments", fields: [postId], references: [id])\n  postId     Int\n  author     User?    @relation("UserComments", fields: [authorId], references: [id])\n  authorId   String?\n  parentId   String?\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n  isApproved Boolean  @default(true)\n  isDeleted  Boolean  @default(false)\n  metadata   Json?\n\n  @@index([postId])\n  @@index([authorId])\n  @@index([createdAt])\n}\n\nmodel AuditLog {\n  id          String   @id @default(uuid())\n  action      String\n  actorId     String?\n  actor       User?    @relation("UserAuditLogs", fields: [actorId], references: [id])\n  targetId    String?\n  targetType  String?\n  description String?\n  payload     Json?\n  ipHash      String?\n  createdAt   DateTime @default(now())\n\n  @@index([actorId])\n  @@index([action])\n  @@index([createdAt])\n}\n\nmodel ExternalPost {\n  id          Int         @id @default(autoincrement())\n  title       String\n  summary     String?\n  link        String      @unique\n  coverImage  String?\n  publishedAt DateTime\n  sourceName  String\n  sourceUrl   String?\n  authorName  String?\n  sentiment   String?\n  isFeatured  Boolean     @default(false)\n  blogPost    BlogPost?   @relation(fields: [blogPostId], references: [id])\n  blogPostId  Int?\n  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])\n  sourceRefId Int?\n  createdAt   DateTime    @default(now())\n}\n\nmodel Category {\n  id          Int        @id @default(autoincrement())\n  name        String     @unique\n  slug        String     @unique\n  description String?\n  createdAt   DateTime   @default(now())\n  updatedAt   DateTime   @updatedAt\n  posts       BlogPost[] @relation("BlogPostCategories")\n}\n\nmodel Tag {\n  id        Int        @id @default(autoincrement())\n  name      String     @unique\n  slug      String     @unique\n  createdAt DateTime   @default(now())\n  updatedAt DateTime   @updatedAt\n  posts     BlogPost[] @relation("BlogPostTags")\n}\n\nmodel NewsSource {\n  id            Int            @id @default(autoincrement())\n  name          String         @unique\n  url           String\n  lastFetched   DateTime?\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n  externalPosts ExternalPost[]\n}\n\nmodel UserPreference {\n  id        String   @id @default(uuid())\n  userId    String\n  topics    String[]\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  user      User     @relation(fields: [userId], references: [id])\n\n  @@unique([userId])\n}\n\nmodel NewsletterSubscription {\n  id        String   @id @default(uuid())\n  userId    String?\n  email     String   @unique\n  verified  Boolean  @default(false)\n  createdAt DateTime @default(now())\n  user      User?    @relation(fields: [userId], references: [id])\n}\n\nenum UserRole {\n  USER\n  WRITER\n  ADMIN\n}\n\nenum PostStatus {\n  DRAFT\n  REVIEW\n  APPROVED\n  PUBLISHED\n  REJECTED\n  ARCHIVED\n}\n\nenum InvitationStatus {\n  PENDING\n  ACCEPTED\n  EXPIRED\n  REVOKED\n}\n',
+      "inlineSchemaHash": "b49a61b0a79bb7a958e87ddaa2576932632c7b1dd40d83518573d39de17b9f5a",
       "copyEngine": true
     };
-    var fs = require("fs");
+    var fs2 = require("fs");
     config.dirname = __dirname;
-    if (!fs.existsSync(path.join(__dirname, "schema.prisma"))) {
+    if (!fs2.existsSync(path2.join(__dirname, "schema.prisma"))) {
       const alternativePaths = [
         "src/generated/prisma",
         "generated/prisma"
       ];
       const alternativePath = alternativePaths.find((altPath) => {
-        return fs.existsSync(path.join(process.cwd(), altPath, "schema.prisma"));
+        return fs2.existsSync(path2.join(process.cwd(), altPath, "schema.prisma"));
       }) ?? alternativePaths[0];
-      config.dirname = path.join(process.cwd(), alternativePath);
+      config.dirname = path2.join(process.cwd(), alternativePath);
       config.isBundled = true;
     }
-    config.runtimeDataModel = JSON.parse('{"models":{"User":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"password","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"avatarUrl","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isVerified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"preferences","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UserPreference","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"subscriptions","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsletterSubscription","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"News":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"summary","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"excerpt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"link","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"publishedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"embeddings","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sentiment","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"tags","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRefId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRef","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsSource","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":["sourceRefId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"categoryId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"category","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Category","nativeType":null,"relationName":"CategoryToNews","relationFromFields":["categoryId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"NewsSource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"url","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"lastFetched","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"News","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"News","nativeType":null,"relationName":"NewsToNewsSource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"UserPreference":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"topics","kind":"scalar","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["userId"]],"uniqueIndexes":[{"name":null,"fields":["userId"]}],"isGenerated":false},"NewsletterSubscription":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"verified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Category":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"News","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"News","nativeType":null,"relationName":"CategoryToNews","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{},"types":{}}');
+    config.runtimeDataModel = JSON.parse('{"models":{"Avatar":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"url","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"fileType","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"size","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"uploadedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"AvatarToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"User":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"password","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"UserRole","nativeType":null,"default":"USER","isGenerated":false,"isUpdatedAt":false},{"name":"isVerified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"isActive","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":true,"isGenerated":false,"isUpdatedAt":false},{"name":"invitedBy","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"avatar","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Avatar","nativeType":null,"relationName":"AvatarToUser","relationFromFields":["avatarId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"avatarId","kind":"scalar","isList":false,"isRequired":false,"isUnique":true,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"receivedInvitations","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"WriterInvitation","nativeType":null,"relationName":"InvitationReceiver","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"reviewedPosts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"PostReviewer","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"comments","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Comment","nativeType":null,"relationName":"UserComments","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"auditLogs","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"AuditLog","nativeType":null,"relationName":"UserAuditLogs","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"posts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"UserPosts","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"preferences","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"UserPreference","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"subscriptions","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsletterSubscription","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"sentInvitations","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"WriterInvitation","nativeType":null,"relationName":"InvitationSender","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"WriterInvitation":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"token","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"role","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"UserRole","nativeType":null,"default":"WRITER","isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"InvitationStatus","nativeType":null,"default":"PENDING","isGenerated":false,"isUpdatedAt":false},{"name":"expiresAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"invitedBy","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"InvitationSender","relationFromFields":["invitedById"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"invitedById","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"invitedUser","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"InvitationReceiver","relationFromFields":["invitedUserId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"invitedUserId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"BlogPost":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"slug","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"summary","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"excerpt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"coverImage","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"status","kind":"enum","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"PostStatus","nativeType":null,"default":"DRAFT","isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserPosts","relationFromFields":["authorId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"authorId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"authorName","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"views","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":0,"isGenerated":false,"isUpdatedAt":false},{"name":"readingTime","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"seoTitle","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"seoDescription","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isFeatured","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"publishedAt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isPublished","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"reviewedBy","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"PostReviewer","relationFromFields":["reviewedById"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"reviewedById","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"reviewedAt","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"scheduledPublish","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"comments","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Comment","nativeType":null,"relationName":"PostComments","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"categories","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Category","nativeType":null,"relationName":"BlogPostCategories","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"tags","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Tag","nativeType":null,"relationName":"BlogPostTags","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false},{"name":"externalPosts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ExternalPost","nativeType":null,"relationName":"BlogPostToExternalPost","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Comment":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"content","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"post","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"PostComments","relationFromFields":["postId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"postId","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"author","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserComments","relationFromFields":["authorId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"authorId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"parentId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"isApproved","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":true,"isGenerated":false,"isUpdatedAt":false},{"name":"isDeleted","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"metadata","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"AuditLog":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"action","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"actorId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"actor","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserAuditLogs","relationFromFields":["actorId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"targetId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"targetType","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"payload","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"Json","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"ipHash","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"ExternalPost":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"title","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"summary","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"link","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"coverImage","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"publishedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceName","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceUrl","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"authorName","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sentiment","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"isFeatured","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"blogPost","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"BlogPostToExternalPost","relationFromFields":["blogPostId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"blogPostId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRef","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"NewsSource","nativeType":null,"relationName":"ExternalPostToNewsSource","relationFromFields":["sourceRefId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false},{"name":"sourceRefId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"Int","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Category":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"slug","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"description","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"posts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"BlogPostCategories","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"Tag":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"slug","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"posts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"BlogPost","nativeType":null,"relationName":"BlogPostTags","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"NewsSource":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"Int","nativeType":null,"default":{"name":"autoincrement","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"name","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"url","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"lastFetched","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"externalPosts","kind":"object","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"ExternalPost","nativeType":null,"relationName":"ExternalPostToNewsSource","relationFromFields":[],"relationToFields":[],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false},"UserPreference":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"topics","kind":"scalar","isList":true,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"updatedAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"DateTime","nativeType":null,"isGenerated":false,"isUpdatedAt":true},{"name":"user","kind":"object","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"UserToUserPreference","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[["userId"]],"uniqueIndexes":[{"name":null,"fields":["userId"]}],"isGenerated":false},"NewsletterSubscription":{"dbName":null,"schema":null,"fields":[{"name":"id","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":true,"isReadOnly":false,"hasDefaultValue":true,"type":"String","nativeType":null,"default":{"name":"uuid","args":[4]},"isGenerated":false,"isUpdatedAt":false},{"name":"userId","kind":"scalar","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":true,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"email","kind":"scalar","isList":false,"isRequired":true,"isUnique":true,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"String","nativeType":null,"isGenerated":false,"isUpdatedAt":false},{"name":"verified","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"Boolean","nativeType":null,"default":false,"isGenerated":false,"isUpdatedAt":false},{"name":"createdAt","kind":"scalar","isList":false,"isRequired":true,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":true,"type":"DateTime","nativeType":null,"default":{"name":"now","args":[]},"isGenerated":false,"isUpdatedAt":false},{"name":"user","kind":"object","isList":false,"isRequired":false,"isUnique":false,"isId":false,"isReadOnly":false,"hasDefaultValue":false,"type":"User","nativeType":null,"relationName":"NewsletterSubscriptionToUser","relationFromFields":["userId"],"relationToFields":["id"],"isGenerated":false,"isUpdatedAt":false}],"primaryKey":null,"uniqueFields":[],"uniqueIndexes":[],"isGenerated":false}},"enums":{"UserRole":{"values":[{"name":"USER","dbName":null},{"name":"WRITER","dbName":null},{"name":"ADMIN","dbName":null}],"dbName":null},"PostStatus":{"values":[{"name":"DRAFT","dbName":null},{"name":"REVIEW","dbName":null},{"name":"APPROVED","dbName":null},{"name":"PUBLISHED","dbName":null},{"name":"REJECTED","dbName":null},{"name":"ARCHIVED","dbName":null}],"dbName":null},"InvitationStatus":{"values":[{"name":"PENDING","dbName":null},{"name":"ACCEPTED","dbName":null},{"name":"EXPIRED","dbName":null},{"name":"REVOKED","dbName":null}],"dbName":null}},"types":{}}');
     defineDmmfProperty2(exports2.Prisma, config.runtimeDataModel);
     config.engineWasm = void 0;
     config.compilerWasm = void 0;
     var { warnEnvConflicts: warnEnvConflicts2 } = require_library();
     warnEnvConflicts2({
-      rootEnvPath: config.relativeEnvPaths.rootEnvPath && path.resolve(config.dirname, config.relativeEnvPaths.rootEnvPath),
-      schemaEnvPath: config.relativeEnvPaths.schemaEnvPath && path.resolve(config.dirname, config.relativeEnvPaths.schemaEnvPath)
+      rootEnvPath: config.relativeEnvPaths.rootEnvPath && path2.resolve(config.dirname, config.relativeEnvPaths.rootEnvPath),
+      schemaEnvPath: config.relativeEnvPaths.schemaEnvPath && path2.resolve(config.dirname, config.relativeEnvPaths.schemaEnvPath)
     });
     var PrismaClient2 = getPrismaClient2(config);
     exports2.PrismaClient = PrismaClient2;
-    Object.assign(exports2, Prisma2);
-    path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
-    path.join(process.cwd(), "src/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node");
-    path.join(__dirname, "schema.prisma");
-    path.join(process.cwd(), "src/generated/prisma/schema.prisma");
+    Object.assign(exports2, Prisma);
+    path2.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+    path2.join(process.cwd(), "src/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node");
+    path2.join(__dirname, "schema.prisma");
+    path2.join(process.cwd(), "src/generated/prisma/schema.prisma");
   }
 });
 
 // src/index.ts
-var import_dotenv = __toESM(require("dotenv"));
+var import_dotenv2 = __toESM(require("dotenv"));
 
 // src/app.ts
-var import_express2 = __toESM(require("express"));
+var import_express4 = __toESM(require("express"));
 var import_cors = __toESM(require("cors"));
 
 // src/utils/logger.ts
@@ -5954,7 +6054,13 @@ var errorHandler = (err, req, res, next) => {
   });
 };
 
-// src/constant/sources.ts
+// src/api/index.ts
+var import_express3 = __toESM(require("express"));
+
+// src/api/v1/index.ts
+var import_express2 = __toESM(require("express"));
+
+// src/api/v1/constant/sources.ts
 var sources = [
   { url: "https://blogs.nvidia.com/feed/", name: "NVIDIA Blog" },
   { url: "https://blog.jetbrains.com/feed/", name: "JetBrains Blog" },
@@ -5967,7 +6073,7 @@ var sources = [
     url: "https://aws.amazon.com/blogs/machine-learning/feed/",
     name: "AWS ML"
   },
-  { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
+  // { url: "https://huggingface.blog/feed.xml", name: "Hugging Face" },
   { url: " https://techcrunch.com/feed/", name: "Tech Crunch" },
   { url: "https://webkit.org/feed/", name: "WebKit" },
   // {
@@ -5980,10 +6086,40 @@ var sources = [
   }
 ];
 
-// src/controllers/News/newsController.ts
-var import_prisma2 = __toESM(require_prisma());
+// src/types/errors.ts
+var AppError = class extends Error {
+  statusCode;
+  isOperational;
+  constructor(message, statusCode, isOperational = true) {
+    super(message);
+    this.statusCode = statusCode;
+    this.isOperational = isOperational;
+    Error.captureStackTrace(this, this.constructor);
+  }
+};
+var BadRequestError = class extends AppError {
+  constructor(message = "Bad Request") {
+    super(message, 400);
+  }
+};
+var InternalServerError = class extends AppError {
+  constructor(message = "Internal Server Error") {
+    super(message, 500, false);
+  }
+};
 
-// src/services/rss.service.ts
+// src/utils/prismaClient.ts
+var import_prisma = __toESM(require_prisma());
+var prisma = new import_prisma.PrismaClient({
+  log: ["query", "error", "warn"],
+  transactionOptions: {
+    maxWait: 1e4,
+    timeout: 1e4
+  }
+});
+var prismaClient_default = prisma;
+
+// src/api/v1/services/rss.service.ts
 var import_axios = __toESM(require("axios"));
 var xml2js = __toESM(require("xml2js"));
 
@@ -6020,7 +6156,44 @@ var classifyContent = (content, title) => {
   }
 };
 
-// src/services/rss.service.ts
+// src/config/env.ts
+var import_zod = require("zod");
+var import_dotenv = __toESM(require("dotenv"));
+var import_fs = __toESM(require("fs"));
+var import_path = __toESM(require("path"));
+import_dotenv.default.config();
+var envSchema = import_zod.z.object({
+  NODE_ENV: import_zod.z.enum(["development", "test", "production"]).default("development"),
+  DATABASE_URL: import_zod.z.string().url(),
+  DIRECT_URL: import_zod.z.string().url().optional(),
+  PORT: import_zod.z.string().default("3000"),
+  FETCH_SECRET: import_zod.z.string().optional(),
+  EMAIL_APP_PASSWORD: import_zod.z.string().optional(),
+  HUGGING_FACE_TOKEN: import_zod.z.string().optional(),
+  APP_URL: import_zod.z.string().optional()
+});
+var parsed = envSchema.safeParse(process.env);
+if (!parsed.success) {
+  console.error("\u274C Invalid environment configuration:");
+  console.error(parsed.error.format());
+  throw new BadRequestError(
+    "Invalid environment variables. Please check your .env file."
+  );
+}
+var env = parsed.data;
+var envFilePath = import_path.default.resolve(process.cwd(), ".env");
+var envFileContent = import_fs.default.readFileSync(envFilePath, "utf-8");
+var envFileKeys = envFileContent.split("\n").map((line) => line.split("=")[0]?.trim()).filter((key) => key && !key.startsWith("#"));
+var allowedKeys = Object.keys(envSchema.shape);
+for (const key of envFileKeys) {
+  if (!allowedKeys.includes(key)) {
+    throw new BadRequestError(
+      `\u274C Unknown environment variable in .env: ${key}`
+    );
+  }
+}
+
+// src/api/v1/services/rss.service.ts
 var DEFAULT_TIMEOUT = 2e4;
 var DEFAULT_RETRIES = 3;
 var BACKOFF_BASE_MS = 800;
@@ -6049,7 +6222,7 @@ function normalizeContentValue(raw2) {
 }
 async function fetchWithRetries(url, opts = {}, attempts = DEFAULT_RETRIES) {
   let lastError = null;
-  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+  const baseUrl = env.APP_URL || "http://localhost:3000";
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {
       const cfg = {
@@ -6084,17 +6257,17 @@ async function fetchWithRetries(url, opts = {}, attempts = DEFAULT_RETRIES) {
   throw lastError;
 }
 async function parseFeedXml(xml, sourceName) {
-  const parsed = await xml2js.parseStringPromise(xml, {
+  const parsed2 = await xml2js.parseStringPromise(xml, {
     trim: true,
     explicitArray: true
   });
-  const rssItems = parsed?.rss?.channel?.[0]?.item;
+  const rssItems = parsed2?.rss?.channel?.[0]?.item;
   if (Array.isArray(rssItems) && rssItems.length) return rssItems;
-  const atomEntries = parsed?.feed?.entry;
+  const atomEntries = parsed2?.feed?.entry;
   if (Array.isArray(atomEntries) && atomEntries.length) return atomEntries;
-  for (const key of Object.keys(parsed)) {
-    if (Array.isArray(parsed[key]) && parsed[key].some((n) => n.title)) {
-      return parsed[key];
+  for (const key of Object.keys(parsed2)) {
+    if (Array.isArray(parsed2[key]) && parsed2[key].some((n) => n.title)) {
+      return parsed2[key];
     }
   }
   logger_default.warn(`parseFeedXml: no items found for ${sourceName}`);
@@ -6112,6 +6285,7 @@ var fetchRSSFeed = async (url, sourceName) => {
       const title = item.title?.[0] || item.name?.[0] || "No Title";
       const link = extractLink(item);
       const category = item.category?.[0] || item["dc:subject"]?.[0] || classifyContent(content, title);
+      const image = item["media:content"]?.[0]?.$?.url || item["media:thumbnail"]?.[0]?.$?.url || item["enclosure"]?.[0]?.$?.url || (typeof content === "string" ? content.match(/https?:\/\/[^\s"]+\.(?:jpg|jpeg|png|gif)/)?.[0] : null) || null;
       return {
         title,
         content: cleanContent(content),
@@ -6123,7 +6297,8 @@ var fetchRSSFeed = async (url, sourceName) => {
         publishedAt: new Date(
           item.pubDate?.[0] || item.updated?.[0] || Date.now()
         ),
-        guid: item.guid?.[0] || item.id?.[0]
+        guid: item.guid?.[0] || item.id?.[0],
+        image
       };
     }).filter((a) => a.link && a.title && a.link.length > 0);
     return articles;
@@ -6143,6 +6318,7 @@ var fetchRSSFeed = async (url, sourceName) => {
             it.content || it.content_snippet || it.description || ""
           );
           const title = it.title || "No Title";
+          const image = it.thumbnail || (content.match(/https?:\/\/[^\s"]+\.(?:jpg|jpeg|png|gif)/)?.[0] ?? null);
           return {
             title,
             content: cleanContent(content),
@@ -6151,7 +6327,8 @@ var fetchRSSFeed = async (url, sourceName) => {
             source: sourceName,
             author: it.author || "Unknown",
             category: classifyContent(content, title),
-            publishedAt: new Date(it.pubDate || Date.now())
+            publishedAt: new Date(it.pubDate || Date.now()),
+            image
           };
         }).filter((a) => a.link);
       } catch (proxyErr) {
@@ -6165,60 +6342,81 @@ var fetchRSSFeed = async (url, sourceName) => {
   }
 };
 
-// src/types/errors.ts
-var AppError = class extends Error {
-  statusCode;
-  isOperational;
-  constructor(message, statusCode, isOperational = true) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = isOperational;
-    Error.captureStackTrace(this, this.constructor);
-  }
-};
-var InternalServerError = class extends AppError {
-  constructor(message = "Internal Server Error") {
-    super(message, 500, false);
-  }
-};
-
-// src/utils/prismaClient.ts
-var import_prisma = __toESM(require_prisma());
-var prisma = new import_prisma.PrismaClient({
-  log: ["query", "error", "warn"]
-});
-var prismaClient_default = prisma;
-
-// src/services/huggingface.service.ts
+// src/api/v1/services/huggingface.service.ts
 var import_axios2 = __toESM(require("axios"));
-var HUGGINGFACE_API_KEY = process.env.HUGGING_FACE_TOKEN;
-if (!HUGGINGFACE_API_KEY) {
-  logger_default.warn("\u26A0\uFE0F Missing HF_API_KEY in environment variables");
-}
-var summarizeText = async (text) => {
-  try {
-    if (!text || text.trim().length === 0) return null;
-    const response = await import_axios2.default.post(
-      "https://api-inference.huggingface.co/models/facebook/bart-large-cnn",
-      { inputs: text.slice(0, 1500) },
-      {
-        headers: {
-          Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
-          "Content-Type": "application/json"
+var HUGGINGFACE_API_KEY = env.HUGGING_FACE_TOKEN;
+async function huggingFaceRequest(model, inputs, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await import_axios2.default.post(
+        `https://api-inference.huggingface.co/models/${model}`,
+        { inputs },
+        {
+          headers: { Authorization: `Bearer ${HUGGINGFACE_API_KEY}` },
+          timeout: 45e3
         }
+      );
+      if (response.data?.error && response.data.estimated_time) {
+        const waitTime = Math.min(
+          response.data.estimated_time * 1e3 + 5e3,
+          3e4
+        );
+        logger_default.info(`\u23F3 Model ${model} loading, waiting ${waitTime / 1e3}s`);
+        await new Promise((r) => setTimeout(r, waitTime));
+        continue;
       }
+      return response.data;
+    } catch (err) {
+      logger_default.warn(`Attempt ${attempt} failed for ${model}: ${err.message}`);
+      if (attempt === maxRetries) throw err;
+      await new Promise((r) => setTimeout(r, 3e3 * attempt));
+    }
+  }
+}
+async function summarizeText(text) {
+  if (!text || text.trim().length === 0) return null;
+  try {
+    const data = await huggingFaceRequest(
+      "facebook/bart-large-cnn",
+      text.slice(0, 1024)
     );
-    const summary = response.data?.[0]?.summary_text || null;
-    return summary;
-  } catch (error) {
-    logger_default.error(`\u{1F9E0} HuggingFace Summarization failed: ${error.message}`);
+    return data?.[0]?.summary_text || null;
+  } catch (err) {
+    logger_default.error(`\u{1F9E0} Summarization failed: ${err.message}`);
     return null;
   }
-};
+}
+async function analyzeSentiment(text) {
+  if (!text || text.trim().length === 0) return "neutral";
+  const model = "cardiffnlp/twitter-roberta-base-sentiment-latest";
+  try {
+    const data = await huggingFaceRequest(model, text.slice(0, 1024));
+    logger_default.info(
+      `\u{1F60A} Raw response from ${model}: ${JSON.stringify(data).slice(0, 300)}...`
+    );
+    if (Array.isArray(data) && data.length > 0) {
+      const predictions = data[0];
+      if (!Array.isArray(predictions)) {
+        logger_default.warn(`\u26A0\uFE0F Unexpected predictions format, returning "neutral"`);
+        return "neutral";
+      }
+      const top = predictions.reduce(
+        (prev, curr) => curr.score > prev.score ? curr : prev
+      );
+      const label = top.label.toLowerCase();
+      logger_default.info(`\u{1F60A} Top sentiment: ${label}, score: ${top.score}`);
+      if (label.includes("positive")) return "positive";
+      if (label.includes("negative")) return "negative";
+    }
+    return "neutral";
+  } catch (err) {
+    logger_default.error(`\u{1F60A} Sentiment analysis failed: ${err.message}`);
+    return "neutral";
+  }
+}
 
-// src/services/newsFetcher.service.ts
+// src/api/v1/services/newsFetcher.service.ts
 var fetchFromSource = async (source) => {
-  let aiSummary = null;
   let savedCount = 0;
   let dbSource = await prismaClient_default.newsSource.findUnique({
     where: { name: source.name }
@@ -6229,96 +6427,121 @@ var fetchFromSource = async (source) => {
     });
   }
   const articles = await fetchRSSFeed(source.url, source.name);
-  if (!articles || articles.length === 0) {
-    logger_default.warn(`\u26A0\uFE0F No articles found for ${source.name}`);
+  if (!articles?.length) {
     return [];
   }
   const newArticles = dbSource.lastFetched ? articles.filter(
     (a) => new Date(a.publishedAt) > new Date(dbSource.lastFetched)
   ) : articles;
-  if (newArticles.length === 0) {
+  if (!newArticles.length) {
     logger_default.info(`\u{1F7E1} No new articles since last fetch for ${source.name}`);
     return [];
   }
-  for (const article of newArticles) {
-    try {
-      if (!article.link || article.link.trim().length === 0) {
-        logger_default.warn(`Skipping article with missing link: ${article.title}`);
-        continue;
-      }
-      if (article.content && article.content.length > 100) {
-        aiSummary = await summarizeText(article.content);
-        await sleep(1500);
-      }
-      await prismaClient_default.$transaction(async (tx) => {
-        const category = article.category ? await tx.category.upsert({
-          where: { name: article.category },
-          create: { name: article.category },
-          update: {}
-        }) : null;
-        await tx.news.upsert({
-          where: { link: article.link },
-          update: {
-            title: article.title,
-            content: article.content,
-            excerpt: article.excerpt,
-            author: article.author,
-            summary: aiSummary ?? void 0,
-            publishedAt: article.publishedAt,
-            updatedAt: /* @__PURE__ */ new Date(),
-            sourceRefId: dbSource.id,
-            categoryId: category?.id
-          },
-          create: {
-            title: article.title,
-            content: article.content,
-            excerpt: article.excerpt,
-            link: article.link,
-            author: article.author,
-            summary: aiSummary ?? void 0,
-            publishedAt: article.publishedAt,
-            sourceRef: { connect: { id: dbSource.id } },
-            ...category?.id && { categoryId: category.id }
+  const BATCH_SIZE = 5;
+  for (let i = 0; i < newArticles.length; i += BATCH_SIZE) {
+    const batch = newArticles.slice(i, i + BATCH_SIZE);
+    for (const article of batch) {
+      try {
+        if (!article.link || !article.title) continue;
+        const contentToProcess = article.content?.substring(0, 1024) || article.title;
+        let aiSummary = null;
+        let sentiment = null;
+        try {
+          if (contentToProcess.length > 50) {
+            aiSummary = await summarizeText(contentToProcess);
+            await sleep(700);
+            sentiment = await analyzeSentiment(contentToProcess);
+            await sleep(700);
           }
+        } catch (aiError) {
+          logger_default.warn(
+            `\u26A0\uFE0F AI processing failed for article: ${aiError.message}`
+          );
+        }
+        const existing = await prismaClient_default.externalPost.findUnique({
+          where: { link: article.link }
         });
-      });
-      savedCount++;
-    } catch (articleError) {
-      logger_default.error(
-        `\u274C Failed to save article from ${source.name}: ${articleError?.message || articleError}`
-      );
+        if (existing) {
+          await prismaClient_default.externalPost.update({
+            where: { id: existing.id },
+            data: {
+              title: article.title,
+              summary: aiSummary || existing.summary,
+              coverImage: article.image || existing.coverImage || null,
+              publishedAt: article.publishedAt,
+              sentiment: sentiment || existing.sentiment,
+              authorName: article.author,
+              sourceName: source.name,
+              sourceUrl: source.url,
+              sourceRef: { connect: { id: dbSource.id } }
+            }
+          });
+        } else {
+          await prismaClient_default.externalPost.create({
+            data: {
+              title: article.title,
+              summary: aiSummary,
+              link: article.link,
+              coverImage: article.image || null,
+              publishedAt: article.publishedAt,
+              sourceName: source.name,
+              sourceUrl: source.url,
+              sentiment,
+              authorName: article.author,
+              isFeatured: false,
+              sourceRef: { connect: { id: dbSource.id } }
+            }
+          });
+        }
+        savedCount++;
+      } catch (err) {
+        logger_default.error(
+          `\u274C Failed to process article ${article.title}: ${err.message}`
+        );
+      }
     }
+    if (i + BATCH_SIZE < newArticles.length) await sleep(1500);
   }
   await prismaClient_default.newsSource.update({
     where: { id: dbSource.id },
     data: { lastFetched: /* @__PURE__ */ new Date() }
   });
   logger_default.info(
-    `\u2705 ${source.name}: ${savedCount}/${newArticles.length} new articles saved`
+    `\u2705 ${source.name}: ${savedCount}/${newArticles.length} new articles processed`
   );
   return newArticles;
 };
 
-// src/controllers/News/newsController.ts
-var getNews = async (req, res, next) => {
+// src/api/v1/controllers/blog/blog.Controller.ts
+var getExternalNews = async (req, res, next) => {
   try {
-    const { category, source, limit = 20, skip: skip2 = 0 } = req.query;
+    const { source, limit = 20, skip: skip2 = 0, featured } = req.query;
     const parsedLimit = Math.min(parseInt(limit, 10), 50);
-    const where = {};
-    if (category) where.category = { name: category };
-    if (source) where.sourceRef = { name: source };
-    const news = await prismaClient_default.news.findMany({
+    const parsedSkip = parseInt(skip2, 10);
+    const externalNews = await prismaClient_default.externalPost.findMany({
       where: {
-        ...category && { category: { name: category } },
-        ...source && { sourceRef: { name: source } }
+        ...source && {
+          sourceRef: { name: source }
+        },
+        ...featured && {
+          isFeatured: featured === "true"
+        }
+      },
+      include: {
+        sourceRef: {
+          select: { id: true, name: true, url: true }
+        }
       },
       orderBy: { publishedAt: "desc" },
-      skip: parseInt(skip2, 10),
+      skip: parsedSkip,
       take: parsedLimit
     });
-    res.json(news);
+    res.json({
+      count: externalNews.length,
+      data: externalNews
+    });
   } catch (err) {
-    next(new InternalServerError("Failed to fetch news"));
+    next(new InternalServerError(err));
   }
 };
 var fetchAndStoreNews = async () => {
@@ -6331,7 +6554,7 @@ var fetchAndStoreNews = async () => {
       await sleep(1200);
     } catch (err) {
       totalFailed++;
-      logger_default.error(`\u274C ${source.name} failed: ${err?.message || err}`);
+      new BadRequestError(`\u274C ${source.name} failed: ${err?.message || err}`);
     }
   }
   logger_default.info(
@@ -6339,58 +6562,52 @@ var fetchAndStoreNews = async () => {
   );
   return { processed: totalProcessed, failed: totalFailed };
 };
-var getNewsForAnalysis = async (req, res, next) => {
+var getExternalNewsForAnalysis = async (req, res, next) => {
   try {
     const { limit = 50 } = req.query;
-    const news = await prismaClient_default.news.findMany({
+    const externalPosts = await prismaClient_default.externalPost.findMany({
       where: {
-        OR: [
-          { summary: null },
-          { embeddings: { equals: import_prisma2.Prisma.DbNull } },
-          { embeddings: { equals: import_prisma2.Prisma.JsonNull } }
-        ]
+        OR: [{ summary: null }, { summary: "" }]
       },
       orderBy: { publishedAt: "desc" },
-      take: parseInt(limit),
+      take: parseInt(limit, 10),
       select: {
         id: true,
         title: true,
-        content: true,
-        excerpt: true,
-        category: true
+        summary: true,
+        link: true,
+        sourceName: true,
+        coverImage: true,
+        publishedAt: true
       }
     });
-    res.json(news);
+    res.json(externalPosts);
   } catch (err) {
-    next(new AppError("Failed to fetch news for analysis", 500));
+    next(new AppError(err, 500));
   }
 };
-var updateNewsWithAI = async (req, res, next) => {
+var updateExternalNewsWithAI = async (req, res, next) => {
   try {
-    const { id } = req?.params;
-    const { summary, sentiment, tags, embeddings } = req.body;
-    if (!id) return next(new AppError("News ID is required", 400));
-    if (!summary && !sentiment && !tags && !embeddings)
-      return next(new AppError("No data provided for update", 400));
-    const updatedNews = await prismaClient_default.news.update({
-      where: { id: parseInt(id) },
+    const { id } = req.params;
+    const { summary, coverImage, isFeatured } = req.body;
+    if (!id) return next(new AppError("External post ID is required", 400));
+    const updatedExternalPost = await prismaClient_default.externalPost.update({
+      where: { id: parseInt(id, 10) },
       data: {
-        summary,
-        sentiment,
-        tags,
-        embeddings,
-        updatedAt: /* @__PURE__ */ new Date()
+        ...summary && { summary },
+        ...coverImage && { coverImage },
+        ...typeof isFeatured === "boolean" && { isFeatured }
       }
     });
-    res.json(updatedNews);
+    res.json(updatedExternalPost);
   } catch (err) {
-    next(new AppError("Failed to update news with AI data", 500));
+    next(new AppError("Failed to update external post with AI data", 500));
   }
 };
 var fetchNews = async (req, res, next) => {
   try {
     const secret = req.query.secret;
-    if (process.env.FETCH_SECRET && secret !== process.env.FETCH_SECRET) {
+    if (env.FETCH_SECRET && secret !== env.FETCH_SECRET) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
     const result = await fetchAndStoreNews();
@@ -6405,30 +6622,40 @@ var fetchNews = async (req, res, next) => {
   }
 };
 
-// src/routes/News/newsRoute.ts
+// src/api/v1/routes/blog/blog.Route.ts
 var import_express = __toESM(require("express"));
 var router = import_express.default.Router();
 router.get("/fetch", fetchNews);
-router.get("/", getNews);
-router.get("/for-analysis", getNewsForAnalysis);
-router.patch("/:id/ai-update", updateNewsWithAI);
-var newsRoute_default = router;
+router.get("/external", getExternalNews);
+router.get("/for-analysis", getExternalNewsForAnalysis);
+router.patch("/:id/ai-update", updateExternalNewsWithAI);
+var blog_Route_default = router;
+
+// src/api/v1/index.ts
+var router2 = import_express2.default.Router();
+router2.use("/blogs", blog_Route_default);
+var v1_default = router2;
+
+// src/api/index.ts
+var router3 = import_express3.default.Router();
+router3.use("/v1", v1_default);
+var api_default = router3;
 
 // src/app.ts
-var app = (0, import_express2.default)();
+var app = (0, import_express4.default)();
 app.use((0, import_cors.default)());
-app.use(import_express2.default.json());
-app.use(import_express2.default.urlencoded({ extended: true }));
-app.use("/api/v1/news", newsRoute_default);
-app.get("/health", (req, res) => {
+app.use(import_express4.default.json());
+app.use(import_express4.default.urlencoded({ extended: true }));
+app.use("/api", api_default);
+app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "OK", service: "Tech News API" });
 });
 app.use(errorHandler);
 var app_default = app;
 
 // src/index.ts
-import_dotenv.default.config();
-var PORT = process.env.PORT || 3e3;
+import_dotenv2.default.config();
+var PORT = env.PORT || 3e3;
 app_default.listen(PORT, () => {
   logger_default.info(`\u{1F680} Server running on port ${PORT}`);
 });

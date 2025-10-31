@@ -1,0 +1,55 @@
+import { z } from "zod";
+import dotenv from "dotenv";
+import { BadRequestError } from "@/types/errors";
+import fs from "fs";
+import path from "path";
+
+dotenv.config();
+
+const envSchema = z.object({
+  NODE_ENV: z
+    .enum(["development", "test", "production"])
+    .default("development"),
+
+  DATABASE_URL: z.string().url(),
+
+  DIRECT_URL: z.string().url().optional(),
+
+  PORT: z.string().default("3000"),
+
+  FETCH_SECRET: z.string().optional(),
+
+  EMAIL_APP_PASSWORD: z.string().optional(),
+
+  HUGGING_FACE_TOKEN: z.string().optional(),
+
+  APP_URL: z.string().optional(),
+});
+
+const parsed = envSchema.safeParse(process.env);
+
+if (!parsed.success) {
+  console.error("❌ Invalid environment configuration:");
+  console.error(parsed.error.format());
+  throw new BadRequestError(
+    "Invalid environment variables. Please check your .env file."
+  );
+}
+
+export const env = parsed.data;
+
+const envFilePath = path.resolve(process.cwd(), ".env");
+const envFileContent = fs.readFileSync(envFilePath, "utf-8");
+const envFileKeys = envFileContent
+  .split("\n")
+  .map((line) => line.split("=")[0]?.trim())
+  .filter((key) => key && !key.startsWith("#"));
+
+const allowedKeys = Object.keys(envSchema.shape);
+for (const key of envFileKeys) {
+  if (!allowedKeys.includes(key as string)) {
+    throw new BadRequestError(
+      `❌ Unknown environment variable in .env: ${key}`
+    );
+  }
+}

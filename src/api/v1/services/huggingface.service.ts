@@ -1,8 +1,8 @@
 import axios from "axios";
 import logger from "@/utils/logger";
+import { env } from "@/config/env";
 
-const HUGGINGFACE_API_KEY = process.env.HUGGING_FACE_TOKEN;
-if (!HUGGINGFACE_API_KEY) logger.warn("⚠️ Missing Hugging Face API key");
+const HUGGINGFACE_API_KEY = env.HUGGING_FACE_TOKEN;
 
 async function huggingFaceRequest(
   model: string,

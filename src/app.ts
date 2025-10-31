@@ -1,16 +1,16 @@
 import express from "express";
 import cors from "cors";
 import { errorHandler } from "@/middlewares/errorHandler";
-import newsRoutes from "@/routes/News/newsRoute";
+import apiRouter from "./api";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/v1/news", newsRoutes);
+app.use("/api", apiRouter);
 
-app.get("/api/v1/health", (req, res) => {
+app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "OK", service: "Tech News API" });
 });
 

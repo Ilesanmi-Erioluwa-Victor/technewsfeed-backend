@@ -4,6 +4,7 @@ import logger from "@/utils/logger";
 import { generateExcerpt } from "@/utils/generateExcerpt";
 import { cleanContent } from "@/utils/cleanContent";
 import { classifyContent } from "@/utils/classifyContent";
+import { env } from "@/config/env";
 
 export interface Article {
   title: string;
@@ -62,7 +63,7 @@ async function fetchWithRetries(
   attempts = DEFAULT_RETRIES
 ): Promise<string> {
   let lastError: any = null;
-  const baseUrl = process.env.APP_URL || "http://localhost:3000";
+  const baseUrl = env.APP_URL || "http://localhost:3000";
 
   for (let attempt = 1; attempt <= attempts; attempt++) {
     try {

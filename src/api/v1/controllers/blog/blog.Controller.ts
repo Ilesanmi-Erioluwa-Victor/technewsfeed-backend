@@ -1,10 +1,11 @@
-import { sources } from "@/constant/sources";
-import { sleep } from "@/services/rss.service";
+import { sources } from "@/api/v1/constant/sources";
 import { AppError, BadRequestError, InternalServerError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
 import { NextFunction, Response, Request } from "express";
-import { fetchFromSource } from "@/services/newsFetcher.service";
+import { fetchFromSource } from "../../services/newsFetcher.service";
+import { sleep } from "../../services/rss.service";
+import { env } from "@/config/env";
 
 export const getExternalNews = async (
   req: Request,
@@ -131,7 +132,7 @@ export const fetchNews = async (
 ) => {
   try {
     const secret = req.query.secret;
-    if (process.env.FETCH_SECRET && secret !== process.env.FETCH_SECRET) {
+    if (env.FETCH_SECRET && secret !== env.FETCH_SECRET) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
