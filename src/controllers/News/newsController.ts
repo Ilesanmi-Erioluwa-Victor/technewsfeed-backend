@@ -1,6 +1,6 @@
 import { sources } from "@/constant/sources";
 import { sleep } from "@/services/rss.service";
-import { AppError, InternalServerError } from "@/types/errors";
+import { AppError, BadRequestError, InternalServerError } from "@/types/errors";
 import logger from "@/utils/logger";
 import prisma from "@/utils/prismaClient";
 import { NextFunction, Response, Request } from "express";
@@ -40,9 +40,8 @@ export const getExternalNews = async (
       count: externalNews.length,
       data: externalNews,
     });
-  } catch (err) {
-    console.error("❌ getExternalNews error:", err);
-    next(new InternalServerError("Failed to fetch external news"));
+  } catch (err: any) {
+    next(new InternalServerError(err));
   }
 };
 
@@ -57,7 +56,7 @@ export const fetchAndStoreNews = async () => {
       await sleep(1200);
     } catch (err: any) {
       totalFailed++;
-      logger.error(`❌ ${source.name} failed: ${err?.message || err}`);
+      new BadRequestError(`❌ ${source.name} failed: ${err?.message || err}`);
     }
   }
 
@@ -94,9 +93,8 @@ export const getExternalNewsForAnalysis = async (
     });
 
     res.json(externalPosts);
-  } catch (err) {
-    console.error("❌ getExternalNewsForAnalysis error:", err);
-    next(new AppError("Failed to fetch external posts for analysis", 500));
+  } catch (err: any) {
+    next(new AppError(err, 500));
   }
 };
 
@@ -121,8 +119,7 @@ export const updateExternalNewsWithAI = async (
     });
 
     res.json(updatedExternalPost);
-  } catch (err) {
-    console.error("❌ updateExternalNewsWithAI error:", err);
+  } catch (err: any) {
     next(new AppError("Failed to update external post with AI data", 500));
   }
 };

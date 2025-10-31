@@ -156,7 +156,6 @@ export const fetchRSSFeed = async (
           item["dc:subject"]?.[0] ||
           classifyContent(content, title);
 
-        // 🖼️ Extract image from multiple possible RSS fields
         const image =
           item["media:content"]?.[0]?.$?.url ||
           item["media:thumbnail"]?.[0]?.$?.url ||
@@ -178,7 +177,7 @@ export const fetchRSSFeed = async (
             item.pubDate?.[0] || item.updated?.[0] || Date.now()
           ),
           guid: item.guid?.[0] || item.id?.[0],
-          image, // 🖼️ Include extracted image
+          image,
         } as Article;
       })
       .filter((a) => a.link && a.title && a.link.length > 0);
@@ -203,7 +202,6 @@ export const fetchRSSFeed = async (
             );
             const title = it.title || "No Title";
 
-            // Try to extract image from proxy fallback too
             const image =
               it.thumbnail ||
               (content.match(/https?:\/\/[^\s"]+\.(?:jpg|jpeg|png|gif)/)?.[0] ??

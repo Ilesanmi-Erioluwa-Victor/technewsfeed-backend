@@ -9,27 +9,37 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
+model Avatar {
   id         String   @id @default(uuid())
-  email      String   @unique
-  password   String
-  name       String?
-  avatarUrl  String?
-  role       UserRole @default(USER)
-  isVerified Boolean  @default(false)
-  isActive   Boolean  @default(true)
-  invitedBy  String?  
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-   receivedInvitations WriterInvitation[] @relation("InvitationReceiver") 
-  reviewedPosts        BlogPost[]        @relation("PostReviewer")       
-  comments             Comment[]         @relation("UserComments")  
+  url        String
+  fileType   String?
+  size       Int?              
+  uploadedAt DateTime @default(now())
+  user       User?     @relation
+}
 
-  auditLogs        AuditLog[]  @relation("UserAuditLogs")
-  posts            BlogPost[]  @relation("UserPosts") 
-  preferences      UserPreference[]
-  subscriptions    NewsletterSubscription[]
-  sentInvitations  WriterInvitation[] @relation("InvitationSender")     
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  name        String?
+  role        UserRole @default(USER)
+  isVerified  Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  invitedBy   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  avatar           Avatar?              @relation(fields: [avatarId], references: [id])
+  avatarId         String?
+  receivedInvitations WriterInvitation[] @relation("InvitationReceiver")
+  reviewedPosts        BlogPost[]        @relation("PostReviewer")
+  comments             Comment[]         @relation("UserComments")
+  auditLogs            AuditLog[]        @relation("UserAuditLogs")
+  posts                BlogPost[]        @relation("UserPosts")
+  preferences          UserPreference[]
+  subscriptions        NewsletterSubscription[]
+  sentInvitations      WriterInvitation[] @relation("InvitationSender")
 
   @@index([role])
   @@index([isActive])
