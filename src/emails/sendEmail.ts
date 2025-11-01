@@ -34,8 +34,7 @@ export const sendEmail = async ({
       appName: variables.appName || "Blogify",
       logoUrl: variables.logoUrl || "https://yourapp.com/logo.png",
       websiteUrl: variables.websiteUrl || "https://yourapp.com",
-      unsubscribeUrl:
-        variables.unsubscribeUrl || "https://yourapp.com/unsubscribe",
+      unsubscribeUrl: variables.unsubscribeUrl || "https://yourapp/unsubscribe",
       year: new Date().getFullYear(),
     });
 
