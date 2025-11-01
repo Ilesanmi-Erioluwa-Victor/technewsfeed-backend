@@ -21,7 +21,7 @@ model Avatar {
 model User {
   id          String   @id @default(uuid())
   email       String   @unique
-  password    String
+ credentials      AuthCredential[]
   name        String?
   role        UserRole @default(USER)
   isVerified  Boolean  @default(false)
@@ -43,6 +43,21 @@ model User {
 
   @@index([role])
   @@index([isActive])
+}
+
+model AuthCredential {
+  id         String   @id @default(uuid())
+  provider   String   
+  password   String?  
+  providerId String?  
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+
+   @@unique([provider, userId])
+  @@index([provider])
+  @@index([providerId])
+  @@index([userId])
 }
 
 

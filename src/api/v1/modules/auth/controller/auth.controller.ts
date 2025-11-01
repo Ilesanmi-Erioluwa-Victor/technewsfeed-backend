@@ -1,11 +1,17 @@
+// controller/auth.controller.ts
 import { successResponse } from "@/types/errors";
 import { Request, Response } from "express";
-import { loginUserService, registerUserService } from "../service/auth.service";
+import {
+  loginUserService,
+  oauthLoginService,
+  registerUserService,
+} from "../service/auth.service";
+import { OAuthService } from "../strategies/OAuthService";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   const user = await registerUserService(name, email, password);
-  return successResponse(res, user, "user registered successfully", 201);
+  return successResponse(res, user, "User registered successfully", 201);
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -21,7 +27,19 @@ export const loginUser = async (req: Request, res: Response) => {
       isVerified: tokens.user.isVerified,
       token: tokens.token,
     },
-    "login successful",
+    "Login successful",
+    200
+  );
+};
+
+export const oauthLogin = async (req: Request, res: Response) => {
+  const { provider, idToken } = req.body;
+  const { user, token } = await oauthLoginService(provider, idToken);
+
+  return successResponse(
+    res,
+    { user, token },
+    `${provider} login successful`,
     200
   );
 };
