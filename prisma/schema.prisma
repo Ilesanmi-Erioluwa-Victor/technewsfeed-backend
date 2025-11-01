@@ -13,33 +13,32 @@ model Avatar {
   id         String   @id @default(uuid())
   url        String
   fileType   String?
-  size       Int?              
+  size       Int?
   uploadedAt DateTime @default(now())
-  user       User?     @relation
+  user       User?
 }
 
 model User {
-  id          String   @id @default(uuid())
-  email       String   @unique
- credentials      AuthCredential[]
-  name        String?
-  role        UserRole @default(USER)
-  isVerified  Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  invitedBy   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  avatar           Avatar?              @relation(fields: [avatarId], references: [id])
-  avatarId         String?               @unique
-  receivedInvitations WriterInvitation[] @relation("InvitationReceiver")
-  reviewedPosts        BlogPost[]        @relation("PostReviewer")
-  comments             Comment[]         @relation("UserComments")
-  auditLogs            AuditLog[]        @relation("UserAuditLogs")
-  posts                BlogPost[]        @relation("UserPosts")
-  preferences          UserPreference[]
-  subscriptions        NewsletterSubscription[]
-  sentInvitations      WriterInvitation[] @relation("InvitationSender")
+  id                  String                   @id @default(uuid())
+  email               String                   @unique
+  name                String?
+  isVerified          Boolean                  @default(false)
+  createdAt           DateTime                 @default(now())
+  updatedAt           DateTime                 @updatedAt
+  avatarId            String?                  @unique
+  invitedBy           String?
+  isActive            Boolean                  @default(true)
+  role                UserRole                 @default(USER)
+  auditLogs           AuditLog[]               @relation("UserAuditLogs")
+  credentials         AuthCredential[]
+  posts               BlogPost[]               @relation("UserPosts")
+  reviewedPosts       BlogPost[]               @relation("PostReviewer")
+  comments            Comment[]                @relation("UserComments")
+  subscriptions       NewsletterSubscription[]
+  avatar              Avatar?                  @relation(fields: [avatarId], references: [id])
+  preferences         UserPreference?
+  sentInvitations     WriterInvitation[]       @relation("InvitationSender")
+  receivedInvitations WriterInvitation[]       @relation("InvitationReceiver")
 
   @@index([role])
   @@index([isActive])
@@ -47,70 +46,67 @@ model User {
 
 model AuthCredential {
   id         String   @id @default(uuid())
-  provider   String   
-  password   String?  
-  providerId String?  
+  provider   String
+  password   String?
+  providerId String?
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
 
-   @@unique([provider, userId])
+  @@unique([provider, userId])
   @@index([provider])
   @@index([providerId])
   @@index([userId])
 }
 
-
 model WriterInvitation {
-  id             String   @id @default(uuid())
-  email          String   @unique
-  token          String   @unique
-  role           UserRole @default(WRITER)
-  status         InvitationStatus @default(PENDING)
-  expiresAt      DateTime
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  invitedBy      User   @relation("InvitationSender", fields: [invitedById], references: [id])
-  invitedById    String
-  invitedUser    User?  @relation("InvitationReceiver", fields: [invitedUserId], references: [id])
-  invitedUserId  String?
+  id            String           @id @default(uuid())
+  email         String           @unique
+  token         String           @unique
+  role          UserRole         @default(WRITER)
+  status        InvitationStatus @default(PENDING)
+  expiresAt     DateTime
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  invitedById   String
+  invitedUserId String?
+  invitedBy     User             @relation("InvitationSender", fields: [invitedById], references: [id])
+  invitedUser   User?            @relation("InvitationReceiver", fields: [invitedUserId], references: [id])
 
   @@index([token])
   @@index([status])
   @@index([expiresAt])
 }
 
-
 model BlogPost {
-  id             Int       @id @default(autoincrement())
-  title          String
-  slug           String    @unique
-  content        String?
-  summary        String?
-  excerpt        String?
-  coverImage     String?
-  status         PostStatus @default(DRAFT)
-  author         User?    @relation("UserPosts", fields: [authorId], references: [id])
-  authorId       String?
-  authorName     String? 
-  views          Int       @default(0)         
-  readingTime    Int?                           
-  seoTitle       String?                       
-  seoDescription String?                      
-  isFeatured     Boolean   @default(false) 
-  publishedAt    DateTime?
-  isPublished    Boolean   @default(false)
-  reviewedBy     User?    @relation("PostReviewer", fields: [reviewedById], references: [id])
-  reviewedById   String?
-  reviewedAt     DateTime?
-  scheduledPublish DateTime? 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  comments       Comment[]     @relation("PostComments")
-  categories     Category[]    @relation("BlogPostCategories")
-  tags           Tag[]         @relation("BlogPostTags")
-  externalPosts  ExternalPost[]
+  id               Int            @id @default(autoincrement())
+  title            String
+  slug             String         @unique
+  content          String?
+  summary          String?
+  excerpt          String?
+  authorName       String?
+  coverImage       String?
+  publishedAt      DateTime?
+  isPublished      Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  authorId         String?
+  isFeatured       Boolean        @default(false)
+  readingTime      Int?
+  reviewedAt       DateTime?
+  reviewedById     String?
+  scheduledPublish DateTime?
+  seoDescription   String?
+  seoTitle         String?
+  status           PostStatus     @default(DRAFT)
+  views            Int            @default(0)
+  author           User?          @relation("UserPosts", fields: [authorId], references: [id])
+  reviewedBy       User?          @relation("PostReviewer", fields: [reviewedById], references: [id])
+  comments         Comment[]      @relation("PostComments")
+  externalPosts    ExternalPost[]
+  categories       Category[]     @relation("BlogPostCategories")
+  tags             Tag[]          @relation("BlogPostTags")
 
   @@index([slug])
   @@index([publishedAt])
@@ -119,105 +115,97 @@ model BlogPost {
   @@index([isPublished])
 }
 
-
 model Comment {
-  id          String   @id @default(uuid())
-  content     String
-  post        BlogPost @relation("PostComments", fields: [postId], references: [id])
-  postId      Int
-  author      User?    @relation("UserComments", fields: [authorId], references: [id])
-  authorId    String?
-  parentId    String?              
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  isApproved  Boolean  @default(true) 
-  isDeleted   Boolean  @default(false) 
-  metadata    Json?                  
+  id         String   @id @default(uuid())
+  content    String
+  postId     Int
+  authorId   String?
+  parentId   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isApproved Boolean  @default(true)
+  isDeleted  Boolean  @default(false)
+  metadata   Json?
+  author     User?    @relation("UserComments", fields: [authorId], references: [id])
+  post       BlogPost @relation("PostComments", fields: [postId], references: [id])
 
   @@index([postId])
   @@index([authorId])
   @@index([createdAt])
 }
 
-
-
 model AuditLog {
   id          String   @id @default(uuid())
   action      String
   actorId     String?
-  actor       User?    @relation("UserAuditLogs", fields: [actorId], references: [id])
   targetId    String?
   targetType  String?
   description String?
   payload     Json?
   ipHash      String?
   createdAt   DateTime @default(now())
+  actor       User?    @relation("UserAuditLogs", fields: [actorId], references: [id])
 
   @@index([actorId])
   @@index([action])
   @@index([createdAt])
 }
 
-
-
 model ExternalPost {
-  id             Int        @id @default(autoincrement())
-  title          String
-  summary        String?
-  link           String      @unique       
-  coverImage     String?
-  publishedAt    DateTime
-  sourceName     String                 
-  sourceUrl      String?              
-  authorName     String?
-  sentiment      String?
-  isFeatured     Boolean     @default(false)
-  blogPost       BlogPost?   @relation(fields: [blogPostId], references: [id])
-  blogPostId     Int?
-  sourceRef      NewsSource? @relation(fields: [sourceRefId], references: [id])
-  sourceRefId    Int?
-  createdAt      DateTime    @default(now())
+  id          Int         @id @default(autoincrement())
+  title       String
+  summary     String?
+  link        String      @unique
+  coverImage  String?
+  publishedAt DateTime
+  sourceName  String
+  sourceUrl   String?
+  authorName  String?
+  isFeatured  Boolean     @default(false)
+  blogPostId  Int?
+  sourceRefId Int?
+  createdAt   DateTime    @default(now())
+  sentiment   String?
+  blogPost    BlogPost?   @relation(fields: [blogPostId], references: [id])
+  sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])
 }
 
-
 model Category {
-  id             Int                     @id @default(autoincrement())
-  name           String                  @unique
-  slug           String                  @unique
-  description    String?
-  createdAt      DateTime                @default(now())
-  updatedAt      DateTime                @updatedAt
-  posts          BlogPost[]              @relation("BlogPostCategories")
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  slug        String     @unique
+  posts       BlogPost[] @relation("BlogPostCategories")
 }
 
 model Tag {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  slug      String    @unique
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  slug      String     @unique
   posts     BlogPost[] @relation("BlogPostTags")
 }
 
 model NewsSource {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique
-  url         String
-  lastFetched DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  url           String
+  lastFetched   DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   externalPosts ExternalPost[]
 }
 
 model UserPreference {
   id        String   @id @default(uuid())
-  userId    String
+  userId    String   @unique
   topics    String[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id])
-
-  @@unique([userId])
 }
 
 model NewsletterSubscription {
@@ -230,18 +218,18 @@ model NewsletterSubscription {
 }
 
 enum UserRole {
-  USER   
-  WRITER  
-  ADMIN   
+  USER
+  WRITER
+  ADMIN
 }
 
 enum PostStatus {
-  DRAFT     
-  REVIEW    
-  APPROVED  
-  PUBLISHED 
-  REJECTED  
-  ARCHIVED  
+  DRAFT
+  REVIEW
+  APPROVED
+  PUBLISHED
+  REJECTED
+  ARCHIVED
 }
 
 enum InvitationStatus {

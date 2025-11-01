@@ -1,4 +1,3 @@
-// controller/auth.controller.ts
 import { successResponse } from "@/types/errors";
 import { Request, Response } from "express";
 import {
@@ -6,11 +5,24 @@ import {
   oauthLoginService,
   registerUserService,
 } from "../service/auth.service";
-import { OAuthService } from "../strategies/OAuthService";
+import { sendEmail } from "@/emails/sendEmail";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   const user = await registerUserService(name, email, password);
+
+  await sendEmail({
+    to: email,
+    subject: `Welcome to Blogify, ${name}!`,
+    templateName: "welcome",
+    variables: {
+      name,
+      appName: "Blogify",
+      loginLink: "https://technewsfeed-backend.onrender.com/api/v1/login",
+      logoUrl: "https://yourapp.com/logo.png",
+    },
+  });
+
   return successResponse(res, user, "User registered successfully", 201);
 };
 
