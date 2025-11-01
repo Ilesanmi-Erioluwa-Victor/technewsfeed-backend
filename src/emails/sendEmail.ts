@@ -11,7 +11,11 @@ export const sendEmail = async ({
   variables = {},
 }: SendEmailProps) => {
   try {
-    const partialsDir = path.resolve(__dirname, "templates", "partials");
+    const baseDir =
+      process.env.NODE_ENV === "production"
+        ? path.resolve(__dirname, "emails", "templates")
+        : path.resolve(__dirname, "../emails/templates");
+    const partialsDir = path.join(baseDir, "partials");
     const partialFiles = fs.readdirSync(partialsDir);
 
     partialFiles.forEach((file) => {
@@ -21,11 +25,7 @@ export const sendEmail = async ({
       handlebars.registerPartial(partialName, partialContent);
     });
 
-    const templatePath = path.resolve(
-      __dirname,
-      "templates",
-      `${templateName}.hbs`
-    );
+    const templatePath = path.join(baseDir, `${templateName}.hbs`);
     const source = fs.readFileSync(templatePath, "utf8");
     const template = handlebars.compile(source);
 
@@ -33,8 +33,10 @@ export const sendEmail = async ({
       ...variables,
       appName: variables.appName || "Blogify",
       logoUrl: variables.logoUrl || "https://yourapp.com/logo.png",
-      websiteUrl: variables.websiteUrl || "https://yourapp.com",
-      unsubscribeUrl: variables.unsubscribeUrl || "https://yourapp/unsubscribe",
+      websiteUrl:
+        variables.websiteUrl || "https://technewsfeed-backend.onrender.com",
+      unsubscribeUrl:
+        variables.unsubscribeUrl || "https://yourapp.com/unsubscribe",
       year: new Date().getFullYear(),
     });
 
