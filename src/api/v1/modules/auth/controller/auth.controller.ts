@@ -23,7 +23,7 @@ export const registerUser = async (req: Request, res: Response) => {
     },
   });
 
-  console.log(response, "response>>>>>>>>>");
+  console.log(response, "response>>>>>>>");
 
   return successResponse(res, user, "User registered successfully", 201);
 };
