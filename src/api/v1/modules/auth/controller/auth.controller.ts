@@ -11,9 +11,9 @@ export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
   const user = await registerUserService(name, email, password);
 
-  sendEmail({
+  const response = await sendEmail({
     to: email,
-    subject: "Welcome",
+    subject: `Welcome to Blogify, ${name}!`,
     templateName: "welcome",
     variables: {
       name,
@@ -21,7 +21,9 @@ export const registerUser = async (req: Request, res: Response) => {
       loginLink: "https://technewsfeed-backend.onrender.com/api/v1/login",
       logoUrl: "https://yourapp.com/logo.png",
     },
-  }).catch((err) => console.error("Email send error:", err));
+  });
+
+  console.log(response, "response>>>>>>>>>");
 
   return successResponse(res, user, "User registered successfully", 201);
 };
