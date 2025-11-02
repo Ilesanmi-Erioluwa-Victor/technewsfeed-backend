@@ -9,9 +9,12 @@ import { sendEmail } from "@/emails/sendEmail";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
+
   const user = await registerUserService(name, email, password);
 
-  const response = await sendEmail({
+  successResponse(res, user, "User registered successfully", 201);
+
+  sendEmail({
     to: email,
     subject: `Welcome to Blogify, ${name}!`,
     templateName: "welcome",
@@ -21,11 +24,7 @@ export const registerUser = async (req: Request, res: Response) => {
       loginLink: "https://technewsfeed-backend.onrender.com/api/v1/login",
       logoUrl: "https://yourapp.com/logo.png",
     },
-  });
-
-  console.log(response, "response>>>>>>>");
-
-  return successResponse(res, user, "User registered successfully", 201);
+  }).catch((error) => console.error("Failed to send welcome email:", error));
 };
 
 export const loginUser = async (req: Request, res: Response) => {
