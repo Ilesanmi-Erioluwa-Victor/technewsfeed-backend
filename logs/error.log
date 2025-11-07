@@ -206,3 +206,306 @@ Please make sure your database server is running at `aws-1-us-east-1.pooler.supa
 [2025-11-07T11:08:37.832Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
 [2025-11-07T11:08:49.744Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
 [2025-11-07T11:09:05.070Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:09:16.742Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:09:30.366Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:09:42.646Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:09:57.702Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:10:09.772Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:10:32.636Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:10:43.783Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:10:58.135Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:11:09.794Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:11:23.917Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:11:36.039Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:11:50.138Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:12:01.734Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:12:15.670Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:12:27.421Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:12:35.560Z] ERROR: ❌ Failed to process article Growing Kotlin Adoption in Your Company: 
+Invalid `prisma.externalPost.create()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/services/newsFetcher.service.ts:86:37
+
+  83     },
+  84   });
+  85 } else {
+→ 86   await prisma.externalPost.create(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-11-07T11:12:48.294Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:12:59.669Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:13:17.954Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:13:29.330Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:13:43.402Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:13:55.721Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:14:10.123Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:14:21.304Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:14:35.312Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:14:46.653Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:15:08.923Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:15:20.809Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:15:44.027Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:15:55.540Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:16:17.281Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:16:38.615Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:17:06.351Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:17:19.695Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:17:34.492Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:17:49.087Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:18:54.945Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:19:07.618Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:19:13.324Z] ERROR: ❌ Failed to process article What’s new at Stack Overflow: November 2025: 
+Invalid `prisma.externalPost.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/services/newsFetcher.service.ts:66:52
+
+  63   );
+  64 }
+  65 
+→ 66 const existing = await prisma.externalPost.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-11-07T11:19:35.468Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:19:48.924Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:20:18.048Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:20:28.929Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:20:46.751Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:20:57.938Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:21:11.787Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:21:22.970Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:21:39.511Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:21:51.156Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:22:04.426Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:22:15.634Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:22:36.681Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:22:48.227Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:23:01.888Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:23:12.846Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:23:26.874Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:23:38.567Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:23:51.917Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:24:03.559Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:24:18.979Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:24:30.240Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:24:46.409Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:24:57.633Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:25:24.671Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:25:36.272Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:25:49.852Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:26:01.191Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:26:18.083Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:26:31.165Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:26:48.219Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:27:00.152Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:27:18.604Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:27:31.288Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:27:45.830Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:27:58.346Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:28:14.948Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:28:25.951Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:28:40.076Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:28:52.343Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:29:06.966Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:29:19.415Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:29:36.434Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:29:48.314Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:30:02.351Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:30:14.180Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:30:35.416Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:30:47.721Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:31:02.963Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:31:14.071Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:31:28.234Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:31:39.952Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:31:57.164Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:32:08.615Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:32:22.285Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:32:34.126Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:32:48.758Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:33:00.048Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:33:15.206Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:33:29.087Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:33:43.797Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:33:55.228Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:34:10.670Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:34:22.142Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:34:38.249Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:34:56.523Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:35:10.599Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:35:21.823Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:35:39.947Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:35:51.414Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:36:05.921Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:36:17.685Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:36:37.683Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:36:49.217Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:37:03.193Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:37:14.811Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:37:36.413Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:37:48.324Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:38:01.682Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:38:14.948Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:38:29.803Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:38:43.952Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:39:12.229Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:39:23.951Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:39:38.491Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:39:52.104Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:40:09.898Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:40:23.055Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:40:37.075Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:40:48.476Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:41:07.454Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:41:19.142Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:41:44.483Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:41:55.947Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:42:10.186Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:42:21.748Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:42:38.235Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:42:53.303Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:43:07.259Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:43:19.927Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:43:35.068Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:43:46.228Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:44:01.427Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:44:13.933Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:44:27.990Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:44:39.781Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:44:54.642Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:45:06.499Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:45:20.642Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:45:35.691Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:45:49.646Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:46:01.486Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:46:21.872Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:46:33.237Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:46:48.640Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:47:00.055Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:47:15.471Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:47:27.360Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:47:41.342Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:47:52.362Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:48:05.908Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:48:17.171Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:48:32.445Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:48:43.540Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:48:57.311Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:49:08.601Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:49:22.496Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:49:33.799Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:49:47.538Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:49:58.745Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:50:12.583Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:50:23.899Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:50:50.942Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:51:02.226Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:51:16.119Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:51:27.360Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:51:45.756Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:51:57.164Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:52:10.946Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:52:22.006Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:52:36.920Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:52:48.134Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:53:03.230Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:53:14.316Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:53:28.178Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:53:39.455Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:53:53.018Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:54:03.994Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:54:17.848Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:54:29.621Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:54:43.243Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:54:54.419Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:55:09.875Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:55:20.855Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:55:34.781Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:55:46.271Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:56:00.287Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:56:11.378Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:56:25.134Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:56:35.885Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:56:54.493Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:57:05.551Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:57:20.556Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:57:31.761Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:57:45.896Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:57:57.221Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:58:14.717Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:58:29.345Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:58:46.302Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:58:59.772Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:59:25.223Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:59:39.125Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:00:02.087Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:00:13.243Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:00:27.288Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:00:38.125Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:00:53.436Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:01:08.235Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:01:23.313Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:01:35.264Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:01:49.693Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:02:02.738Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:02:24.212Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:02:35.768Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:02:50.352Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:03:03.931Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:03:18.203Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:03:29.902Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:03:44.087Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:03:55.186Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:04:09.037Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:04:20.472Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:04:39.912Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:04:51.563Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:05:05.369Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:05:16.548Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:05:35.710Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:05:46.861Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:06:00.856Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:06:11.946Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:06:26.238Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:06:37.424Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:06:52.355Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:07:03.537Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:07:17.418Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:07:29.178Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:07:47.548Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:07:58.725Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:08:12.277Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:08:23.471Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:08:36.911Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:08:48.069Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:09:03.514Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:09:14.604Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:09:28.586Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:09:39.729Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:09:53.452Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T12:10:04.614Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T12:10:18.338Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T13:28:35.999Z] ERROR: 😊 Sentiment analysis failed: getaddrinfo EAI_AGAIN api-inference.huggingface.co
+[2025-11-07T13:28:46.703Z] ERROR: ❌ Failed to process article Monitoring and optimizing website performance: 
+Invalid `prisma.externalPost.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/services/newsFetcher.service.ts:66:52
+
+  63   );
+  64 }
+  65 
+→ 66 const existing = await prisma.externalPost.findUnique(
+Timed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 9)
+[2025-11-07T13:29:05.219Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T13:29:23.218Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T13:29:28.929Z] ERROR: ❌ Failed to process article How to land your first developer job: 
+Invalid `prisma.externalPost.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/services/newsFetcher.service.ts:66:52
+
+  63   );
+  64 }
+  65 
+→ 66 const existing = await prisma.externalPost.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-11-07T13:29:48.512Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T13:29:59.643Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410

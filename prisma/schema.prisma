@@ -40,6 +40,7 @@ model User {
   sentInvitations     WriterInvitation[]       @relation("InvitationSender")
   receivedInvitations WriterInvitation[]       @relation("InvitationReceiver")
   verificationTokens  VerificationToken[]
+   magicLinkTokens     MagicLinkToken[]  
 
   @@index([role])
   @@index([isActive])
@@ -67,6 +68,20 @@ model VerificationToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model MagicLinkToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  email     String
+  userId    String?
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  used      Boolean  @default(false)
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@index([email])
+  @@index([expiresAt])
 }
 
 

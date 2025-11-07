@@ -38,6 +38,8 @@ const envSchema = z.object({
   GOOGLE_REFRESH_TOKEN: z.string(),
 
   GMAIL_USER: z.string(),
+
+  FRONTEND_URL: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

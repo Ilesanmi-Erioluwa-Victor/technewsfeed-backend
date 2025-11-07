@@ -43,7 +43,7 @@ export const sendEmail = async ({
     });
 
     const messageParts = [
-      `From: "${variables.appName }" <${process.env.GMAIL_USER}>`,
+      `From: "${variables.appName}" <${process.env.GMAIL_USER}>`,
       `To: ${to}`,
       `Subject: ${subject}`,
       "Content-Type: text/html; charset=utf-8",

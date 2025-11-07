@@ -131,10 +131,74 @@ export const verifyEmailService = async (token: string) => {
     variables: {
       name: user.name as string,
       appName: "TechNewsFeed",
-      loginLink: `${process.env.APP_URL}/login`,
+      loginLink: `${env.APP_URL}/login`,
       logoUrl: "https://yourapp.com/logo.png",
     },
   });
 
   return { message: "Email verified successfully!" };
+};
+
+export const requestMagicLinkService = async (email: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) throw new Error("User not found");
+
+  const token = crypto.randomUUID();
+  const expiresAt = addMinutes(new Date(), 15);
+
+  await prisma.magicLinkToken.create({
+    data: {
+      token,
+      email,
+      userId: user.id,
+      expiresAt,
+    },
+  });
+
+  const magicLink = `${env.FRONTEND_URL}/auth/magic-link?token=${token}`;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Your Login Magic Link",
+    templateName: "magic-link",
+    variables: {
+      name: user.name || "there",
+      magicLink,
+      expiryMinutes: 15,
+    },
+  });
+
+  return { message: "Magic link sent successfully" };
+};
+
+export const verifyMagicLinkService = async (token: string) => {
+  const record = await prisma.magicLinkToken.findUnique({ where: { token } });
+  if (!record) throw new BadRequestError("Invalid or expired link");
+
+  if (record.expiresAt < new Date()) throw new BadRequestError("Link expired");
+
+  if (record.used) throw new BadRequestError("Link already used");
+
+  const user = await prisma.user.findUnique({ where: { id: record.userId! } });
+  if (!user) throw new BadRequestError("User not found");
+
+  await prisma.magicLinkToken.update({
+    where: { token },
+    data: { used: true },
+  });
+
+  if (!user.isVerified) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { isVerified: true },
+    });
+  }
+
+  const jwtToken = jwt.sign(
+    { userId: user.id, email: user.email },
+    env.JWT_SECRET!,
+    { expiresIn: env.JWT_EXPIRES_IN } as jwt.SignOptions
+  );
+
+  return { token: jwtToken, user };
 };

@@ -1,0 +1,24 @@
+{{> header}}
+
+<table width="100%" style="font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;">
+  <tr>
+    <td align="center">
+      <table width="600" style="background:white;padding:20px;border-radius:10px;">
+        <tr>
+          <td>
+            <h2 style="color:#333;">Hi {{name}},</h2>
+            <p>Click the button below to log in securely to your account. This link will expire in {{expiryMinutes}} minutes.</p>
+            <p style="text-align:center;margin:30px 0;">
+              <a href="{{magicLink}}" style="background:#007bff;color:white;padding:12px 24px;border-radius:6px;text-decoration:none;">Login Now</a>
+            </p>
+            <p>If you didn’t request this, please ignore this email.</p>
+            <p style="color:#888;">— The Team at YourBlog</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+
+{{> footer}}

@@ -4,7 +4,9 @@ import {
   loginUserService,
   oauthLoginService,
   registerUserService,
+  requestMagicLinkService,
   verifyEmailService,
+  verifyMagicLinkService,
 } from "../service/auth.service";
 import { sendEmail } from "@/emails/sendEmail";
 
@@ -55,4 +57,16 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
   const result = await verifyEmailService(token as string);
   return successResponse(res, result, "Account successfully verified", 200);
+};
+
+export const requestMagicLink = async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const result = await requestMagicLinkService(email);
+  return successResponse(res, result, "Magic link sent to your email", 200);
+};
+
+export const verifyMagicLink = async (req: Request, res: Response) => {
+  const { token } = req.query;
+  const result = await verifyMagicLinkService(token as string);
+  return successResponse(res, result, "Login successful", 200);
 };
