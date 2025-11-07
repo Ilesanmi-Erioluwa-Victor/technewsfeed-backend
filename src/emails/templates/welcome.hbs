@@ -1,17 +1,43 @@
 {{> header}}
 
-<table width="600" align="center" cellpadding="0" cellspacing="0" style="background-color: white; padding: 20px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9f9f9; padding: 40px 0; font-family: Arial, sans-serif;">
   <tr>
-    <td>
-      <h2 style="font-family: Arial, sans-serif; color: #333;">Welcome to {{appName}}, {{name}}!</h2>
-      <p style="font-family: Arial, sans-serif; color: #555;">
-        We're thrilled to have you onboard! Your account has been successfully created.
-      </p>
-      <p style="font-family: Arial, sans-serif; color: #555;">
-        You can now explore, read, learn and connect with amazing reader on {{appName}}.
-      </p>
-      <p>
-        <a href="{{loginLink}}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; text-decoration: none;">Access Your Dashboard</a>
+    <td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <tr>
+          <td align="center" style="padding: 40px 30px;">
+            <h2 style="color: #2b2b2b; margin-bottom: 10px;">Welcome to {{appName}}, {{name}}!</h2>
+            <p style="color: #555; font-size: 15px; line-height: 1.6; max-width: 500px; margin: 0 auto 20px;">
+              We’re absolutely thrilled to have you on board 🎉  
+              You’ve just joined a vibrant community where ideas meet inspiration.
+            </p>
+
+            <p style="color: #555; font-size: 15px; line-height: 1.6; max-width: 500px; margin: 0 auto 30px;">
+              With {{appName}}, you can now explore insightful articles, connect with other readers, and share your voice with the world.  
+              Your journey into the world of knowledge and storytelling begins now.
+            </p>
+
+            <a href="{{loginLink}}" style="display: inline-block; background-color: #007bff; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: bold; font-size: 15px;">
+              Access Your Account
+            </a>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;" />
+
+            <h3 style="color: #333; margin-bottom: 10px;">What you can do next:</h3>
+            <ul style="color: #555; font-size: 14px; line-height: 1.8; text-align: left; max-width: 450px; margin: 0 auto 20px; padding-left: 20px;">
+              <li>📚 Discover trending articles and stories.</li>
+              <li>💬 Join the conversation by leaving comments.</li>
+              <li>🔔 Stay updated with tailored notifications and newsletters.</li>
+            </ul>
+
+            <p style="color: #999; font-size: 13px; margin-top: 30px;">
+              Need help? Visit our <a href="{{websiteUrl}}/support" style="color: #007bff; text-decoration: none;">Help Center</a> or reach out to our support team anytime.
+            </p>
+          </td>
+        </tr>
+      </table>
+      <p style="color: #aaa; font-size: 12px; margin-top: 20px;">
+        © {{year}} {{appName}}. All rights reserved.
       </p>
     </td>
   </tr>

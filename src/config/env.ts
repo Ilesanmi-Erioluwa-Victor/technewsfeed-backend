@@ -35,7 +35,9 @@ const envSchema = z.object({
 
   JWT_EXPIRES_IN: z.string().default("20d"),
 
-  GOOGLE_REFRESH_TOKEN: z.string()
+  GOOGLE_REFRESH_TOKEN: z.string(),
+
+  GMAIL_USER: z.string(),
 });
 
 const parsed = envSchema.safeParse(process.env);

@@ -4,6 +4,7 @@ import {
   loginUserService,
   oauthLoginService,
   registerUserService,
+  verifyEmailService,
 } from "../service/auth.service";
 import { sendEmail } from "@/emails/sendEmail";
 
@@ -13,18 +14,6 @@ export const registerUser = async (req: Request, res: Response) => {
   const user = await registerUserService(name, email, password);
 
   successResponse(res, user, "User registered successfully", 201);
-
-  sendEmail({
-    to: email,
-    subject: `Welcome to Blogify, ${name}!`,
-    templateName: "welcome",
-    variables: {
-      name,
-      appName: "Blogify",
-      loginLink: "https://technewsfeed-backend.onrender.com/api/v1/login",
-      logoUrl: "https://yourapp.com/logo.png",
-    },
-  }).catch((error) => console.error("Failed to send welcome email:", error));
 };
 
 export const loginUser = async (req: Request, res: Response) => {
@@ -55,4 +44,15 @@ export const oauthLogin = async (req: Request, res: Response) => {
     `${provider} login successful`,
     200
   );
+};
+
+export const verifyEmail = async (req: Request, res: Response) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(400).json({ message: "Verification token is required" });
+  }
+
+  const result = await verifyEmailService(token as string);
+  return successResponse(res, result, "Account successfully verified", 200);
 };

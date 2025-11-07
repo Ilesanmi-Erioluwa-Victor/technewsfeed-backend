@@ -39,6 +39,7 @@ model User {
   preferences         UserPreference?
   sentInvitations     WriterInvitation[]       @relation("InvitationSender")
   receivedInvitations WriterInvitation[]       @relation("InvitationReceiver")
+  verificationTokens  VerificationToken[]
 
   @@index([role])
   @@index([isActive])
@@ -58,6 +59,16 @@ model AuthCredential {
   @@index([providerId])
   @@index([userId])
 }
+
+model VerificationToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
 
 model WriterInvitation {
   id            String           @id @default(uuid())

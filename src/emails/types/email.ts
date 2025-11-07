@@ -2,6 +2,7 @@ export type EmailTemplateName =
   | "welcome"
   | "forgot-password"
   | "otp"
+  | "verify"
   | "notification";
 
 export interface SendEmailProps {
