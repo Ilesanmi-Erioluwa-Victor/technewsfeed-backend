@@ -175,3 +175,34 @@ Can't reach database server at `aws-1-us-east-1.pooler.supabase.com:6543`
 Please make sure your database server is running at `aws-1-us-east-1.pooler.supabase.com:6543`.
 [2025-10-18T07:25:39.910Z] ERROR: ❌ Chromium Blog failed: Failed to fetch Chromium Blog: content.replace is not a function
 [2025-10-18T07:31:55.130Z] ERROR: GET /api/news/ - Failed to fetch news
+[2025-11-07T11:02:28.252Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:02:39.482Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:02:55.289Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:03:08.038Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:03:22.969Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:03:34.963Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:03:48.815Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:04:00.033Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:04:13.888Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:04:25.356Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:04:40.457Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:04:51.937Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:05:05.670Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:05:16.950Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:05:32.171Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:05:43.331Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:05:57.847Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:06:09.121Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:06:22.555Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:06:33.912Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:06:49.076Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:07:00.020Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:07:14.387Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:07:25.429Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:07:44.715Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:07:56.361Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:08:11.613Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:08:22.613Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:08:37.832Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
+[2025-11-07T11:08:49.744Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-11-07T11:09:05.070Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
