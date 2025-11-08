@@ -62,7 +62,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const requestMagicLink = async (req: Request, res: Response) => {
   const { email } = req.body;
   const result = await requestMagicLinkService(email);
-  return successResponse(res, result, "Magic link sent to your email", 200);
+  return successResponse(res, result, "", 200);
 };
 
 export const verifyMagicLink = async (req: Request, res: Response) => {

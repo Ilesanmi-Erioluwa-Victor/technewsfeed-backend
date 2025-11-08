@@ -14,7 +14,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/oauth", oauthLogin);
 router.post("/verify-email", verifyEmail);
-router.post("/magic-link/request", requestMagicLink);
+router.post("/magic-link", requestMagicLink);
 router.get("/magic-login", verifyMagicLink);
 
 export default router;
