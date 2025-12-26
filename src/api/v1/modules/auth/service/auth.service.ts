@@ -56,6 +56,16 @@ export async function registerUserService(
     },
   });
 
+  sendEmail({
+    to: email,
+    subject: `Welcome to TechNewsFeed, ${name}!`,
+    templateName: "welcome",
+    variables: {
+      name,
+      appName: "TechNewsFeed",
+    },
+  });
+
   return {
     message:
       "Registration successful. Please check your email to verify your account.",

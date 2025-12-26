@@ -47,17 +47,18 @@ export const OAuthService = {
     avatarUrl?: string;
     providerId?: string;
   }) {
+    // Only include avatar in the response
     const userInclude = {
       avatar: true,
-      credentials: true,
     };
-
+  
     let user = await prisma.user.findUnique({
       where: { email },
       include: userInclude,
     });
-
+  
     if (!user) {
+      // Create new user
       user = await prisma.user.create({
         data: {
           email,
@@ -82,11 +83,15 @@ export const OAuthService = {
         include: userInclude,
       });
     } else {
-      const hasCredential = user.credentials.some(
-        (cred) => cred.provider === provider
-      );
-
-      if (!hasCredential) {
+      // Check credential separately without including in response
+      const existingCredential = await prisma.authCredential.findFirst({
+        where: {
+          userId: user.id,
+          provider: provider as string,
+        },
+      });
+  
+      if (!existingCredential) {
         await prisma.authCredential.create({
           data: {
             provider: provider as string,
@@ -94,25 +99,17 @@ export const OAuthService = {
             userId: user.id,
           },
         });
-
-        user = await prisma.user.findUnique({
-          where: { email },
-          include: userInclude,
-        });
       }
     }
-
+  
     if (!user) {
       throw new Error("Failed to create or find user");
     }
-    if (!user.credentials || !("avatar" in user)) {
-      throw new Error("User object is missing required relations");
-    }
-
+  
     const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {
       expiresIn: env.JWT_EXPIRES_IN,
     } as jwt.SignOptions);
-
+  
     return { user, token };
-  },
-};
+  }
+}

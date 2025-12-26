@@ -566,3 +566,21 @@ Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.co
 Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
 [2025-12-26T14:16:25.979Z] ERROR: POST /api/v1/auth/register - Email already registered
 [2025-12-26T14:23:44.538Z] ERROR: POST /api/v1/auth/magic-link - Failed to send email: Error: invalid_grant
+[2025-12-26T20:17:38.296Z] ERROR: POST /api/v1/auth/register - Email already registered
+[2025-12-26T20:17:51.606Z] ERROR: POST /api/v1/auth/register - Email already registered
+[2025-12-26T20:37:16.071Z] ERROR: GET /api/v1/auth/magic-login?token=bfeb002c-cbc8-4662-bc14-d4c3322fbc31 - Link expired
+[2025-12-26T21:13:33.081Z] ERROR: POST /api/v1/auth/oauth - Invalid Google token
+[2025-12-26T21:14:32.316Z] ERROR: POST /api/v1/auth/oauth - Invalid Google token
+[2025-12-26T21:25:11.954Z] ERROR: POST /api/v1/auth/oauth - Wrong recipient, payload audience != requiredAudience
+[2025-12-26T21:25:37.715Z] ERROR: POST /api/v1/auth/oauth - Wrong recipient, payload audience != requiredAudience
+[2025-12-26T21:40:58.594Z] ERROR: POST /api/v1/auth/oauth - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/strategies/OAuthService.ts:55:34
+
+  52   avatar: true,
+  53 };
+  54   
+→ 55 let user = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
