@@ -26,5 +26,5 @@
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src", "src/scripts/get-token.ts"]
 }

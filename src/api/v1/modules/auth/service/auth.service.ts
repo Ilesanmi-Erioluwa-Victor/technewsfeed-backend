@@ -165,6 +165,7 @@ export const requestMagicLinkService = async (email: string) => {
       name: user.name || "there",
       magicLink,
       expiryMinutes: 15,
+      appName: "TechNewsFeed",
     },
   });
 

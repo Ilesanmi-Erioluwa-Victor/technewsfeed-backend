@@ -33,12 +33,11 @@ export const sendEmail = async ({
 
     const html = template({
       ...variables,
-      appName: variables.appName || "Blogify",
-      logoUrl: variables.logoUrl || "https://yourapp.com/logo.png",
-      websiteUrl:
-        variables.websiteUrl || "https://technewsfeed-backend.onrender.com",
+      appName: variables.appName || "TechNewsFeed",
+      logoUrl: variables.logoUrl || "https://technewsfeed.com/logo.png",
+      websiteUrl: variables.websiteUrl || "https://technewsfeed.com",
       unsubscribeUrl:
-        variables.unsubscribeUrl || "https://yourapp.com/unsubscribe",
+        variables.unsubscribeUrl || "https://technewsfeed.com/unsubscribe",
       year: new Date().getFullYear(),
     });
 
