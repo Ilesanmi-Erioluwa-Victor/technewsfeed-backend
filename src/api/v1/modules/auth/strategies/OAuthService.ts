@@ -1,4 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
+import axios from "axios";
 import jwt from "jsonwebtoken";
 import prisma from "@/utils/prismaClient";
 import { env } from "@/config/env";
@@ -17,6 +18,10 @@ export const OAuthService = {
     switch (provider) {
       case "google":
         return await this.verifyGoogleToken(idToken);
+      case "github":
+        return await this.verifyGitHubToken(idToken);
+      // case "apple":
+      //   return await this.verifyAppleToken(idToken);
       default:
         throw new BadRequestError(`Unsupported provider: ${provider}`);
     }
@@ -38,6 +43,79 @@ export const OAuthService = {
       providerId: payload.sub,
     };
   },
+
+  async verifyGitHubToken(accessToken: string) {
+    try {
+      const response = await axios.get("https://api.github.com/user", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/json",
+        },
+      });
+
+      const userData = response.data;
+      let email = userData.email;
+      if (!email) {
+        const emailResponse = await axios.get(
+          "https://api.github.com/user/emails",
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          }
+        );
+        const emails = emailResponse.data;
+        const primaryEmail = emails.find((e: any) => e.primary);
+        email = primaryEmail?.email || emails[0]?.email;
+      }
+
+      if (!email) {
+        throw new UnauthorizedError(
+          "GitHub account doesn't have a public email"
+        );
+      }
+
+      return {
+        email,
+        name: userData.name || userData.login || "GitHub User",
+        avatarUrl: userData.avatar_url,
+        providerId: userData.id.toString(),
+      };
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        throw new UnauthorizedError("Invalid GitHub access token");
+      }
+      throw new UnauthorizedError("Failed to verify GitHub token");
+    }
+  },
+
+  // async verifyAppleToken(idToken: string) {
+  //   try {
+  //     const decoded = this.decodeJWT(idToken);
+
+  //     if (!decoded.email) {
+  //       throw new UnauthorizedError("Apple token doesn't contain email");
+  //     }
+
+  //     return {
+  //       email: decoded.email,
+  //       name: decoded.name || "Apple User",
+  //       avatarUrl: undefined,
+  //       providerId: decoded.sub,
+  //     };
+  //   } catch (error) {
+  //     throw new UnauthorizedError("Invalid Apple token");
+  //   }
+  // },
+
+  // decodeJWT(token: string): any {
+  //   const parts = token.split(".");
+  //   if (parts.length !== 3) {
+  //     throw new Error("Invalid JWT format");
+  //   }
+  //   const payload = parts[1];
+  //   const base64 = payload?.replace(/-/g, "+").replace(/_/g, "/");
+  //   const decoded = Buffer.from(base64, "base64").toString("utf8");
+  //   return JSON.parse(decoded);
+  // },
 
   async loginOrRegisterUser({
     provider,
