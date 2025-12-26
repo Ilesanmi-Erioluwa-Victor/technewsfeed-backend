@@ -2,6 +2,11 @@ import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 import prisma from "@/utils/prismaClient";
 import { env } from "@/config/env";
+import {
+  BadRequestError,
+  InternalServerError,
+  UnauthorizedError,
+} from "@/types/errors";
 
 export type OAuthProvider = "google" | "github" | "apple";
 
@@ -13,7 +18,7 @@ export const OAuthService = {
       case "google":
         return await this.verifyGoogleToken(idToken);
       default:
-        throw new Error(`Unsupported provider: ${provider}`);
+        throw new BadRequestError(`Unsupported provider: ${provider}`);
     }
   },
 
@@ -24,7 +29,7 @@ export const OAuthService = {
     });
     const payload = ticket.getPayload();
 
-    if (!payload?.email) throw new Error("Invalid Google token");
+    if (!payload?.email) throw new UnauthorizedError("Invalid Google token");
 
     return {
       email: payload.email,
@@ -149,13 +154,17 @@ export const OAuthService = {
     }
 
     if (!user) {
-      throw new Error("Failed to create or find user");
+      throw new InternalServerError("Failed to create or find user");
     }
 
-    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {
-      expiresIn: env.JWT_EXPIRES_IN,
-    } as jwt.SignOptions);
+    try {
+      const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {
+        expiresIn: env.JWT_EXPIRES_IN,
+      } as jwt.SignOptions);
 
-    return { user, token };
+      return { user, token };
+    } catch (error) {
+      throw new InternalServerError("Failed to generate authentication token");
+    }
   },
 };
