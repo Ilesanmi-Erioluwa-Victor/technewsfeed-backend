@@ -47,18 +47,16 @@ export const OAuthService = {
     avatarUrl?: string;
     providerId?: string;
   }) {
-    // Only include avatar in the response
     const userInclude = {
       avatar: true,
     };
-  
+
     let user = await prisma.user.findUnique({
       where: { email },
       include: userInclude,
     });
-  
+
     if (!user) {
-      // Create new user
       user = await prisma.user.create({
         data: {
           email,
@@ -83,14 +81,13 @@ export const OAuthService = {
         include: userInclude,
       });
     } else {
-      // Check credential separately without including in response
       const existingCredential = await prisma.authCredential.findFirst({
         where: {
           userId: user.id,
           provider: provider as string,
         },
       });
-  
+
       if (!existingCredential) {
         await prisma.authCredential.create({
           data: {
@@ -100,16 +97,65 @@ export const OAuthService = {
           },
         });
       }
+
+      if (avatarUrl) {
+        if (!user.avatar) {
+          const avatar = await prisma.avatar.create({
+            data: {
+              url: avatarUrl,
+              fileType: "image",
+              size: null,
+            },
+          });
+
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              avatarId: avatar.id,
+            },
+          });
+
+          user = await prisma.user.findUnique({
+            where: { email },
+            include: userInclude,
+          });
+        } else if (user.avatar.url !== avatarUrl) {
+          await prisma.avatar.update({
+            where: { id: user.avatar.id },
+            data: {
+              url: avatarUrl,
+              updatedAt: new Date(),
+            },
+          });
+
+          user = await prisma.user.findUnique({
+            where: { email },
+            include: userInclude,
+          });
+        }
+      }
+
+      if (name && user?.name !== name) {
+        await prisma.user.update({
+          where: { id: user?.id as string },
+          data: { name },
+        });
+
+        user = await prisma.user.findUnique({
+          where: { email },
+          include: userInclude,
+        });
+      }
     }
-  
+
     if (!user) {
       throw new Error("Failed to create or find user");
     }
-  
+
     const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {
       expiresIn: env.JWT_EXPIRES_IN,
     } as jwt.SignOptions);
-  
+
     return { user, token };
-  }
-}
+  },
+};
