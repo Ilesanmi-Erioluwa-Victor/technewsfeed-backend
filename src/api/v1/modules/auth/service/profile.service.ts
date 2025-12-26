@@ -55,42 +55,26 @@ export const updateUserName = async (userId: string, newName: string) => {
   return updatedUser;
 };
 
-// ========== VERIFY PASSWORD STRENGTH ==========
 export const validatePasswordStrength = (password: string): boolean => {
   if (password.length < 8) {
     throw new BadRequestError("Password must be at least 8 characters long");
   }
 
-  // Check for at least one uppercase letter
   if (!/[A-Z]/.test(password)) {
     throw new BadRequestError(
       "Password must contain at least one uppercase letter"
     );
   }
 
-  // Check for at least one lowercase letter
   if (!/[a-z]/.test(password)) {
     throw new BadRequestError(
       "Password must contain at least one lowercase letter"
     );
   }
 
-  // Check for at least one number
-  if (!/\d/.test(password)) {
-    throw new BadRequestError("Password must contain at least one number");
-  }
-
-  // Check for at least one special character
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    throw new BadRequestError(
-      "Password must contain at least one special character"
-    );
-  }
-
   return true;
 };
 
-// ========== GET USER WITH LOCAL CREDENTIALS ==========
 export const getUserWithLocalCredentials = async (email: string) => {
   const user = await prisma.user.findUnique({
     where: { email },
@@ -100,16 +84,17 @@ export const getUserWithLocalCredentials = async (email: string) => {
       },
     },
   });
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
 
   return user;
 };
 
-// ========== FORGOT PASSWORD ==========
 export const requestPasswordReset = async (email: string) => {
   const user = await getUserWithLocalCredentials(email);
 
   if (!user) {
-    // Security: Don't reveal if user exists
     return {
       success: true,
       message: "If an account exists, you will receive a password reset email",
