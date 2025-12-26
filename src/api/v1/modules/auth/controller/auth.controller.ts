@@ -8,7 +8,6 @@ import {
   verifyEmailService,
   verifyMagicLinkService,
 } from "../service/auth.service";
-import { sendEmail } from "@/emails/sendEmail";
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
