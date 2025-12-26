@@ -509,3 +509,60 @@ Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.co
 Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
 [2025-11-07T13:29:48.512Z] ERROR: 🧠 Summarization failed: Request failed with status code 410
 [2025-11-07T13:29:59.643Z] ERROR: 😊 Sentiment analysis failed: Request failed with status code 410
+[2025-12-26T14:02:17.789Z] ERROR: POST /api/v1/auth/register - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/service/auth.service.ts:16:38
+
+  13   email: string,
+  14   password: string
+  15 ) {
+→ 16   const existing = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-12-26T14:02:44.376Z] ERROR: POST /api/v1/auth/register - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/service/auth.service.ts:16:38
+
+  13   email: string,
+  14   password: string
+  15 ) {
+→ 16   const existing = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-12-26T14:04:59.278Z] ERROR: POST /api/v1/auth/register - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/service/auth.service.ts:16:38
+
+  13   email: string,
+  14   password: string
+  15 ) {
+→ 16   const existing = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-12-26T14:05:58.132Z] ERROR: POST /api/v1/auth/register - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/service/auth.service.ts:16:38
+
+  13   email: string,
+  14   password: string
+  15 ) {
+→ 16   const existing = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-12-26T14:10:57.870Z] ERROR: POST /api/v1/auth/register - 
+Invalid `prisma.user.findUnique()` invocation in
+/home/ilesanmi-erioluwa-victor/Desktop/technewsfeed-backend/src/api/v1/modules/auth/service/auth.service.ts:16:38
+
+  13   email: string,
+  14   password: string
+  15 ) {
+→ 16   const existing = await prisma.user.findUnique(
+Can't reach database server at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`
+
+Please make sure your database server is running at `techfeednewsdev-technewsfeed-dev.i.aivencloud.com:13108`.
+[2025-12-26T14:16:25.979Z] ERROR: POST /api/v1/auth/register - Email already registered
+[2025-12-26T14:23:44.538Z] ERROR: POST /api/v1/auth/magic-link - Failed to send email: Error: invalid_grant

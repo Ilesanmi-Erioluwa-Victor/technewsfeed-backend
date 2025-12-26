@@ -66,6 +66,6 @@ export const sendEmail = async ({
 
     console.log(`✅ Email sent successfully to ${to}`);
   } catch (error) {
-    console.error("❌ Error sending email via Gmail API:", error);
+    throw new Error(`Failed to send email: ${error}`);
   }
 };

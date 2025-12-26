@@ -3,12 +3,11 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
-datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
-}
 
+
+datasource db {
+   provider = "postgresql" 
+}
 model Avatar {
   id         String   @id @default(uuid())
   url        String
@@ -40,7 +39,8 @@ model User {
   sentInvitations     WriterInvitation[]       @relation("InvitationSender")
   receivedInvitations WriterInvitation[]       @relation("InvitationReceiver")
   verificationTokens  VerificationToken[]
-   magicLinkTokens     MagicLinkToken[]  
+  passwordResetTokens PasswordResetToken[]
+  magicLinkTokens     MagicLinkToken[]
 
   @@index([role])
   @@index([isActive])
@@ -68,6 +68,22 @@ model VerificationToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, token])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  otp       String   @unique
+  userId    String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model MagicLinkToken {
@@ -84,7 +100,6 @@ model MagicLinkToken {
   @@index([expiresAt])
 }
 
-
 model WriterInvitation {
   id            String           @id @default(uuid())
   email         String           @unique
@@ -95,7 +110,7 @@ model WriterInvitation {
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   invitedById   String
-  invitedUserId String?
+  invitedUserId String?          @unique
   invitedBy     User             @relation("InvitationSender", fields: [invitedById], references: [id])
   invitedUser   User?            @relation("InvitationReceiver", fields: [invitedUserId], references: [id])
 
@@ -194,6 +209,9 @@ model ExternalPost {
   sentiment   String?
   blogPost    BlogPost?   @relation(fields: [blogPostId], references: [id])
   sourceRef   NewsSource? @relation(fields: [sourceRefId], references: [id])
+
+  @@index([blogPostId])
+  @@index([sourceRefId])
 }
 
 model Category {
@@ -236,7 +254,7 @@ model UserPreference {
 
 model NewsletterSubscription {
   id        String   @id @default(uuid())
-  userId    String?
+  userId    String?  @unique
   email     String   @unique
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
