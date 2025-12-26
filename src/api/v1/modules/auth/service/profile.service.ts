@@ -7,47 +7,13 @@ import {
   UnauthorizedError,
   NotFoundError,
 } from "@/types/errors";
+import { createAuditLog } from "@/utils/createAuditLog";
 
-// ========== AUDIT LOG HELPER ==========
-export const createAuditLog = async (data: {
-  userId: string;
-  action: string;
-  category: string;
-  entity?: string;
-  entityId?: string;
-  oldValue?: any;
-  newValue?: any;
-  description?: string;
-  ipAddress?: string;
-  userAgent?: string;
-}) => {
-  try {
-    await prisma.auditLog.create({
-      data: {
-        action: data.action,
-        actorId: data.userId,
-        targetId: data.entityId as string,
-        targetType: data.entity as string,
-        description: data.description as string,
-        payload: {
-          oldValue: data.oldValue,
-          newValue: data.newValue,
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Failed to create audit log:", error);
-  }
-};
-
-// ========== UPDATE USER NAME ==========
 export const updateUserName = async (userId: string, newName: string) => {
   if (!newName || newName.trim().length < 2) {
     throw new BadRequestError("Name must be at least 2 characters long");
   }
-
   const trimmedName = newName.trim();
-
   const user = await prisma.user.findUnique({
     where: { id: userId },
   });
@@ -57,7 +23,6 @@ export const updateUserName = async (userId: string, newName: string) => {
   }
 
   const oldName = user.name;
-
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
