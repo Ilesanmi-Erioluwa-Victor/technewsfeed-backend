@@ -19,19 +19,17 @@ import {
 } from "../controller/profile.controller";
 
 const router = Router();
+
+// ========= PUBLIC =========
+router.post("/password/forgot", validate(forgotPasswordSchema), forgotPassword);
+router.post("/password/reset", validate(resetPasswordSchema), resetPassword);
+
 router.use(authenticate);
 
-router.patch("/name", validate(updateNameSchema), updateName);
-
-router.put("/password", validate(changePasswordSchema), updatePassword);
+router.patch("/", validate(updateNameSchema), updateName);
+router.patch("/password", validate(changePasswordSchema), updatePassword);
 
 router.post("/otp/request", validate(requestOTPSchema), requestNewOTP);
-
 router.post("/otp/verify", validate(verifyOTPSchema), verifyNewOTP);
-
-// ========== PUBLIC ROUTES ==========
-router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
-
-router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
 
 export default router;
