@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {
-  BadRequestError,
-  successResponse,
-  UnauthorizedError,
-} from "@/types/errors";
+import { successResponse } from "@/types/errors";
 import {
   changePassword,
   requestOTP,
@@ -59,10 +55,6 @@ export const resetPassword = async (
   try {
     const { email, otp, newPassword } = req.body;
 
-    if (!email || !otp || !newPassword) {
-      throw new BadRequestError("Email, OTP and new password are required");
-    }
-
     const result = await resetPasswordWithOTP(email, otp, newPassword);
 
     return successResponse(res, result, result.message, 200);
@@ -80,11 +72,11 @@ export const updatePassword = async (
     const userId = req.user?.id;
     const { currentPassword, newPassword } = req.body;
 
-    if (!userId) {
-      throw new UnauthorizedError("User not authenticated");
-    }
-
-    const result = await changePassword(userId, currentPassword, newPassword);
+    const result = await changePassword(
+      userId as string,
+      currentPassword,
+      newPassword
+    );
 
     return successResponse(res, result, result.message, 200);
   } catch (error) {
@@ -101,7 +93,7 @@ export const requestNewOTP = async (
     const userId = req.user?.id;
     const { purpose } = req.body;
 
-    const result = await requestOTP(userId, purpose);
+    const result = await requestOTP(userId as string, purpose);
 
     return successResponse(res, result, result.message, 200);
   } catch (error) {
@@ -118,7 +110,7 @@ export const verifyNewOTP = async (
     const userId = req.user?.id;
     const { otp, purpose } = req.body;
 
-    const result = await verifyOTP(userId, otp, purpose);
+    const result = await verifyOTP(userId as string, otp, purpose);
 
     return successResponse(res, result, result.message, 200);
   } catch (error) {

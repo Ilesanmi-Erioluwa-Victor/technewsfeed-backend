@@ -17,11 +17,7 @@ export const updateUserName = async (userId: string, newName: string) => {
     where: { id: userId },
   });
 
-  if (!user) {
-    throw new NotFoundError("User not found");
-  }
-
-  const oldName = user.name;
+  const oldName = user?.name;
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
@@ -79,9 +75,6 @@ export const getUserWithLocalCredentials = async (email: string) => {
       },
     },
   });
-  if (!user) {
-    throw new NotFoundError("User not found");
-  }
 
   return user;
 };
@@ -161,13 +154,9 @@ export const resetPasswordWithOTP = async (
   validatePasswordStrength(newPassword);
   const user = await getUserWithLocalCredentials(email);
 
-  if (!user) {
-    throw new NotFoundError("User not found");
-  }
-
   const resetToken = await prisma.passwordResetToken.findFirst({
     where: {
-      userId: user.id,
+      userId: user?.id as string,
       otp,
       used: false,
       expiresAt: { gt: new Date() },
@@ -182,7 +171,7 @@ export const resetPasswordWithOTP = async (
   await prisma.$transaction(async (tx) => {
     await tx.authCredential.updateMany({
       where: {
-        userId: user.id,
+        userId: user?.id as string,
         provider: "local",
       },
       data: {
@@ -197,11 +186,11 @@ export const resetPasswordWithOTP = async (
   });
 
   await createAuditLog({
-    userId: user.id,
+    userId: user?.id as string,
     action: "PASSWORD_RESET_COMPLETE",
     category: "SECURITY",
     entity: "User",
-    entityId: user.id,
+    entityId: user?.id as string,
     description: "User reset password using OTP",
   });
 
@@ -227,10 +216,7 @@ export const changePassword = async (
     },
   });
 
-  if (!user) {
-    throw new NotFoundError("User not found");
-  }
-  const localCredential = user.credentials.find((c) => c.provider === "local");
+  const localCredential = user?.credentials.find((c) => c.provider === "local");
   if (!localCredential || !localCredential.password) {
     throw new BadRequestError("This account does not have a password set");
   }
@@ -259,7 +245,7 @@ export const changePassword = async (
 
   await prisma.authCredential.updateMany({
     where: {
-      userId: user.id,
+      userId: user?.id as string,
       provider: "local",
     },
     data: {
@@ -268,11 +254,11 @@ export const changePassword = async (
   });
 
   await createAuditLog({
-    userId: user.id,
+    userId: user?.id as string,
     action: "PASSWORD_CHANGE",
     category: "SECURITY",
     entity: "User",
-    entityId: user.id,
+    entityId: user?.id as string,
     description: "User changed their password",
   });
 
@@ -307,12 +293,8 @@ export const requestOTP = async (
     where: { id: userId },
   });
 
-  if (!user) {
-    throw new NotFoundError("User not found");
-  }
-
   await checkOTPRateLimit(userId);
-  const otp = generateOTP(); // Create OTP record (expires in 10 minutes)
+  const otp = generateOTP();
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   await prisma.verificationToken.create({
