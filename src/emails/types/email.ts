@@ -4,7 +4,10 @@ export type EmailTemplateName =
   | "otp"
   | "magic-link"
   | "verify"
-  | "notification";
+  | "notification"
+  | "password-reset-confirmation"
+  | "password-reset"
+  ;
 
 export interface SendEmailProps {
   to: string;

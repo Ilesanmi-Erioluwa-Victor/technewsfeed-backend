@@ -327,11 +327,11 @@ export const requestOTP = async (
   }
 
   await sendEmail({
-    to: user.email,
+    to: user?.email as string,
     subject: emailSubject,
     templateName: emailTemplate,
     variables: {
-      name: user.name || "User",
+      name: user?.name as string|| "User",
       otp,
       appName: "TechNewsFeed",
       purpose: purpose.replace("_", " "),
