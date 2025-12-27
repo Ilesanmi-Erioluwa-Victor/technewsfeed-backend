@@ -1,7 +1,13 @@
 
 /node_modules
 
-
+# Logs
+*.log
+logs/
+error.log
+combined.log
+logs/
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*

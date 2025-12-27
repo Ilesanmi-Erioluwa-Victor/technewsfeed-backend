@@ -1,0 +1,99 @@
+<table
+  width="100%"
+  cellpadding="0"
+  cellspacing="0"
+  style="background-color: #f8f9fa; font-family: Arial, Helvetica, sans-serif;"
+>
+  <tr>
+    <td align="center" style="padding: 0 20px 32px 20px;">
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        style="max-width: 600px;"
+      >
+        <tr>
+          <td
+            align="center"
+            style="background-color: #ffffff; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 4px 4px;"
+          >
+
+            <table cellpadding="0" cellspacing="0" style="width: 100%;">
+              <tr>
+                <td style="padding: 32px;">
+
+                  {{#if socialLinks}}
+                    <table
+                      cellpadding="0"
+                      cellspacing="0"
+                      style="margin: 0 auto 24px auto;"
+                    >
+                      <tr>
+                        {{#each socialLinks}}
+                          <td style="padding: 0 8px;">
+                            <a
+                              href="{{this.url}}"
+                              style="text-decoration: none;"
+                            >
+                              <img
+                                src="{{this.icon}}"
+                                alt="{{this.name}}"
+                                width="24"
+                                height="24"
+                                style="display: block;"
+                              />
+                            </a>
+                          </td>
+                        {{/each}}
+                      </tr>
+                    </table>
+                  {{/if}}
+
+                  <p
+                    style="font-size: 12px; line-height: 18px; color: #666666; margin: 0 0 16px 0;"
+                  >
+                    &copy;
+                    {{year}}
+                    {{companyName}}. All rights reserved.<br />
+                    {{companyAddress}}
+                  </p>
+
+                  <p
+                    style="font-size: 12px; line-height: 18px; color: #666666; margin: 0 0 24px 0;"
+                  >
+                    <a
+                      href="{{privacyUrl}}"
+                      style="color: #0066cc; text-decoration: none; margin: 0 8px;"
+                    >Privacy Policy</a>
+                    <span style="color: #cccccc;">•</span>
+                    <a
+                      href="{{termsUrl}}"
+                      style="color: #0066cc; text-decoration: none; margin: 0 8px;"
+                    >Terms of Service</a>
+                    <span style="color: #cccccc;">•</span>
+                    <a
+                      href="{{unsubscribeUrl}}"
+                      style="color: #0066cc; text-decoration: none; margin: 0 8px;"
+                    >Unsubscribe</a>
+                  </p>
+
+                  <p
+                    style="font-size: 11px; line-height: 16px; color: #999999; margin: 0;"
+                  >
+                    Contact us:
+                    <a
+                      href="mailto:{{contactEmail}}"
+                      style="color: #0066cc; text-decoration: none;"
+                    >{{contactEmail}}</a>
+                    {{#if contactPhone}} | {{contactPhone}}{{/if}}
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

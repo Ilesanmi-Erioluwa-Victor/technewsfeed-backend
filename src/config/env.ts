@@ -40,6 +40,7 @@ const envSchema = z.object({
   GMAIL_USER: z.string(),
 
   FRONTEND_URL: z.string(),
+  GITHUB_CLIENT_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

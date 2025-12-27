@@ -11,7 +11,6 @@ export const errorHandler = (
   let statusCode = 500;
   let message = "Internal Server Error";
   let validationErrors: ValidationError[] = [];
-  let stack: string | undefined;
 
   if (err instanceof AppError) {
     statusCode = err.statusCode;
@@ -19,29 +18,32 @@ export const errorHandler = (
     validationErrors = err.validationErrors || [];
 
     if (err.isOperational) {
-      logger.warn(`Operational Error: ${req.method} ${req.url} - ${message}`, {
-        validationErrors,
+      logger.warn(`Operational error`, {
+        method: req.method,
+        url: req.url,
+        message,
       });
     } else {
-      logger.error(`Programmer Error: ${req.method} ${req.url} - ${message}`, {
-        stack: err.stack,
-        validationErrors,
+      logger.error(`Non-operational error`, {
+        method: req.method,
+        url: req.url,
+        errorName: err.name,
       });
+
       if (process.env.NODE_ENV === "development") {
-        stack = err.stack;
+        logger.error(err.stack);
       }
     }
   } else {
-    logger.error(
-      `Unexpected Error: ${req.method} ${req.url} - ${err.message}`,
-      {
-        stack: err.stack,
-      }
-    );
+    logger.error(`Unhandled exception`, {
+      method: req.method,
+      url: req.url,
+      message: err.message,
+    });
 
     if (process.env.NODE_ENV === "development") {
+      logger.error(err.stack);
       message = err.message;
-      stack = err.stack;
     }
   }
 
@@ -50,19 +52,18 @@ export const errorHandler = (
     message,
   };
 
-  if (validationErrors.length > 0) {
+  if (validationErrors.length) {
     response.validationErrors = validationErrors;
   }
 
-  if (process.env.NODE_ENV === "development" && stack) {
-    response.stack = stack;
+  if (process.env.NODE_ENV === "development" && err.stack) {
+    response.stack = err.stack;
   }
 
   res.status(statusCode).json(response);
 };
 
-export const asyncHandler = (fn: Function) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+export const asyncHandler =
+  (fn: (...args: any[]) => Promise<any>) =>
+  (req: Request, res: Response, next: NextFunction) =>
     Promise.resolve(fn(req, res, next)).catch(next);
-  };
-};
