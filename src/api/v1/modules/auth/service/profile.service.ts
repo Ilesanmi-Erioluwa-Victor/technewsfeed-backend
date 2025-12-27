@@ -12,9 +12,6 @@ import { createAuditLog } from "@/utils/createAuditLog";
 import { generateOTP } from "@/utils/generateOtp";
 
 export const updateUserName = async (userId: string, newName: string) => {
-  if (!newName || newName.trim().length < 2) {
-    throw new BadRequestError("Name must be at least 2 characters long");
-  }
   const trimmedName = newName.trim();
   const user = await prisma.user.findUnique({
     where: { id: userId },

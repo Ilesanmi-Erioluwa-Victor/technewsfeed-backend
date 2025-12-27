@@ -19,12 +19,8 @@ export const updateName = async (
   next: NextFunction
 ) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user!.id;
     const { name } = req.body;
-
-    if (!userId) {
-      throw new UnauthorizedError("User not authenticated");
-    }
 
     const updatedUser = await updateUserName(userId, name);
 
@@ -46,10 +42,6 @@ export const forgotPassword = async (
 ) => {
   try {
     const { email } = req.body;
-
-    if (!email) {
-      throw new BadRequestError("Email is required");
-    }
 
     const result = await requestPasswordReset(email);
 
@@ -92,12 +84,6 @@ export const updatePassword = async (
       throw new UnauthorizedError("User not authenticated");
     }
 
-    if (!currentPassword || !newPassword) {
-      throw new BadRequestError(
-        "Current password and new password are required"
-      );
-    }
-
     const result = await changePassword(userId, currentPassword, newPassword);
 
     return successResponse(res, result, result.message, 200);
@@ -115,19 +101,6 @@ export const requestNewOTP = async (
     const userId = req.user?.id;
     const { purpose } = req.body;
 
-    if (!userId) {
-      throw new UnauthorizedError("User not authenticated");
-    }
-
-    if (
-      !purpose ||
-      !["email_verification", "security", "transaction"].includes(purpose)
-    ) {
-      throw new BadRequestError(
-        "Valid purpose is required: email_verification, security, or transaction"
-      );
-    }
-
     const result = await requestOTP(userId, purpose);
 
     return successResponse(res, result, result.message, 200);
@@ -144,14 +117,6 @@ export const verifyNewOTP = async (
   try {
     const userId = req.user?.id;
     const { otp, purpose } = req.body;
-
-    if (!userId) {
-      throw new UnauthorizedError("User not authenticated");
-    }
-
-    if (!otp || !purpose) {
-      throw new BadRequestError("OTP and purpose are required");
-    }
 
     const result = await verifyOTP(userId, otp, purpose);
 
