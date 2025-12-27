@@ -6,8 +6,10 @@ import {
   BadRequestError,
   UnauthorizedError,
   NotFoundError,
+  TooManyRequestsError,
 } from "@/types/errors";
 import { createAuditLog } from "@/utils/createAuditLog";
+import { generateOTP } from "@/utils/generateOtp";
 
 export const updateUserName = async (userId: string, newName: string) => {
   if (!newName || newName.trim().length < 2) {
@@ -110,7 +112,6 @@ export const requestPasswordReset = async (email: string) => {
     );
   }
 
-  // Delete any existing unused reset tokens
   await prisma.passwordResetToken.deleteMany({
     where: {
       userId: user.id,
@@ -118,10 +119,8 @@ export const requestPasswordReset = async (email: string) => {
     },
   });
 
-  // Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-  // Create reset token (expires in 15 minutes)
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
   await prisma.passwordResetToken.create({
@@ -132,7 +131,6 @@ export const requestPasswordReset = async (email: string) => {
     },
   });
 
-  // Send email
   await sendEmail({
     to: email,
     subject: "Reset Your Password - TechNewsFeed",
@@ -162,14 +160,12 @@ export const requestPasswordReset = async (email: string) => {
   };
 };
 
-// ========== RESET PASSWORD WITH OTP ==========
 export const resetPasswordWithOTP = async (
   email: string,
   otp: string,
   newPassword: string
 ) => {
   validatePasswordStrength(newPassword);
-
   const user = await getUserWithLocalCredentials(email);
 
   if (!user) {
@@ -188,13 +184,9 @@ export const resetPasswordWithOTP = async (
   if (!resetToken) {
     throw new UnauthorizedError("Invalid or expired OTP");
   }
-
-  // Hash new password
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-  // Update password in transaction
   await prisma.$transaction(async (tx) => {
-    // Update password
     await tx.authCredential.updateMany({
       where: {
         userId: user.id,
@@ -205,7 +197,6 @@ export const resetPasswordWithOTP = async (
       },
     });
 
-    // Mark OTP as used
     await tx.passwordResetToken.update({
       where: { id: resetToken.id },
       data: { used: true },
@@ -228,14 +219,12 @@ export const resetPasswordWithOTP = async (
   };
 };
 
-// ========== CHANGE PASSWORD (LOGGED IN USER) ==========
 export const changePassword = async (
   userId: string,
   currentPassword: string,
   newPassword: string
 ) => {
   validatePasswordStrength(newPassword);
-
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: {
@@ -248,14 +237,11 @@ export const changePassword = async (
   if (!user) {
     throw new NotFoundError("User not found");
   }
-
   const localCredential = user.credentials.find((c) => c.provider === "local");
-
   if (!localCredential || !localCredential.password) {
     throw new BadRequestError("This account does not have a password set");
   }
 
-  // Verify current password
   const isPasswordValid = await bcrypt.compare(
     currentPassword,
     localCredential.password
@@ -265,7 +251,6 @@ export const changePassword = async (
     throw new UnauthorizedError("Current password is incorrect");
   }
 
-  // Check if new password is same as old password
   const isSamePassword = await bcrypt.compare(
     newPassword,
     localCredential.password
@@ -277,10 +262,8 @@ export const changePassword = async (
     );
   }
 
-  // Hash new password
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-  // Update password
   await prisma.authCredential.updateMany({
     where: {
       userId: user.id,
@@ -306,15 +289,8 @@ export const changePassword = async (
   };
 };
 
-// ========== GENERATE OTP ==========
-export const generateOTP = (): string => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-};
-
-// ========== CHECK OTP RATE LIMIT ==========
 export const checkOTPRateLimit = async (userId: string): Promise<void> => {
   const oneMinuteAgo = new Date(Date.now() - 60 * 1000);
-
   const recentRequests = await prisma.auditLog.count({
     where: {
       actorId: userId,
@@ -323,14 +299,13 @@ export const checkOTPRateLimit = async (userId: string): Promise<void> => {
     },
   });
 
-  if (recentRequests >= 3) {
+  if (recentRequests >= 5) {
     throw new TooManyRequestsError(
       "Too many OTP requests. Please wait before trying again."
     );
   }
 };
 
-// ========== REQUEST OTP (GENERAL PURPOSE) ==========
 export const requestOTP = async (
   userId: string,
   purpose: "email_verification" | "security" | "transaction"
@@ -343,13 +318,8 @@ export const requestOTP = async (
     throw new NotFoundError("User not found");
   }
 
-  // Check rate limit
   await checkOTPRateLimit(userId);
-
-  // Generate OTP
-  const otp = generateOTP();
-
-  // Create OTP record (expires in 10 minutes)
+  const otp = generateOTP(); // Create OTP record (expires in 10 minutes)
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
   await prisma.verificationToken.create({
@@ -360,7 +330,6 @@ export const requestOTP = async (
     },
   });
 
-  // Send email based on purpose
   let emailSubject = "";
   let emailTemplate = "";
 
@@ -407,12 +376,10 @@ export const requestOTP = async (
   return {
     success: true,
     message: "OTP sent to your email",
-    // Development only - remove in production
     ...(process.env.NODE_ENV === "development" && { otp }),
   };
 };
 
-// ========== VERIFY OTP ==========
 export const verifyOTP = async (
   userId: string,
   otp: string,
@@ -429,8 +396,6 @@ export const verifyOTP = async (
   if (!verificationToken) {
     throw new UnauthorizedError("Invalid or expired OTP");
   }
-
-  // Delete the used OTP
   await prisma.verificationToken.delete({
     where: { id: verificationToken.id },
   });
