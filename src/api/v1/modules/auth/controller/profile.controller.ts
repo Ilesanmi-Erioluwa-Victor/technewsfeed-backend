@@ -41,7 +41,12 @@ export const forgotPassword = async (
 
     const result = await requestPasswordReset(email, req);
 
-    return successResponse(res, result, result.message, 200);
+    return successResponse(
+      res,
+      { message: result?.message },
+      result.message,
+      200
+    );
   } catch (error) {
     next(error);
   }
@@ -57,7 +62,12 @@ export const resetPassword = async (
 
     const result = await resetPasswordWithOTP(email, otp, newPassword, req);
 
-    return successResponse(res, result, result.message, 200);
+    return successResponse(
+      res,
+      { message: result?.message },
+      result.message,
+      200
+    );
   } catch (error) {
     next(error);
   }
