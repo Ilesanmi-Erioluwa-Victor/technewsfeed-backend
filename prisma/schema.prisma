@@ -175,23 +175,47 @@ model Comment {
   @@index([createdAt])
 }
 
+
+model AuditCategory {
+  id          String              @id @default(uuid())
+  name        AuditCategoryEnum   @unique
+  description String?
+  icon        String?
+  color       String?             @default("#6b7280")
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  auditLogs   AuditLog[]
+  
+  @@index([name])
+  @@index([isActive])
+}
+
 model AuditLog {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   action      String
+  categoryId  String?
+  category    AuditCategory? @relation(fields: [categoryId], references: [id])
   actorId     String?
   targetId    String?
   targetType  String?
   description String?
   payload     Json?
-  ipHash      String?
-  createdAt   DateTime @default(now())
-  actor       User?    @relation("UserAuditLogs", fields: [actorId], references: [id])
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?         
+  severity    String?        @default("INFO") 
+  sessionId   String?       
+  createdAt   DateTime       @default(now())
+  actor       User?          @relation("UserAuditLogs", fields: [actorId], references: [id])
 
   @@index([actorId])
   @@index([action])
+  @@index([categoryId])
   @@index([createdAt])
+  @@index([severity])
+  @@index([sessionId])
 }
-
 model ExternalPost {
   id          Int         @id @default(autoincrement())
   title       String
@@ -281,4 +305,17 @@ enum InvitationStatus {
   ACCEPTED
   EXPIRED
   REVOKED
+}
+
+enum AuditCategoryEnum {
+  AUTHENTICATION
+  PROFILE
+  SECURITY
+  ACCOUNT
+  CONTENT
+  MODERATION
+  SYSTEM
+  ADMIN
+  BILLING
+  SUBSCRIPTION
 }
