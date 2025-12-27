@@ -5,10 +5,8 @@ export const updateNameSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters long" })
     .max(100, { message: "Name cannot exceed 100 characters" })
-    .trim()
-    .refine((name) => name.length > 0, { message: "Name is required" }),
+    .trim(),
 });
-
 export const changePasswordSchema = z
   .object({
     currentPassword: z
@@ -28,16 +26,14 @@ export const changePasswordSchema = z
     path: ["newPassword"],
   });
 
+export const PurposeEnum = z.enum([
+  "email_verification",
+  "security",
+  "transaction",
+]);
+
 export const requestOTPSchema = z.object({
-  purpose: z
-    .enum(["email_verification", "security", "transaction"])
-    .refine(
-      (val) => ["email_verification", "security", "transaction"].includes(val),
-      {
-        message:
-          "Purpose must be one of: email_verification, security, transaction",
-      }
-    ),
+  purpose: PurposeEnum,
 });
 
 export const verifyOTPSchema = z.object({

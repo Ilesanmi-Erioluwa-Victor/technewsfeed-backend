@@ -1,19 +1,40 @@
 import type { Response } from "express";
+
+export type ValidationError = {
+  field: string;
+  message: string;
+};
+
 export class AppError extends Error {
   statusCode: number;
   isOperational: boolean;
+  validationErrors: ValidationError[] = [];
 
-  constructor(message: string, statusCode: number, isOperational = true) {
+  constructor(
+    message: string,
+    statusCode: number,
+    isOperational = true,
+    validationErrors?: ValidationError[]
+  ) {
     super(message);
     this.statusCode = statusCode;
     this.isOperational = isOperational;
+    this.validationErrors = validationErrors || [];
     Error.captureStackTrace(this, this.constructor);
+  }
+
+  hasValidationErrors(): boolean {
+    return this.validationErrors.length > 0;
+  }
+
+  addValidationError(field: string, message: string): void {
+    this.validationErrors.push({ field, message });
   }
 }
 
 export class BadRequestError extends AppError {
-  constructor(message = "Bad Request") {
-    super(message, 400);
+  constructor(message = "Bad Request", validationErrors?: ValidationError[]) {
+    super(message, 400, true, validationErrors);
   }
 }
 
@@ -42,8 +63,11 @@ export class ConflictError extends AppError {
 }
 
 export class UnprocessableEntityError extends AppError {
-  constructor(message = "Unprocessable Entity") {
-    super(message, 422);
+  constructor(
+    message = "Unprocessable Entity",
+    validationErrors?: ValidationError[]
+  ) {
+    super(message, 422, true, validationErrors);
   }
 }
 
@@ -82,4 +106,13 @@ export const successResponse = <T = any>(
     message,
     data,
   });
+};
+
+export const createValidationErrors = (
+  issues: Array<{ path: (string | number | symbol)[]; message: string }>
+): ValidationError[] => {
+  return issues.map((issue) => ({
+    field: issue.path.map(String).join(".") || "root",
+    message: issue.message,
+  }));
 };
