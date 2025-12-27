@@ -18,11 +18,11 @@ export const updateName = async (
     const userId = req.user!.id;
     const { name } = req.body;
 
-    const updatedUser = await updateUserName(userId, name, req);
+    await updateUserName(userId, name, req);
 
     return successResponse(
       res,
-      { user: updatedUser },
+      { message: "Name updated successfully" },
       "Name updated successfully",
       200
     );
