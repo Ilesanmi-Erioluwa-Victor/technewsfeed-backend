@@ -1,12 +1,23 @@
 import { z } from "zod";
 
-export const updateNameSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters long" })
-    .max(100, { message: "Name cannot exceed 100 characters" })
-    .trim(),
-});
+export const updateNameSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, { message: "Name must be at least 2 characters long" })
+      .max(100, { message: "Name cannot exceed 100 characters" })
+      .trim(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.name || data.name.trim() === "") {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Name is required",
+        path: ["Name"],
+      });
+    }
+  });
+
 export const changePasswordSchema = z
   .object({
     currentPassword: z

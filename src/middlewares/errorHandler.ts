@@ -16,33 +16,34 @@ export const errorHandler = (
     statusCode = err.statusCode;
     message = err.message;
     validationErrors = err.validationErrors || [];
-
     if (err.isOperational) {
-      logger.warn(`Operational error`, {
+      logger.warn(`Operational error: ${message}`, {
         method: req.method,
         url: req.url,
-        message,
+        statusCode,
+        validationErrors:
+          validationErrors.length > 0 ? validationErrors : undefined,
       });
     } else {
       logger.error(`Non-operational error`, {
         method: req.method,
         url: req.url,
         errorName: err.name,
+        message: err.message,
+        stack: err.stack,
       });
-
-      if (process.env.NODE_ENV === "development") {
-        logger.error(err.stack);
-      }
     }
   } else {
     logger.error(`Unhandled exception`, {
       method: req.method,
       url: req.url,
+      errorName: err.name,
       message: err.message,
+      stack: err.stack,
     });
 
+    // In development, show the actual error message
     if (process.env.NODE_ENV === "development") {
-      logger.error(err.stack);
       message = err.message;
     }
   }
@@ -52,7 +53,7 @@ export const errorHandler = (
     message,
   };
 
-  if (validationErrors.length) {
+  if (process.env.NODE_ENV === "development" && validationErrors.length > 0) {
     response.validationErrors = validationErrors;
   }
 
@@ -62,8 +63,3 @@ export const errorHandler = (
 
   res.status(statusCode).json(response);
 };
-
-export const asyncHandler =
-  (fn: (...args: any[]) => Promise<any>) =>
-  (req: Request, res: Response, next: NextFunction) =>
-    Promise.resolve(fn(req, res, next)).catch(next);

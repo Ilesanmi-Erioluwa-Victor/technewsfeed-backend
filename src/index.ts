@@ -4,6 +4,7 @@ import logger from "@/utils/logger";
 import { env } from "@/config/env";
 import "@/jobs/cleanupMagicLinks";
 
+
 dotenv.config();
 
 const PORT = env.PORT || 3000;
