@@ -1,15 +1,19 @@
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
+import geoip from "geoip-lite";
+import useragent from "useragent";
+import { Request } from "express";
+
 import prisma from "@/utils/prismaClient";
 import { sendEmail } from "@/emails/sendEmail";
 import {
   BadRequestError,
   UnauthorizedError,
-  NotFoundError,
   TooManyRequestsError,
 } from "@/types/errors";
 import { createAuditLog } from "@/utils/createAuditLog";
 import { generateOTP } from "@/utils/generateOtp";
+import { maskIP } from "@/utils/maskIp";
+import { EMAIL_TEMPLATES, getTemplateForPurpose } from "@/emails/types/email";
 
 export const updateUserName = async (userId: string, newName: string) => {
   const trimmedName = newName.trim();
@@ -79,7 +83,7 @@ export const getUserWithLocalCredentials = async (email: string) => {
   return user;
 };
 
-export const requestPasswordReset = async (email: string) => {
+export const requestPasswordReset = async (email: string, req?: Request) => {
   const user = await getUserWithLocalCredentials(email);
 
   if (!user) {
@@ -117,15 +121,30 @@ export const requestPasswordReset = async (email: string) => {
     },
   });
 
+  const userAgent = req?.headers["user-agent"] || "Unknown";
+  const agent = useragent.parse(userAgent);
+  const deviceInfo = `${agent.os.toString()} • ${agent.device.toString()}`;
+
   await sendEmail({
     to: email,
     subject: "Reset Your Password - TechNewsFeed",
-    templateName: "password-reset",
+    templateName: EMAIL_TEMPLATES.FORGOT_PASSWORD,
     variables: {
       name: user.name || "User",
       otp,
       appName: "TechNewsFeed",
       expiresIn: "15 minutes",
+      deviceInfo,
+      timestamp: new Date().toLocaleString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        year: "numeric",
+      }),
+      resetLink: `${process.env.APP_URL}/reset-password`,
+      websiteUrl: process.env.APP_URL || "https://technewsfeed.com",
     },
   });
 
@@ -149,7 +168,8 @@ export const requestPasswordReset = async (email: string) => {
 export const resetPasswordWithOTP = async (
   email: string,
   otp: string,
-  newPassword: string
+  newPassword: string,
+  req?: Request
 ) => {
   validatePasswordStrength(newPassword);
   const user = await getUserWithLocalCredentials(email);
@@ -192,6 +212,45 @@ export const resetPasswordWithOTP = async (
     entity: "User",
     entityId: user?.id as string,
     description: "User reset password using OTP",
+  });
+
+  const ipAddress = req?.ip || req?.socket?.remoteAddress || "Unknown";
+  const userAgent = req?.headers["user-agent"] || "Unknown";
+  const agent = useragent.parse(userAgent);
+
+  let location = "Unknown Location";
+  if (ipAddress && ipAddress !== "Unknown") {
+    const geo = geoip.lookup(ipAddress);
+    if (geo) {
+      location = `${geo.city || ""}${geo.city && geo.country ? ", " : ""}${
+        geo.country || ""
+      }`;
+    }
+  }
+  const deviceInfo = `${agent.os.toString()} • ${agent.device.toString()}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Password Updated Successfully - TechNewsFeed",
+    templateName: EMAIL_TEMPLATES.PASSWORD_RESET_CONFIRMATION,
+    variables: {
+      name: user?.name || "User",
+      appName: "TechNewsFeed",
+      timestamp: new Date().toLocaleString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZoneName: "short",
+      }),
+      deviceInfo,
+      location,
+      ipAddress: ipAddress === "Unknown" ? "Unknown" : maskIP(ipAddress),
+      loginLink: `${process.env.APP_URL}/login`,
+      websiteUrl: process.env.APP_URL || "https://technewsfeed.com",
+    },
   });
 
   return {
@@ -305,37 +364,27 @@ export const requestOTP = async (
     },
   });
 
-  let emailSubject = "";
-  let emailTemplate = "";
+  const emailSubjects = {
+    email_verification: "Verify Your Email - TechNewsFeed",
+    security: "Security Verification - TechNewsFeed",
+    transaction: "Transaction Verification - TechNewsFeed",
+  };
 
-  switch (purpose) {
-    case "email_verification":
-      emailSubject = "Verify Your Email - TechNewsFeed";
-      emailTemplate = "verify-email";
-      break;
-    case "security":
-      emailSubject = "Security Verification - TechNewsFeed";
-      emailTemplate = "security-otp";
-      break;
-    case "transaction":
-      emailSubject = "Transaction Verification - TechNewsFeed";
-      emailTemplate = "transaction-otp";
-      break;
-    default:
-      emailSubject = "Verification Code - TechNewsFeed";
-      emailTemplate = "generic-otp";
-  }
+  const emailTemplate = getTemplateForPurpose(purpose);
+  const emailSubject =
+    emailSubjects[purpose] || "Verification Code - TechNewsFeed";
 
   await sendEmail({
     to: user?.email as string,
     subject: emailSubject,
     templateName: emailTemplate,
     variables: {
-      name: user?.name as string|| "User",
+      name: user?.name || "User",
       otp,
       appName: "TechNewsFeed",
       purpose: purpose.replace("_", " "),
       expiresIn: "10 minutes",
+      websiteUrl: process.env.APP_URL || "https://technewsfeed.com",
     },
   });
 

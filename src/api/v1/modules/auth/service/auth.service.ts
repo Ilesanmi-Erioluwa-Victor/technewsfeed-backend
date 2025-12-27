@@ -7,6 +7,7 @@ import { OAuthProvider, OAuthService } from "../strategies/OAuthService";
 import { randomBytes } from "crypto";
 import { addMinutes } from "date-fns";
 import { sendEmail } from "@/emails/sendEmail";
+import { EMAIL_TEMPLATES } from "@/emails/types/email";
 
 export async function registerUserService(
   name: string,
@@ -48,7 +49,7 @@ export async function registerUserService(
   await sendEmail({
     to: email,
     subject: "Verify your email to activate your TechNewsFeed account",
-    templateName: "verify",
+    templateName: EMAIL_TEMPLATES.VERIFY_EMAIL,
     variables: {
       name,
       appName: "TechNewsFeed",
@@ -59,7 +60,7 @@ export async function registerUserService(
   sendEmail({
     to: email,
     subject: `Welcome to TechNewsFeed, ${name}!`,
-    templateName: "welcome",
+    templateName: EMAIL_TEMPLATES.WELCOME,
     variables: {
       name,
       appName: "TechNewsFeed",
@@ -137,7 +138,7 @@ export const verifyEmailService = async (token: string) => {
   await sendEmail({
     to: user.email,
     subject: `Welcome to TechNewsFeed, ${user.name}!`,
-    templateName: "welcome",
+    templateName: EMAIL_TEMPLATES.WELCOME,
     variables: {
       name: user.name as string,
       appName: "TechNewsFeed",
@@ -170,7 +171,7 @@ export const requestMagicLinkService = async (email: string) => {
   await sendEmail({
     to: user.email,
     subject: "Your Login Magic Link",
-    templateName: "magic-link",
+    templateName: EMAIL_TEMPLATES.MAGIC_LINK,
     variables: {
       name: user.name || "there",
       magicLink,
