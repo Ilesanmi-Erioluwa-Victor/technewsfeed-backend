@@ -58,10 +58,6 @@ export const updateUserName = async (userId: string, newName: string) => {
 };
 
 export const validatePasswordStrength = (password: string): boolean => {
-  if (password.length < 8) {
-    throw new BadRequestError("Password must be at least 8 characters long");
-  }
-
   if (!/[A-Z]/.test(password)) {
     throw new BadRequestError(
       "Password must contain at least one uppercase letter"
