@@ -18,7 +18,7 @@ export const updateName = async (
     const userId = req.user!.id;
     const { name } = req.body;
 
-    const updatedUser = await updateUserName(userId, name);
+    const updatedUser = await updateUserName(userId, name, req);
 
     return successResponse(
       res,
@@ -75,7 +75,8 @@ export const updatePassword = async (
     const result = await changePassword(
       userId as string,
       currentPassword,
-      newPassword
+      newPassword,
+      req
     );
 
     return successResponse(res, result, result.message, 200);
@@ -93,7 +94,7 @@ export const requestNewOTP = async (
     const userId = req.user?.id;
     const { purpose } = req.body;
 
-    const result = await requestOTP(userId as string, purpose);
+    const result = await requestOTP(userId as string, purpose, req);
 
     return successResponse(res, result, result.message, 200);
   } catch (error) {
@@ -110,7 +111,7 @@ export const verifyNewOTP = async (
     const userId = req.user?.id;
     const { otp, purpose } = req.body;
 
-    const result = await verifyOTP(userId as string, otp, purpose);
+    const result = await verifyOTP(userId as string, otp, purpose, req);
 
     return successResponse(res, result, result.message, 200);
   } catch (error) {

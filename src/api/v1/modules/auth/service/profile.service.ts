@@ -16,8 +16,9 @@ import { maskIP } from "@/utils/maskIp";
 import { EMAIL_TEMPLATES, getTemplateForPurpose } from "@/emails/types/email";
 import { AuditAction, AuditEntity } from "@/types/audit.types";
 import { AuditCategoryEnum } from "@/generated/prisma";
+import { getAuditContext } from "@/utils/auditHelpers";
 
-export const updateUserName = async (userId: string, newName: string) => {
+export const updateUserName = async (userId: string, newName: string, req?: Request) => {
   const trimmedName = newName.trim();
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -51,6 +52,7 @@ export const updateUserName = async (userId: string, newName: string) => {
     oldValue: { name: oldName },
     newValue: { name: trimmedName },
     description: "User changed their display name",
+    ...getAuditContext(req),
   });
 
   return updatedUser;
@@ -157,6 +159,7 @@ export const requestPasswordReset = async (email: string, req?: Request) => {
     entity: AuditEntity.USER,
     entityId: user.id,
     description: "User requested password reset",
+    ...getAuditContext(req),
   });
 
   return {
@@ -214,6 +217,7 @@ export const resetPasswordWithOTP = async (
     entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User reset password using OTP",
+    ...getAuditContext(req),
   });
 
   const ipAddress = req?.ip || req?.socket?.remoteAddress || "Unknown";
@@ -265,7 +269,8 @@ export const resetPasswordWithOTP = async (
 export const changePassword = async (
   userId: string,
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
+  req?: Request
 ) => {
   validatePasswordStrength(newPassword);
   const user = await prisma.user.findUnique({
@@ -321,6 +326,7 @@ export const changePassword = async (
     entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User changed their password",
+    ...getAuditContext(req),
   });
 
   return {
@@ -348,7 +354,8 @@ export const checkOTPRateLimit = async (userId: string): Promise<void> => {
 
 export const requestOTP = async (
   userId: string,
-  purpose: "email_verification" | "security" | "transaction"
+  purpose: "email_verification" | "security" | "transaction",
+  req?: Request
 ) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -397,6 +404,7 @@ export const requestOTP = async (
     entity: AuditEntity.USER,
     entityId: userId,
     description: `User requested OTP for ${purpose}`,
+    ...getAuditContext(req),
   });
 
   return {
@@ -409,7 +417,8 @@ export const requestOTP = async (
 export const verifyOTP = async (
   userId: string,
   otp: string,
-  purpose: string
+  purpose: string,
+  req?: Request
 ) => {
   const verificationToken = await prisma.verificationToken.findFirst({
     where: {
@@ -433,6 +442,7 @@ export const verifyOTP = async (
     entity: AuditEntity.USER,
     entityId: userId,
     description: `User verified OTP for ${purpose}`,
+    ...getAuditContext(req),
   });
 
   return {
