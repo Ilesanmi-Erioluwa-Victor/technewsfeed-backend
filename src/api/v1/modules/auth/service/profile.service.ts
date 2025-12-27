@@ -14,6 +14,8 @@ import { createAuditLog } from "@/utils/createAuditLog";
 import { generateOTP } from "@/utils/generateOtp";
 import { maskIP } from "@/utils/maskIp";
 import { EMAIL_TEMPLATES, getTemplateForPurpose } from "@/emails/types/email";
+import { AuditAction, AuditEntity } from "@/types/audit.types";
+import { AuditCategoryEnum } from "@/generated/prisma";
 
 export const updateUserName = async (userId: string, newName: string) => {
   const trimmedName = newName.trim();
@@ -42,9 +44,9 @@ export const updateUserName = async (userId: string, newName: string) => {
 
   await createAuditLog({
     userId,
-    action: "NAME_CHANGE",
-    category: "PROFILE",
-    entity: "User",
+    action: AuditAction.NAME_CHANGE,
+    categoryName: AuditCategoryEnum.PROFILE,
+    entity: AuditEntity.USER,
     entityId: userId,
     oldValue: { name: oldName },
     newValue: { name: trimmedName },
@@ -150,9 +152,9 @@ export const requestPasswordReset = async (email: string, req?: Request) => {
 
   await createAuditLog({
     userId: user.id,
-    action: "PASSWORD_RESET_REQUEST",
-    category: "SECURITY",
-    entity: "User",
+    action: AuditAction.PASSWORD_RESET_REQUEST,
+    categoryName: AuditCategoryEnum.SECURITY,
+    entity: AuditEntity.USER,
     entityId: user.id,
     description: "User requested password reset",
   });
@@ -207,9 +209,9 @@ export const resetPasswordWithOTP = async (
 
   await createAuditLog({
     userId: user?.id as string,
-    action: "PASSWORD_RESET_COMPLETE",
-    category: "SECURITY",
-    entity: "User",
+    action: AuditAction.PASSWORD_RESET_COMPLETE,
+    categoryName: AuditCategoryEnum.SECURITY,
+    entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User reset password using OTP",
   });
@@ -314,9 +316,9 @@ export const changePassword = async (
 
   await createAuditLog({
     userId: user?.id as string,
-    action: "PASSWORD_CHANGE",
-    category: "SECURITY",
-    entity: "User",
+    action: AuditAction.PASSWORD_CHANGE,
+    categoryName: AuditCategoryEnum.SECURITY,
+    entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User changed their password",
   });
@@ -390,9 +392,9 @@ export const requestOTP = async (
 
   await createAuditLog({
     userId,
-    action: "OTP_REQUEST",
-    category: "SECURITY",
-    entity: "User",
+    action: AuditAction.OTP_REQUEST,
+    categoryName: AuditCategoryEnum.SECURITY,
+    entity: AuditEntity.USER,
     entityId: userId,
     description: `User requested OTP for ${purpose}`,
   });
@@ -426,9 +428,9 @@ export const verifyOTP = async (
 
   await createAuditLog({
     userId,
-    action: "OTP_VERIFY",
-    category: "SECURITY",
-    entity: "User",
+    action: AuditAction.OTP_VERIFY,
+    categoryName: AuditCategoryEnum.SECURITY,
+    entity: AuditEntity.USER,
     entityId: userId,
     description: `User verified OTP for ${purpose}`,
   });

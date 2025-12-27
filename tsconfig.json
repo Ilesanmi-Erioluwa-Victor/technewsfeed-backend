@@ -26,5 +26,6 @@
     "ignoreDeprecations": "6.0",
     "skipLibCheck": true
   },
-  "include": ["src", "src/scripts/get-token.ts"]
+  "include": ["src/**/*", "prisma.config.ts"], 
+  "exclude": ["node_modules", "dist"]
 }
