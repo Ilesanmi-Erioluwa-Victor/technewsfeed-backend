@@ -14,11 +14,15 @@ import { createAuditLog } from "@/utils/createAuditLog";
 import { generateOTP } from "@/utils/generateOtp";
 import { maskIP } from "@/utils/maskIp";
 import { EMAIL_TEMPLATES, getTemplateForPurpose } from "@/emails/types/email";
-import { AuditAction, AuditEntity } from "@/types/audit.types";
 import { AuditCategoryEnum } from "@/generated/prisma";
-import { getAuditContext } from "@/utils/auditHelpers";
+import { getAuditContext } from "@/utils/audit/auditHelpers";
+import { AuditAction, AuditEntity, AuditSeverity } from "@/utils/audit/types";
 
-export const updateUserName = async (userId: string, newName: string, req?: Request) => {
+export const updateUserName = async (
+  userId: string,
+  newName: string,
+  req?: Request
+) => {
   const trimmedName = newName.trim();
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -43,6 +47,8 @@ export const updateUserName = async (userId: string, newName: string, req?: Requ
     },
   });
 
+  const auditContext = getAuditContext(req);
+
   await createAuditLog({
     userId,
     action: AuditAction.NAME_CHANGE,
@@ -52,7 +58,11 @@ export const updateUserName = async (userId: string, newName: string, req?: Requ
     oldValue: { name: oldName },
     newValue: { name: trimmedName },
     description: "User changed their display name",
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   return updatedUser;
@@ -152,6 +162,8 @@ export const requestPasswordReset = async (email: string, req?: Request) => {
     },
   });
 
+  const auditContext = getAuditContext(req);
+
   await createAuditLog({
     userId: user.id,
     action: AuditAction.PASSWORD_RESET_REQUEST,
@@ -159,7 +171,11 @@ export const requestPasswordReset = async (email: string, req?: Request) => {
     entity: AuditEntity.USER,
     entityId: user.id,
     description: "User requested password reset",
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   return {
@@ -209,6 +225,7 @@ export const resetPasswordWithOTP = async (
       data: { used: true },
     });
   });
+  const auditContext = getAuditContext(req);
 
   await createAuditLog({
     userId: user?.id as string,
@@ -217,7 +234,11 @@ export const resetPasswordWithOTP = async (
     entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User reset password using OTP",
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   const ipAddress = req?.ip || req?.socket?.remoteAddress || "Unknown";
@@ -319,6 +340,8 @@ export const changePassword = async (
     },
   });
 
+  const auditContext = getAuditContext(req);
+
   await createAuditLog({
     userId: user?.id as string,
     action: AuditAction.PASSWORD_CHANGE,
@@ -326,7 +349,11 @@ export const changePassword = async (
     entity: AuditEntity.USER,
     entityId: user?.id as string,
     description: "User changed their password",
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   return {
@@ -397,6 +424,8 @@ export const requestOTP = async (
     },
   });
 
+  const auditContext = getAuditContext(req);
+
   await createAuditLog({
     userId,
     action: AuditAction.OTP_REQUEST,
@@ -404,7 +433,11 @@ export const requestOTP = async (
     entity: AuditEntity.USER,
     entityId: userId,
     description: `User requested OTP for ${purpose}`,
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   return {
@@ -435,6 +468,8 @@ export const verifyOTP = async (
     where: { id: verificationToken.id },
   });
 
+  const auditContext = getAuditContext(req);
+
   await createAuditLog({
     userId,
     action: AuditAction.OTP_VERIFY,
@@ -442,7 +477,11 @@ export const verifyOTP = async (
     entity: AuditEntity.USER,
     entityId: userId,
     description: `User verified OTP for ${purpose}`,
-    ...getAuditContext(req),
+    severity: AuditSeverity.INFO,
+    ipAddress: auditContext.ipAddress as string,
+    userAgent: auditContext.userAgent as string,
+    sessionId: auditContext.sessionId as string,
+    metadata: auditContext.metadata,
   });
 
   return {

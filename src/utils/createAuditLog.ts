@@ -1,10 +1,16 @@
-import { AuditLogData, getCategoryFromAction } from "@/types/audit.types";
+import {
+  getCategoryFromAction,
+  getSeverityFromAction,
+} from "@/types/audit.types";
 import prisma from "@/utils/prismaClient";
+import { AuditLogData } from "./audit/types";
 
 export const createAuditLog = async (data: AuditLogData) => {
   try {
     const categoryName =
       data.categoryName || getCategoryFromAction(data.action);
+
+    const severity = data.severity || getSeverityFromAction(data.action);
 
     let auditCategory = await prisma.auditCategory.findUnique({
       where: { name: categoryName },
@@ -35,7 +41,7 @@ export const createAuditLog = async (data: AuditLogData) => {
         },
         ipAddress: data.ipAddress as string,
         userAgent: data.userAgent as string,
-        severity: data.severity || "INFO",
+        severity: severity,
         sessionId: data.sessionId as string,
         metadata: data.metadata as any,
       },
