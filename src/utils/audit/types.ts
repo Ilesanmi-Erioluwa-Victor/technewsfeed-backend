@@ -168,3 +168,15 @@ export interface AuditStats {
     end: Date;
   };
 }
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface AuditLogsResult {
+  logs: AuditLogWithRelations[];
+  pagination: PaginationInfo;
+}

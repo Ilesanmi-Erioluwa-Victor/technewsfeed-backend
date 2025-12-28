@@ -1,8 +1,15 @@
 import { AuditCategoryEnum } from "@/generated/prisma";
-import { getAuditLogs, getAuditStats } from "@/utils/audit/auditService";
 import { AuditFilterOptions } from "@/utils/audit/types";
-import prisma from "@/utils/prismaClient";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import {
+  exportLogsToCSV,
+  getAuditLogs,
+  getAuditStats,
+  getLogsByCategory,
+  getSystemStats,
+  getUserLogs,
+  searchLogs,
+} from "../services/audit.service";
 
 export const getLogs = async (
   req: Request,
@@ -36,7 +43,6 @@ export const getLogs = async (
       limit: parseInt(limit as string) || 50,
     };
 
-    // Parse dates if provided
     if (startDate) {
       options.startDate = new Date(startDate as string);
     }
@@ -56,7 +62,7 @@ export const getLogs = async (
   }
 };
 
-export const getLogsByCategory = async (
+export const getLogsByCategoryHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -65,13 +71,11 @@ export const getLogsByCategory = async (
     const { category } = req.params;
     const { page = 1, limit = 50 } = req.query;
 
-    const options: AuditFilterOptions = {
-      category: category as AuditCategoryEnum,
-      page: parseInt(page as string) || 1,
-      limit: parseInt(limit as string) || 50,
-    };
-
-    const result = await getAuditLogs(options);
+    const result = await getLogsByCategory(
+      category as AuditCategoryEnum,
+      parseInt(page as string) || 1,
+      parseInt(limit as string) || 50
+    );
 
     res.json({
       success: true,
@@ -83,7 +87,7 @@ export const getLogsByCategory = async (
   }
 };
 
-export const searchLogs = async (
+export const searchLogsHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -102,13 +106,11 @@ export const searchLogs = async (
       });
     }
 
-    const options: AuditFilterOptions = {
-      search: searchTerm.trim(),
-      page: parseInt(page as string) || 1,
-      limit: parseInt(limit as string) || 50,
-    };
-
-    const result = await getAuditLogs(options);
+    const result = await searchLogs(
+      searchTerm.trim(),
+      parseInt(page as string) || 1,
+      parseInt(limit as string) || 50
+    );
 
     res.json({
       success: true,
@@ -149,7 +151,7 @@ export const getCategoryStats = async (
   }
 };
 
-export const getUserLogs = async (
+export const getUserLogsHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -158,13 +160,18 @@ export const getUserLogs = async (
     const userId = req.user?.id;
     const { page = 1, limit = 50 } = req.query;
 
-    const options: AuditFilterOptions = {
-      userId: userId as string,
-      page: parseInt(page as string) || 1,
-      limit: parseInt(limit as string) || 50,
-    };
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: "Authentication required",
+      });
+    }
 
-    const result = await getAuditLogs(options);
+    const result = await getUserLogs(
+      userId,
+      parseInt(page as string) || 1,
+      parseInt(limit as string) || 50
+    );
 
     res.json({
       success: true,
@@ -176,7 +183,7 @@ export const getUserLogs = async (
   }
 };
 
-export const getSystemStats = async (
+export const getSystemStatsHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -194,30 +201,62 @@ export const getSystemStats = async (
       end = new Date(endDate as string);
     }
 
-    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const recentOptions: AuditFilterOptions = {
-      startDate: start || last24Hours,
-      endDate: end || new Date(),
-    };
-
-    const [totalLogs, recentLogs, stats] = await Promise.all([
-      prisma.auditLog.count(),
-
-      getAuditLogs({ ...recentOptions, limit: 100 }),
-      getAuditStats(start, end),
-    ]);
+    const stats = await getSystemStats(start, end);
 
     res.json({
       success: true,
-      data: {
-        totalLogs,
-        recentActivity: {
-          count: recentLogs.pagination.total,
-          logs: recentLogs.logs.slice(0, 10),
+      data: stats,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const exportLogs = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { startDate, endDate, format = "json" } = req.query;
+
+    let start: Date | undefined;
+    let end: Date | undefined;
+
+    if (startDate) {
+      start = new Date(startDate as string);
+    }
+    if (endDate) {
+      end = new Date(endDate as string);
+    }
+
+    const result = await getAuditLogs({
+      startDate: start as Date,
+      endDate: end as Date,
+      limit: 10000,
+    });
+
+    if (format === "csv") {
+      const csv = await exportLogsToCSV(result.logs);
+
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=audit-logs-${Date.now()}.csv`
+      );
+      return res.send(csv);
+    }
+
+    res.json({
+      success: true,
+      data: result.logs,
+      metadata: {
+        total: result.pagination.total,
+        exportedAt: new Date(),
+        timeframe: {
+          start: start || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          end: end || new Date(),
         },
-        categoryStats: stats.byCategory,
-        severityDistribution: stats.bySeverity,
-        topActions: stats.byAction.slice(0, 5),
       },
     });
   } catch (error) {

@@ -1,5 +1,11 @@
 import { AuditCategoryEnum } from "@/generated/prisma";
-import { AuditFilterOptions, AuditStats } from "@/utils/audit/types";
+import {
+  AuditAction,
+  AuditFilterOptions,
+  AuditLogsResult,
+  AuditSeverity,
+  AuditStats,
+} from "@/utils/audit/types";
 import prisma from "@/utils/prismaClient";
 
 export const getAuditLogs = async (
@@ -134,15 +140,40 @@ export const getAuditStats = async (
     take: 10,
   });
 
+  const toAuditSeverity = (severity: string | null): AuditSeverity => {
+    if (!severity) return AuditSeverity.INFO;
+
+    const upperSeverity = severity.toUpperCase();
+    if (Object.values(AuditSeverity).includes(upperSeverity as AuditSeverity)) {
+      return upperSeverity as AuditSeverity;
+    }
+    return AuditSeverity.INFO;
+  };
+
+  const toAuditAction = (action: string | null): AuditAction => {
+    if (!action) return AuditAction.LOGIN;
+
+    const upperAction = action.toUpperCase();
+    const isValidAction = (value: string): value is AuditAction => {
+      return Object.values(AuditAction).includes(value as AuditAction);
+    };
+
+    if (isValidAction(upperAction)) {
+      return upperAction as AuditAction;
+    }
+
+    return AuditAction.LOGIN;
+  };
+
   return {
     totalLogs,
     byCategory: categoryStats,
     bySeverity: bySeverity.map((item) => ({
-      severity: item.severity,
+      severity: toAuditSeverity(item.severity),
       count: item._count,
     })),
     byAction: byAction.map((item) => ({
-      action: item.action,
+      action: toAuditAction(item.action),
       count: item._count,
     })),
     timeframe: {

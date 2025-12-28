@@ -2,28 +2,33 @@ import { authenticate } from "@/middlewares/auth.middlewares";
 import { requireRole } from "@/middlewares/role.middleware";
 import { Router } from "express";
 import {
+  exportLogs,
   getCategoryStats,
   getLogs,
-  getLogsByCategory,
-  getSystemStats,
-  getUserLogs,
-  searchLogs,
+  getLogsByCategoryHandler,
+  getSystemStatsHandler,
+  getUserLogsHandler,
+  searchLogsHandler,
 } from "../controller/audit.controller";
 
 const router = Router();
+
+router.get("/my-logs", authenticate, getUserLogsHandler);
 
 router.use(authenticate, requireRole(["ADMIN"]));
 
 router.get("/", getLogs);
 
-router.get("/category/:category", getLogsByCategory);
+router.get("/category/:category", getLogsByCategoryHandler);
 
-router.get("/search", searchLogs);
+router.get("/search", searchLogsHandler);
 
 router.get("/stats/category", getCategoryStats);
 
-router.get("/stats/system", getSystemStats);
+router.get("/stats/system", getSystemStatsHandler);
 
-router.get("/my-logs", authenticate, getUserLogs);
+router.get("/export", exportLogs);
+
+router.get("/my-logs", authenticate, getUserLogsHandler);
 
 export default router;
