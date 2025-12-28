@@ -2,7 +2,9 @@ import { AuditCategoryEnum } from "@/generated/prisma";
 import { AuditFilterOptions, AuditStats } from "@/utils/audit/types";
 import prisma from "@/utils/prismaClient";
 
-export const getAuditLogs = async (options: AuditFilterOptions = {}) => {
+export const getAuditLogs = async (
+  options: AuditFilterOptions = {}
+): Promise<AuditLogsResult> => {
   const {
     category,
     action,
@@ -69,7 +71,7 @@ export const getAuditLogs = async (options: AuditFilterOptions = {}) => {
   ]);
 
   return {
-    logs,
+    logs: logs as any[],
     pagination: {
       page,
       limit,
@@ -178,11 +180,6 @@ export const getSystemStats = async (startDate?: Date, endDate?: Date) => {
   };
 };
 
-export const createAuditLog = async (data: any) => {
-  const { createAuditLog } = await import("@/utils/createAuditLog");
-  return createAuditLog(data);
-};
-
 export const getLogsByCategory = async (
   category: AuditCategoryEnum,
   page: number = 1,
@@ -217,4 +214,21 @@ export const getUserLogs = async (
     page,
     limit,
   });
+};
+
+export const exportLogsToCSV = async (logs: any[]) => {
+  const csvData = logs.map((log) => ({
+    Timestamp: log.createdAt.toISOString(),
+    Action: log.action,
+    Category: log.category?.name || "N/A",
+    User: log.actor?.email || "N/A",
+    Description: log.description || "N/A",
+    IP: log.ipAddress || "N/A",
+    Severity: log.severity,
+  }));
+
+  return [
+    Object.keys(csvData[0] || {}).join(","),
+    ...csvData.map((row) => Object.values(row).join(",")),
+  ].join("\n");
 };
