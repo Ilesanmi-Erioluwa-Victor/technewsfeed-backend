@@ -1,30 +1,29 @@
-// routes/audit.routes.ts
-import { Router } from 'express';
-import { authenticate } from '@/middlewares/auth.middleware';
-import { requireRole } from '@/middlewares/role.middleware';
-import { AuditController } from '@/controllers/audit.controller';
+import { authenticate } from "@/middlewares/auth.middlewares";
+import { requireRole } from "@/middlewares/role.middleware";
+import { Router } from "express";
+import {
+  getCategoryStats,
+  getLogs,
+  getLogsByCategory,
+  getSystemStats,
+  getUserLogs,
+  searchLogs,
+} from "../controller/audit.controller";
 
 const router = Router();
 
-// All audit routes require ADMIN role
-router.use(authenticate, requireRole(['ADMIN']));
+router.use(authenticate, requireRole(["ADMIN"]));
 
-// Get audit logs with filtering
-router.get('/', AuditController.getLogs);
+router.get("/", getLogs);
 
-// Get logs by specific category
-router.get('/category/:category', AuditController.getLogsByCategory);
+router.get("/category/:category", getLogsByCategory);
 
-// Search logs
-router.get('/search', AuditController.searchLogs);
+router.get("/search", searchLogs);
 
-// Get category statistics
-router.get('/stats/category', AuditController.getCategoryStats);
+router.get("/stats/category", getCategoryStats);
 
-// Get system-wide statistics
-router.get('/stats/system', AuditController.getSystemStats);
+router.get("/stats/system", getSystemStats);
 
-// Optional: Allow users to see their own logs (non-admin)
-router.get('/my-logs', authenticate, AuditController.getUserLogs);
+router.get("/my-logs", authenticate, getUserLogs);
 
 export default router;
