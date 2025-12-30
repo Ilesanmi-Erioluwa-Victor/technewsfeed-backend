@@ -43,9 +43,9 @@ export const authenticate = async (
       },
     });
 
-    if (!user) {
-      throw new UnauthorizedError("User not found,");
-    }
+    // if (!user) {
+    //   throw new UnauthorizedError("User not found,");
+    // }
 
     if (!user?.isVerified) {
       throw new UnauthorizedError(
