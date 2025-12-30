@@ -29,7 +29,7 @@ export const errorHandler = (
         method: req.method,
         url: req.url,
         errorName: err.name,
-        // message: err.message,
+        message: err.message,
         stack: err.stack,
       });
     }
