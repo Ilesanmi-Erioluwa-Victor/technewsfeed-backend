@@ -19,12 +19,6 @@ router.use(authenticate, requireRole(["ADMIN"]));
 
 router.get("/", getLogs);
 
-router.get("/category/:category", getLogsByCategoryHandler);
-
-router.get("/search", searchLogsHandler);
-
-router.get("/stats/category", getCategoryStats);
-
 router.get("/stats/system", getSystemStatsHandler);
 
 router.get("/export", exportLogs);

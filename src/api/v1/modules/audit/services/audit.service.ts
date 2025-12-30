@@ -8,6 +8,87 @@ import {
 } from "@/utils/audit/types";
 import prisma from "@/utils/prismaClient";
 
+export const getAuditLogs = async (
+  options: AuditFilterOptions = {}
+): Promise<AuditLogsResult> => {
+  const {
+    category,
+    action,
+    userId,
+    entity,
+    entityId,
+    startDate,
+    endDate,
+    severity,
+    search,
+    page = 1,
+    limit = 50,
+  } = options;
+
+  const skip = (page - 1) * limit;
+
+  const where: any = {};
+
+  if (category) {
+    where.category = {
+      name: category,
+    };
+  }
+
+  if (action) where.action = action;
+  if (userId) where.actorId = userId;
+  if (entity) where.targetType = entity;
+  if (entityId) where.targetId = entityId;
+  if (severity) where.severity = severity;
+
+  if (startDate || endDate) {
+    where.createdAt = {};
+    if (startDate) where.createdAt.gte = startDate;
+    if (endDate) where.createdAt.lte = endDate;
+  }
+
+  if (search) {
+    where.OR = [
+      { description: { contains: search, mode: "insensitive" } },
+      { actor: { name: { contains: search, mode: "insensitive" } } },
+      { actor: { email: { contains: search, mode: "insensitive" } } },
+    ];
+  }
+
+  const [logs, total] = await Promise.all([
+    prisma.auditLog.findMany({
+      where,
+      include: {
+        category: true,
+        actor: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            role: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    }),
+    prisma.auditLog.count({ where }),
+  ]);
+
+  return {
+    logs: logs as any[],
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  };
+};
+
+
+
 export const getAuditStats = async (
   startDate?: Date,
   endDate?: Date
