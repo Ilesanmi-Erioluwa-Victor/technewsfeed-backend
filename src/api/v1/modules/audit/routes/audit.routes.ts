@@ -25,7 +25,7 @@ router.get("/search", searchLogsHandler);
 
 router.get("/stats/category", getCategoryStats);
 
-// router.get("/stats/system", getSystemStatsHandler);
+router.get("/stats/system", getSystemStatsHandler);
 
 router.get("/export", exportLogs);
 
