@@ -72,7 +72,7 @@ export const authenticate = async (
     if (error instanceof jwt.JsonWebTokenError) {
       next(new UnauthorizedError("Invalid token"));
     } else if (error instanceof jwt.TokenExpiredError) {
-      // next(new UnauthorizedError("Token expired"));
+      next(new UnauthorizedError("Token expired"));
     } else {
       next(error);
     }
