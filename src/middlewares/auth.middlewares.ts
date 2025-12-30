@@ -47,15 +47,15 @@ export const authenticate = async (
       throw new UnauthorizedError("User not found,");
     }
 
-    // if (!user?.isVerified) {
-    //   throw new UnauthorizedError(
-    //     "You are not verified yet, please verify your account"
-    //   );
-    // }
-
-    if (!user.isActive) {
-      throw new UnauthorizedError("Account is deactivated");
+    if (!user?.isVerified) {
+      throw new UnauthorizedError(
+        "You are not verified yet, please verify your account"
+      );
     }
+
+    // if (!user.isActive) {
+    //   throw new UnauthorizedError("Account is deactivated");
+    // }
 
     req.user = {
       id: user.id,
