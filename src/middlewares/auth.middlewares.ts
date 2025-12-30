@@ -53,17 +53,17 @@ export const authenticate = async (
       );
     }
 
-    // if (!user.isActive) {
-    //   throw new UnauthorizedError("Account is deactivated");
-    // }
+    if (!user.isActive) {
+      throw new UnauthorizedError("Account is deactivated");
+    }
 
-    req.user = {
-      id: user.id,
-      email: user.email,
-      name: user.name as string,
-      role: user.role,
-      isVerified: user.isVerified,
-    };
+    // req.user = {
+    //   id: user.id,
+    //   email: user.email,
+    //   name: user.name as string,
+    //   role: user.role,
+    //   isVerified: user.isVerified,
+    // };
 
     req.userId = user.id;
 
