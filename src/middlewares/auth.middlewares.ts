@@ -43,15 +43,15 @@ export const authenticate = async (
       },
     });
 
-    // if (!user) {
-    //   throw new UnauthorizedError("User not found,");
-    // }
-
-    if (!user?.isVerified) {
-      throw new UnauthorizedError(
-        "You are not verified yet, please verify your account"
-      );
+    if (!user) {
+      throw new UnauthorizedError("User not found,");
     }
+
+    // if (!user?.isVerified) {
+    //   throw new UnauthorizedError(
+    //     "You are not verified yet, please verify your account"
+    //   );
+    // }
 
     if (!user.isActive) {
       throw new UnauthorizedError("Account is deactivated");
