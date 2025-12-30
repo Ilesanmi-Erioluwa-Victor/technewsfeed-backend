@@ -10,7 +10,7 @@ export const requireRole = (allowedRoles: string | string[]) => {
       const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
       if (!roles.includes(req.user.role)) {
         throw new ForbiddenError(
-          // `Access denied. Required roles: ${roles.join(", ")}`
+          `Access denied. Required roles: ${roles.join(", ")}`
         );
       }
 
