@@ -57,15 +57,15 @@ export const authenticate = async (
       throw new UnauthorizedError("Account is deactivated");
     }
 
-    // req.user = {
-    //   id: user.id,
-    //   email: user.email,
-    //   name: user.name as string,
-    //   role: user.role,
-    //   isVerified: user.isVerified,
-    // };
+    req.user = {
+      id: user.id,
+      email: user.email,
+      name: user.name as string,
+      role: user.role,
+      isVerified: user.isVerified,
+    };
 
-    req.userId = user.id;
+    // req.userId = user.id;
 
     next();
   } catch (error) {
