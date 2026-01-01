@@ -17,7 +17,6 @@ export const registerSchema = z.object({
     .min(3, { message: "Password must be at least 3 characters long" }),
 });
 
-// Login Schema
 export const loginSchema = z.object({
   email: z
     .string()
@@ -28,23 +27,20 @@ export const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-// OAuth Provider Enum
-export const OAuthProviderEnum = z.enum(["google", "github", "facebook"], {
-  errorMap: () => ({ message: "Invalid OAuth provider" }),
-});
+export const OAuthProviderEnum = z.enum(["google", "github", "facebook"]);
 
-// OAuth Login Schema
 export const oauthLoginSchema = z.object({
-  provider: OAuthProviderEnum,
+  provider: OAuthProviderEnum.refine(
+    (val) => ["google", "github", "facebook"].includes(val),
+    { message: "Invalid OAuth provider" }
+  ),
   idToken: z.string().min(1, { message: "ID token is required" }),
 });
 
-// Verify Email Schema (for query parameters)
 export const verifyEmailSchema = z.object({
   token: z.string().min(1, { message: "Verification token is required" }),
 });
 
-// Magic Link Request Schema
 export const requestMagicLinkSchema = z.object({
   email: z
     .string()
@@ -54,12 +50,10 @@ export const requestMagicLinkSchema = z.object({
     .trim(),
 });
 
-// Magic Link Verification Schema (for query parameters)
 export const verifyMagicLinkSchema = z.object({
   token: z.string().min(1, { message: "Magic link token is required" }),
 });
 
-// Resend Verification Email Schema
 export const resendVerificationSchema = z.object({
   email: z
     .string()

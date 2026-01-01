@@ -7,10 +7,12 @@ import {
   verifyEmail,
   verifyMagicLink,
 } from "../controller/auth.controller";
+import { validate } from "@/middlewares/validate.middleware";
+import { registerSchema } from "@/schemas/auth.schema";
 
 const router = Router();
 
-router.post("/register", registerUser);
+router.post("/register", validate(registerSchema), registerUser);
 router.post("/login", loginUser);
 router.post("/oauth", oauthLogin);
 router.post("/verify-email", verifyEmail);
