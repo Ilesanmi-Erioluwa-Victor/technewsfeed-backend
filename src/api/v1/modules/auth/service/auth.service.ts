@@ -214,3 +214,49 @@ export const verifyMagicLinkService = async (token: string) => {
 
   return { token: jwtToken, user };
 };
+
+export const resendVerificationEmailService = async (email: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  if (!user) {
+    return {
+      message: "If an account exists, you will receive a verification email.",
+    };
+  }
+
+  if (user.isVerified) {
+    return { message: "Email is already verified." };
+  }
+
+  await prisma.verificationToken.deleteMany({
+    where: { userId: user.id },
+  });
+
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = addMinutes(new Date(), 30);
+
+  await prisma.verificationToken.create({
+    data: {
+      token,
+      userId: user.id,
+      expiresAt,
+    },
+  });
+
+  const verificationLink = `${env.APP_URL}/api/v1/auth/verify-email?token=${token}`;
+
+  await sendEmail({
+    to: email,
+    subject: "Verify Your Email - TechNewsFeed",
+    templateName: EMAIL_TEMPLATES.VERIFY_EMAIL,
+    variables: {
+      name: user.name || "User",
+      appName: "TechNewsFeed",
+      verifyLink: verificationLink,
+    },
+  });
+
+  return {
+    message: "Verification email sent. Please check your inbox.",
+  };
+};
