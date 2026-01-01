@@ -74,10 +74,6 @@ export const verifyMagicLink = async (req: Request, res: Response) => {
 export const resendVerification = async (req: Request, res: Response) => {
   const { email } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ message: "Email is required" });
-  }
-
   const result = await resendVerificationEmailService(email);
   return successResponse(res, result, "", 200);
 };

@@ -5,20 +5,17 @@ import { BadRequestError, createValidationErrors } from "@/types/errors";
 export const validate = <T>(schema: ZodType<T>) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      // Ensure body exists for validation
       const bodyToValidate = req.body || {};
 
       const validatedData = await schema.parseAsync(bodyToValidate);
       req.body = validatedData;
       next();
     } catch (error) {
-      // Update just the error handling in your validate.middleware.ts
       if (error instanceof ZodError) {
         const issues = error.issues.map((issue) => {
           const field = issue.path.join(".") || "body";
           let message = issue.message;
 
-          // Customize specific error messages
           if (message.includes("expected string, received undefined")) {
             message = "is required";
           } else if (message.includes("expected string, received null")) {

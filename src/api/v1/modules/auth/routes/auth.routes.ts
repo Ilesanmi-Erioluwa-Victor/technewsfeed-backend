@@ -4,19 +4,43 @@ import {
   oauthLogin,
   registerUser,
   requestMagicLink,
+  resendVerification,
   verifyEmail,
   verifyMagicLink,
 } from "../controller/auth.controller";
-import { validate } from "@/middlewares/validate.middleware";
-import { registerSchema } from "@/schemas/auth.schema";
+import { validate, validateQuery } from "@/middlewares/validate.middleware";
+import {
+  loginSchema,
+  oauthLoginSchema,
+  registerSchema,
+  requestMagicLinkSchema,
+  resendVerificationSchema,
+  verifyEmailSchema,
+  verifyMagicLinkSchema,
+} from "@/schemas/auth.schema";
 
 const router = Router();
 
 router.post("/register", validate(registerSchema), registerUser);
-router.post("/login", loginUser);
-router.post("/oauth", oauthLogin);
-router.post("/verify-email", verifyEmail);
-router.post("/magic-link", requestMagicLink);
-router.get("/magic-login", verifyMagicLink);
+
+router.post("/login", validate(loginSchema), loginUser);
+
+router.post("/oauth", validate(oauthLoginSchema), oauthLogin);
+
+router.post("/verify-email", validateQuery(verifyEmailSchema), verifyEmail);
+
+router.post("/magic-link", validate(requestMagicLinkSchema), requestMagicLink);
+
+router.post(
+  "/resend-verification",
+  validate(resendVerificationSchema),
+  resendVerification
+);
+
+router.get(
+  "/magic-login",
+  validateQuery(verifyMagicLinkSchema),
+  verifyMagicLink
+);
 
 export default router;
